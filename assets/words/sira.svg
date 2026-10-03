@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300"><defs><filter id="sh" x="-30%" y="-30%" width="160%" height="170%"><feDropShadow dx="0" dy="7" stdDeviation="6" flood-color="#6f466e" flood-opacity=".24"/></filter><linearGradient id="sea" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d7f0f8"/><stop offset="1" stop-color="#8ccbe3"/></linearGradient><linearGradient id="pink" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffd6e6"/><stop offset="0.55" stop-color="#f39cc2"/><stop offset="1" stop-color="#d277aa"/></linearGradient><linearGradient id="wd" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe5c4"/><stop offset="1" stop-color="#d9a06a"/></linearGradient></defs><g filter="url(#sh)">
+  <path d="M150 50 L150 196" stroke="#a5652c" stroke-width="7" stroke-linecap="round"/>
+  <path d="M158 56 Q216 112 232 180 L158 180 Z" fill="url(#pink)" stroke="#b9618f" stroke-width="5" stroke-linejoin="round"/>
+  <path d="M142 80 Q100 132 92 180 L142 180 Z" fill="#fffaf2" stroke="#c4a3c9" stroke-width="5" stroke-linejoin="round"/>
+  <path d="M58 196 L242 196 Q236 238 196 242 L104 242 Q64 238 58 196 Z" fill="url(#wd)" stroke="#a5652c" stroke-width="6" stroke-linejoin="round"/>
+  <path d="M80 212 L220 212" stroke="#fff" stroke-opacity=".6" stroke-width="6" stroke-linecap="round"/>
+  <path d="M30 256 Q60 240 90 256 Q120 272 150 256 Q180 240 210 256 Q240 272 270 256" fill="none" stroke="url(#sea)" stroke-width="12" stroke-linecap="round"/>
+</g></svg>

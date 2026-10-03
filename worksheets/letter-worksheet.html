@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>דף פעילות — כוכבות קוראות</title>
+<style>
+@font-face{font-family:'School Print Hebrew';src:url('../assets/fonts/noto-sans-hebrew.woff2') format('woff2');font-weight:100 900}
+@page{size:A4;margin:12mm}*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;color:#000;background:#eee}.sheet{width:210mm;min-height:297mm;margin:10px auto;background:#fff;padding:13mm 15mm}.top{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid #000;padding-bottom:6mm}.top h1{font-size:29px;margin:0}.top img{height:22mm;margin-inline-start:6mm;vertical-align:middle}.name{font-size:15px;border-bottom:1px solid #000;min-width:55mm;padding-bottom:3px}.instruction{font-size:16px;font-weight:bold;margin:6mm 0 3mm}.print-letter{font-family:'School Print Hebrew',Arial,sans-serif}.demo{display:grid;grid-template-columns:38mm 1fr;gap:8mm;align-items:center;border:1.5px solid #000;padding:5mm}.big{font-size:92px;font-weight:600;text-align:center;line-height:1}.guide{font-size:15px;line-height:1.55}.trace-row,.free-row{display:flex;direction:rtl;gap:7mm;border-bottom:1px solid #777;padding:2mm 3mm 4mm;margin-bottom:3mm;height:24mm;align-items:center}.trace-letter{font-size:57px;font-weight:600;color:#bbb;line-height:1}.free-box{height:19mm;flex:1;border-right:1px dashed #aaa}.bank{display:grid;grid-template-columns:repeat(8,1fr);gap:4mm;direction:rtl}.bank span{height:16mm;border:1.5px solid #000;display:grid;place-items:center;font-size:31px;font-weight:600}.pics{display:grid;grid-template-columns:repeat(6,1fr);gap:3mm}.pics div{border:1.5px solid #000;border-radius:4mm;height:28mm;display:grid;place-items:center}.pics img{max-width:80%;max-height:24mm;filter:grayscale(1) contrast(1.15)}.footer{display:flex;justify-content:space-between;margin-top:6mm;font-size:12px}.print{position:fixed;left:18px;bottom:18px;border:2px solid #000;background:#fff;padding:10px 16px;border-radius:8px;font-weight:bold;cursor:pointer}@media print{body{background:#fff}.sheet{margin:0;padding:8mm 11mm;width:auto;min-height:auto}.print{display:none}}@media(max-width:800px){.sheet{width:100%;margin:0;padding:8mm}.bank{grid-template-columns:repeat(6,1fr)}.pics{grid-template-columns:repeat(3,1fr)}}
+</style></head>
+<body><main class="sheet" id="sheet"></main><button class="print" onclick="print()">הדפסה</button>
+<script>
+const SHEETS={
+ 'מ':{item:'מעיל',img:'item-coat-open-transparent.png',pics:[['מפתח','words/mafteach.png'],['תוף','words/tof.png'],['מראה','words/mara.png'],['כדור','words/kadur.png'],['מטרייה','words/mitriya.png'],['שמש','words/shemesh.png']],bank:'מטנמשסמבכמתלמע'},
+ 'ש':{item:'שעון',img:'item-watch-transparent.png',pics:[['שמש','words/shemesh.png'],['פרח','words/perach.png'],['שוקולד','words/shokolad.png'],['כדור','words/kadur.png'],['שעון','words/shaon.png'],['מפתח','words/mafteach.png']],bank:'שעשצטשמתשסנשבג'},
+ 'ל':{item:'לב',img:'item-heart.svg',pics:[['לימון','words/limon.svg'],['תוף','words/tof.png'],['לחם','words/lechem.svg'],['שמש','words/shemesh.png'],['לב','item-heart.svg'],['מפתח','words/mafteach.png']],bank:'לרלדולזכלבנלמת'},
+ 'נ':{item:'נעליים',img:'item-boots.svg',pics:[['נר','words/ner.svg'],['כדור','words/kadur.png'],['נוצה','words/notza.svg'],['פרח','words/perach.png'],['נחש','words/nachash.svg'],['מראה','words/mara.png']],bank:'נגנכבנוזנרדנלמ'},
+ 'ס':{item:'סיכה',img:'item-pin.svg',pics:[['ספר','words/sefer.svg'],['תוף','words/tof.png'],['סירה','words/sira.svg'],['פרח','words/perach.png'],['סוכרייה','words/sukariya.svg'],['מטרייה','words/mitriya.png']],bank:'סטסושסמעססהתסב'},
+ 'צ':{item:'צמיד',img:'item-bracelet.svg',pics:[['צב','words/tzav.svg'],['כדור','words/kadur.png'],['צלחת','words/tzalachat.svg'],['שמש','words/shemesh.png'],['ציפור','words/tzipor.svg'],['מפתח','words/mafteach.png']],bank:'צעצשטצמגצנבצסת'},
+ 'ח':{item:'חצאית',img:'item-skirt.svg',pics:[['חלון','words/chalon.svg'],['שמש','words/shemesh.png'],['חתול','words/chatul.svg'],['תוף','words/tof.png'],['חלב','words/chalav.svg'],['מראה','words/mara.png']],bank:'חהחתרחדוחכבחמנ'}
+};
+const l=new URLSearchParams(location.search).get('l'),d=SHEETS[l]||SHEETS['מ'],L=SHEETS[l]?l:'מ';
+document.title=`דף פעילות — האות ${L}׳`;
+const rep=(html,n)=>Array.from({length:n},()=>html).join('');
+document.getElementById('sheet').innerHTML=`
+<header class="top"><div><h1>מתרגלות את האות ${L}׳ <img src="../assets/${d.img}" alt=""></h1><div>${L}ְ־${L}ְ־${d.item}</div></div><div class="name">שם: __________________</div></header>
+<div class="instruction">1. עוברות על האות באצבע ואחר כך בעיפרון</div>
+<section class="demo"><div class="big print-letter">${L}</div><div class="guide">אומרות יחד: ${L}ְ־${L}ְ־${d.item}.<br>מתחילות מלמעלה וכותבות לאט.<br><b>חשוב יותר לכתוב בנחת מאשר לכתוב מושלם.</b></div></section>
+<div class="instruction">2. עוברות על האותיות האפורות</div>
+<div class="trace-row">${rep(`<span class="trace-letter print-letter">${L}</span>`,6)}</div>
+<div class="instruction">3. כותבות לבד</div>
+<div class="free-row">${rep('<span class="free-box"></span>',5)}</div>
+<div class="instruction">4. מקיפות את כל האותיות ${L}׳</div>
+<div class="bank">${[...d.bank].map(x=>`<span class="print-letter">${x}</span>`).join('')}</div>
+<div class="instruction">5. צובעות רק את התמונות שמתחילות בצליל ${L}ְ</div>
+<div class="pics">${d.pics.map(([w,src])=>`<div><img src="../assets/${src}" alt="${w}"></div>`).join('')}</div>
+<footer class="footer"><span>טיפ להורים: אמרו יחד את שם כל תמונה והקשיבו לצליל הראשון, בלי לבקש מהילדה לאיית.</span><span>כוכבות קוראות</span></footer>`;
+</script></body></html>

@@ -46,7 +46,7 @@ ART = {}
 
 # ---------- rewards ----------
 ART['assets/item-boots.svg'] = svg(PINK + PINK_SOFT + GOLD, ''.join(
-    f'''<g transform="translate({dx} 0)">
+    f'''<g transform="translate({dx} 0) scale(.78 1)">
   <path d="M-38 40 Q-40 30 -28 28 L28 28 Q40 30 38 40 L40 160 Q44 176 54 186 Q64 198 62 214 L62 226 Q62 236 50 236 L-50 236 Q-62 236 -62 226 L-62 214 Q-64 198 -54 186 Q-44 176 -40 160 Z" fill="url(#pink)" stroke="#b9618f" stroke-width="6" stroke-linejoin="round"/>
   <path d="M-62 216 L62 216 L62 226 Q62 236 50 236 L-50 236 Q-62 236 -62 226 Z" fill="#f7d5e4" stroke="#b9618f" stroke-width="6" stroke-linejoin="round"/>
   <path d="M-38 40 Q-40 30 -28 28 L28 28 Q40 30 38 40 L38 58 L-38 58 Z" fill="url(#pinks)" stroke="#b9618f" stroke-width="6" stroke-linejoin="round"/>
@@ -54,7 +54,7 @@ ART['assets/item-boots.svg'] = svg(PINK + PINK_SOFT + GOLD, ''.join(
   {''.join(f'<path d="M-16 {y} L16 {y+12} M16 {y} L-16 {y+12}" stroke="#fff" stroke-width="5" stroke-linecap="round"/><circle cx="-17" cy="{y}" r="4" fill="url(#gold)"/><circle cx="17" cy="{y}" r="4" fill="url(#gold)"/>' for y in (76, 102, 128, 154))}
   <path d="M-28 48 Q-32 100 -30 160" fill="none" stroke="#fff" stroke-opacity=".7" stroke-width="7" stroke-linecap="round"/>
   <path d="M26 92l4 9 10 1-8 6 3 10-9-6-9 6 3-10-8-6 10-1z" fill="#fff4c9" stroke="#e1b65b" stroke-width="2"/>
-</g>''' for dx in (78, 222)
+</g>''' for dx in (52, 248)
 ), vb='0 0 300 250')
 
 ART['assets/item-pin.svg'] = svg(PINK + GOLD + PINK_SOFT, '''

@@ -104,7 +104,7 @@ const go = {
       <button class="round" style="position:absolute;bottom:28px;left:28px;z-index:31;width:auto;padding:0 26px;border-radius:999px;font-size:28px;font-weight:700" onclick="openParents()">להורים</button>
       <div class="hero-title"><h1>כוכבות קוראות</h1><p>הכנה משחקית לכיתה א׳</p></div>
       <div class="worlds">
-        <button class="world active" onclick="go.world()"><img src="${ITEMS.coat.card}" alt=""><b>לבוש ואביזרים</b><small>${doneCount()} מתוך 7 אותיות</small></button>
+        <button class="world active" onclick="go.world()"><img src="${ITEMS.coat.img}" alt=""><b>לבוש ואביזרים</b><small>${doneCount()} מתוך 7 אותיות</small></button>
         <button class="world locked" onclick="Sfx.soft()"><img src="assets/words/tof.png" alt=""><b>הבמה</b><small>5 אותיות</small></button>
         <button class="world locked" onclick="Sfx.soft()"><img src="assets/words/mara.png" alt=""><b>החדר</b><small>3 אותיות</small></button>
         <button class="world locked" onclick="Sfx.soft()"><img src="assets/words/shokolad.png" alt=""><b>האוכל</b><small>3 אותיות</small></button>

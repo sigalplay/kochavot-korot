@@ -14,16 +14,16 @@ const STAR_BOX = { x: 1114, y: 216, w: 289, h: 739 };
 /* Items. Positions are fractions of the star box:
    cx/cy = centre of the item on the star, w = width as a share of the star's width.
    snap: 'body' = clicks into place, 'wrist' = either wrist, 'free' = stays where dropped.
-   layer: true = the image is the same size as star.png and already sits on her body (best fit). */
+   layer: true = the image is the same size as star.png and already sits on her body (best fit);
+   fit = where the item is inside that layer [x, y, w, h] as fractions (used for the fly-in animation). */
 const ITEMS = {
-  coat:     { name: 'מעיל',   img: 'assets/items/coat.png',     ar: .825, w: .64,  cx: .50,  cy: .396, z: 6, snap: 'body' },
+  coat: { name: 'מעיל', img: 'assets/items/coat-on.png', fit: [.170, .273, .675, .225], card: 'assets/items/coat.png', cardAr: 0.825, layer: true, ar: 2.555, w: 1, cx: .5, cy: .5, z: 6, snap: 'body' },
   watch:    { name: 'שעון',   img: 'assets/items/watch.png',    ar: 1.878, w: .12, cx: .24,  cy: .558, z: 8, snap: 'wrist' },
   heart:    { name: 'לב',     img: 'assets/items/heart.png',    ar: .80,  w: .20,  cx: .50,  cy: .40,  z: 9, snap: 'free' },
-  // boots: the card is the new painting; on the body we still use the front-facing placeholder until an "on feet" version exists
-  boots:    { name: 'נעליים', img: 'assets/item-boots.svg', card: 'assets/items/boots.png', cardAr: .957, ar: .833, w: .70, cx: .495, cy: .899, z: 5, snap: 'body' },
+  boots: { name: 'נעליים', img: 'assets/items/boots-on.png', fit: [.159, .852, .703, .148], card: 'assets/items/boots.png', cardAr: 0.957, layer: true, ar: 2.555, w: 1, cx: .5, cy: .5, z: 5, snap: 'body' },
   pin:      { name: 'סיכה',   img: 'assets/items/pin.png',      ar: .846, w: .20,  cx: .712, cy: .091, z: 9, snap: 'free' },
   bracelet: { name: 'צמיד',   img: 'assets/items/bracelet.png', ar: .772, w: .15,  cx: .774, cy: .552, z: 8, snap: 'wrist' },
-  skirt:    { name: 'חצאית',  img: 'assets/items/skirt.png',    ar: .703, w: .80,  cx: .50,  cy: .605, z: 5, snap: 'body' },
+  skirt: { name: 'חצאית', img: 'assets/items/skirt-on.png', fit: [.049, .438, .921, .223], card: 'assets/items/skirt.png', cardAr: 0.703, layer: true, ar: 2.555, w: 1, cx: .5, cy: .5, z: 5, snap: 'body' },
 };
 const WRISTS = [{ cx: .24, cy: .558 }, { cx: .774, cy: .558 }];
 

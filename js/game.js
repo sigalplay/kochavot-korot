@@ -104,7 +104,7 @@ const go = {
       <button class="round" style="position:absolute;bottom:28px;left:28px;z-index:31;width:auto;padding:0 26px;border-radius:999px;font-size:28px;font-weight:700" onclick="openParents()">להורים</button>
       <div class="hero-title"><h1>כוכבות קוראות</h1><p>הכנה משחקית לכיתה א׳</p></div>
       <div class="worlds">
-        <button class="world active" onclick="go.world()"><img src="${ITEMS.coat.img}" alt=""><b>לבוש ואביזרים</b><small>${doneCount()} מתוך 7 אותיות</small></button>
+        <button class="world active" onclick="go.world()"><img src="${ITEMS.coat.card || ITEMS.coat.img}" alt=""><b>לבוש ואביזרים</b><small>${doneCount()} מתוך 7 אותיות</small></button>
         <button class="world locked" onclick="Sfx.soft()"><img src="assets/words/tof.png" alt=""><b>הבמה</b><small>5 אותיות</small></button>
         <button class="world locked" onclick="Sfx.soft()"><img src="assets/words/mara.png" alt=""><b>החדר</b><small>3 אותיות</small></button>
         <button class="world locked" onclick="Sfx.soft()"><img src="assets/words/shokolad.png" alt=""><b>האוכל</b><small>3 אותיות</small></button>
@@ -225,8 +225,8 @@ const Unit = {
     const card = $('#rewardCard img'); if (!card) return;
     const from = rectOf(card), it = ITEMS[k];
     if (!state.outfit[k]) { state.outfit[k] = defaultPos(k); save(); }
-    const to = itemBox(k, state.outfit[k]), f = document.createElement('img');
-    f.src = it.img; f.className = 'flying-item'; Object.assign(f.style, { left: from.x + 'px', top: from.y + 'px', width: from.w + 'px' });
+    const box = itemBox(k, state.outfit[k]), to = it.fit ? { x: box.x + it.fit[0] * box.w, y: box.y + it.fit[1] * box.h, w: it.fit[2] * box.w, h: it.fit[3] * box.h } : box, f = document.createElement('img');
+    f.src = it.layer ? it.card : it.img; f.className = 'flying-item'; Object.assign(f.style, { left: from.x + 'px', top: from.y + 'px', width: from.w + 'px' });
     stage.appendChild(f); card.style.visibility = 'hidden'; Sfx.fly();
     requestAnimationFrame(() => requestAnimationFrame(() => Object.assign(f.style, { left: to.x + 'px', top: to.y + 'px', width: to.w + 'px' })));
     setTimeout(() => { f.remove(); const rc = $('#rewardCard'); if (rc) { rc.style.transition = 'opacity .5s'; rc.style.opacity = 0; } const s = $('#star'); if (s) s.outerHTML = starHTML(); hop(); sparkle(to.x + to.w / 2, to.y + to.h / 2, 22); Sfx.snap(); const a = $('#finishActions'); if (a) a.style.opacity = 1; }, 1150);
@@ -317,29 +317,52 @@ const Wardrobe = {
     screen(`${topbar({ back: 'go.world()', title: 'חדר ההלבשה' })}
       ${loose.map(k => this.cubbyImg(k)).join('')}${starHTML()}<div class="drop-glow" id="dropGlow" style="left:${STAR_BOX.x - 60}px;top:${STAR_BOX.y - 40}px;width:${STAR_BOX.w + 120}px;height:${STAR_BOX.h + 60}px"></div>
       <div class="wardrobe-bar">${Object.keys(state.outfit).length ? `<button class="pill" onclick="Wardrobe.undressAll()">${ICON.undress} הכול חוזר לארון</button>` : ''}</div>`, { bg: ART.wardrobe, bgClass: 'wardrobe' });
-    // worn items can be dragged too
-    stage.querySelectorAll('#star .worn').forEach(el => this.liftable(el));
+    this.bindStar();
     stage.querySelectorAll('.closet-item').forEach(el => this.draggable(el));
     prompt([state.inv.length ? 'wardrobe' : 'wardrobe-empty']);
   },
   cubbyRect(k) { const c = CUBBIES[k], it = ITEMS[k], ar = it.cardAr || it.ar, h = c.w * ar; return { x: c.x - c.w / 2, y: c.b - h, w: c.w }; },
   cubbyImg(k) { const r = this.cubbyRect(k), it = ITEMS[k]; return `<img class="closet-item arrive" data-item="${k}" src="${it.card || it.img}" alt="${it.name}" draggable="false" style="left:${r.x}px;top:${r.y}px;width:${r.w}px">`; },
-  liftable(el) {
-    el.style.pointerEvents = 'auto'; el.style.cursor = 'grab'; el.style.touchAction = 'none';
-    el.addEventListener('pointerdown', e => {
-      e.preventDefault(); const k = el.dataset.item, r = rectOf(el); el.remove();
-      const n = document.createElement('img'); n.className = 'closet-item'; n.dataset.item = k; n.src = ITEMS[k].img; n.draggable = false;
-      Object.assign(n.style, { left: r.x + 'px', top: r.y + 'px', width: r.w + 'px' }); stage.appendChild(n);
-      this.draggable(n); this.startDrag(n, e);
+  // what the item looks like while dragged: full-size layers travel as their card picture
+  view(k, over) {
+    const it = ITEMS[k];
+    if (it.layer) return { src: it.card, ar: it.cardAr, w: this.cubbyRect(k).w * (over ? 1.25 : 1.1) };
+    const worn = itemBox(k); return { src: it.img, ar: it.ar, w: over ? worn.w : Math.max(worn.w, this.cubbyRect(k).w) };
+  },
+  alpha: {},
+  async alphaOf(src) {
+    if (this.alpha[src]) return this.alpha[src];
+    const img = new Image(); img.src = src; await img.decode().catch(() => {});
+    const c = document.createElement('canvas'); c.width = img.naturalWidth; c.height = img.naturalHeight;
+    const x = c.getContext('2d'); x.drawImage(img, 0, 0);
+    try { this.alpha[src] = { w: c.width, h: c.height, d: x.getImageData(0, 0, c.width, c.height).data }; } catch { this.alpha[src] = null; }
+    return this.alpha[src];
+  },
+  // tapping the star picks the top-most worn item under the finger
+  bindStar() {
+    const star = $('#star'); if (!star) return;
+    star.style.pointerEvents = 'auto'; star.style.touchAction = 'none';
+    stage.querySelectorAll('#star .worn').forEach(im => this.alphaOf(im.getAttribute('src')));
+    star.addEventListener('pointerdown', async e => {
+      e.preventDefault(); const p = toStage(e);
+      const worn = [...star.querySelectorAll('.worn')].sort((a, b) => b.style.zIndex - a.style.zIndex);
+      for (const im of worn) {
+        const r = rectOf(im); if (p.x < r.x || p.y < r.y || p.x > r.x + r.w || p.y > r.y + r.h) continue;
+        const A = this.alpha[im.getAttribute('src')];
+        if (A) { const ax = Math.floor((p.x - r.x) / r.w * A.w), ay = Math.floor((p.y - r.y) / r.h * A.h); if (A.d[(ay * A.w + ax) * 4 + 3] < 60) continue; }
+        const k = im.dataset.item; im.remove();
+        const n = document.createElement('img'); n.className = 'closet-item'; n.dataset.item = k; n.draggable = false; stage.appendChild(n);
+        this.draggable(n); this.startDrag(n, e); return;
+      }
     });
   },
   draggable(el) { el.addEventListener('pointerdown', e => { e.preventDefault(); this.startDrag(el, e); }); },
   startDrag(el, e) {
     if (this.active) return;
-    Sfx.tap(); const k = el.dataset.item, it = ITEMS[k], id = e.pointerId;
-    this.active = true; el.classList.remove('arrive'); el.classList.add('dragging'); el.src = it.img;
-    const worn = itemBox(k), glow = $('#dropGlow');
-    const place = ev => { const p = toStage(ev), over = this.overStar(p), w = over ? worn.w : Math.max(worn.w, this.cubbyRect(k).w), h = w * it.ar; Object.assign(el.style, { width: w + 'px', left: p.x - w / 2 + 'px', top: p.y - h / 2 + 'px' }); glow?.classList.toggle('on', over); };
+    Sfx.tap(); const k = el.dataset.item, id = e.pointerId;
+    this.active = true; el.classList.remove('arrive'); el.classList.add('dragging');
+    const glow = $('#dropGlow');
+    const place = ev => { const p = toStage(ev), over = this.overStar(p), v = this.view(k, over), h = v.w * v.ar; if (el.getAttribute('src') !== v.src) el.src = v.src; Object.assign(el.style, { width: v.w + 'px', left: p.x - v.w / 2 + 'px', top: p.y - h / 2 + 'px' }); glow?.classList.toggle('on', over); };
     const move = ev => { if (ev.pointerId === id) place(ev); };
     const up = ev => { if (ev.pointerId !== id) return; removeEventListener('pointermove', move); removeEventListener('pointerup', up); removeEventListener('pointercancel', up); glow?.classList.remove('on'); this.active = false; this.drop(el, k, toStage(ev)); };
     place(e); addEventListener('pointermove', move); addEventListener('pointerup', up); addEventListener('pointercancel', up);
@@ -353,7 +376,7 @@ const Wardrobe = {
       else if (it.snap === 'wrist') { const fx = (p.x - STAR_BOX.x) / STAR_BOX.w, fy = (p.y - STAR_BOX.y) / STAR_BOX.h; pos = WRISTS.reduce((a, b) => Math.hypot(a.cx - fx, a.cy - fy) < Math.hypot(b.cx - fx, b.cy - fy) ? a : b); pos = { cx: pos.cx, cy: pos.cy }; }
       else pos = { cx: +((p.x - STAR_BOX.x) / STAR_BOX.w).toFixed(3), cy: +((p.y - STAR_BOX.y) / STAR_BOX.h).toFixed(3) };
       state.outfit[k] = pos; save(); el.remove();
-      const s = $('#star'); s.outerHTML = starHTML(); stage.querySelectorAll('#star .worn').forEach(x => this.liftable(x));
+      const s = $('#star'); s.outerHTML = starHTML(); this.bindStar();
       const b = itemBox(k, pos); sparkle(b.x + b.w / 2, b.y + b.h / 2, 16); Sfx.snap(); hop(); say('dressed');
     } else {
       delete state.outfit[k]; save(); const r = this.cubbyRect(k);

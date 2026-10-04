@@ -33,7 +33,7 @@ main{max-width:980px;margin:0 auto;padding:16px}
 <script src="js/content.js"></script>
 <script src="js/audio.js"></script>
 <script>
-const groups={'הכול':()=>true,'הוראות':id=>/^(open|words|hunt|write|write2|done|yes)-/.test(id),'מילים ופריטים':id=>/^(w|i)-/.test(id),'אותיות וצלילים':id=>/^(name|sound|letter)-/.test(id),'כללי':id=>!/-(mem|shin|lamed|nun|samech|tsadi|chet)$/.test(id)&&!/^(w|i|letter)-/.test(id)};
+const groups={'הכול':()=>true,'הוראות':id=>/^(open|words|hunt|write|write2|done|yes)-/.test(id),'מילים ופריטים':id=>/^(w|i)-/.test(id),'אותיות וצלילים':id=>/^(name|sound|letter)-/.test(id),'כללי':id=>!/^(open|words|hunt|write|write2|done|yes|name|sound|w|i|letter)-/.test(id)};
 let filter='הכול',have=new Set(),rec=null;
 async function refresh(){have=new Set(await Voice.listClips()||[]);document.getElementById('count').textContent=[...have].filter(k=>LINES[k]).length;render()}
 function render(){

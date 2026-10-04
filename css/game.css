@@ -110,6 +110,14 @@ button{font:inherit;color:inherit;border:0;background:none;padding:0;cursor:poin
 .drop-glow.on{opacity:1;animation:twinkle 1s infinite alternate}
 .wardrobe-bar{position:absolute;left:120px;bottom:40px;display:flex;gap:18px;z-index:30}
 
+/* the stage */
+.tray{position:absolute;z-index:8;border-radius:30px;background:#fff6fbe6;box-shadow:0 0 0 6px #f4c3d6,0 12px 30px #0004;text-align:center;padding-top:10px}
+.tray b{font-size:26px;color:var(--plum)}
+.prop{position:absolute;touch-action:none;cursor:grab;filter:drop-shadow(0 8px 10px #2a183555)}
+.prop.dragging{cursor:grabbing;filter:drop-shadow(0 16px 18px #2a183577)}
+.on-stage{position:absolute;inset:0;pointer-events:none;z-index:12}
+.world.done{box-shadow:0 0 0 6px #f3c86b,0 12px 28px #6b3f7a33,inset 0 -6px 0 #f1dbe8}
+
 /* finish */
 .reward-card{position:absolute;left:365px;top:140px;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,#fffbe9 0,#ffe9f2 60%,#ffe9f200 72%);display:grid;place-items:center;animation:popIn .6s both}
 .reward-card img{width:62%;max-height:62%;object-fit:contain;filter:drop-shadow(0 10px 14px #6b3f7a44)}

@@ -20,8 +20,8 @@ const SAVE_KEY = 'kochavot-v2';
 function loadState() {
   let s = null;
   try { s = JSON.parse(localStorage.getItem(SAVE_KEY)); } catch {}
-  if (!s || typeof s !== 'object') s = { done: {}, inv: [], outfit: {} };
-  s.done ||= {}; s.inv ||= []; s.outfit ||= {};
+  if (!s || typeof s !== 'object') s = { done: {}, inv: [], outfit: {}, stage: {} };
+  s.done ||= {}; s.inv ||= []; s.outfit ||= {}; s.stage ||= {};
   if (!s.migrated) { // bring over progress from the earlier prototype
     try {
       const old = JSON.parse(localStorage.getItem('kochavot-group1-inventory') || '[]');
@@ -64,7 +64,7 @@ function itemBox(key, pos) {
   return { x: STAR_BOX.x + p.cx * STAR_BOX.w - w / 2, y: STAR_BOX.y + p.cy * STAR_BOX.h - h / 2, w, h };
 }
 function starHTML() {
-  const worn = Object.entries(state.outfit).filter(([k]) => ITEMS[k] && state.inv.includes(k))
+  const worn = Object.entries(state.outfit).filter(([k]) => ITEMS[k] && !ITEMS[k].world && state.inv.includes(k))
     .map(([k, p]) => { const b = itemBox(k, p); return `<img class="worn" data-item="${k}" src="${ITEMS[k].img}" alt="${ITEMS[k].name}" style="left:${b.x - STAR_BOX.x}px;top:${b.y - STAR_BOX.y}px;width:${b.w}px;z-index:${ITEMS[k].z}">`; }).join('');
   return `<div class="star" id="star" style="left:${STAR_BOX.x}px;top:${STAR_BOX.y}px;width:${STAR_BOX.w}px;height:${STAR_BOX.h}px"><img src="${ART.star}" alt="הכוכבת" style="left:0;top:0;width:100%;height:100%;z-index:4">${worn ? `<img src="${ART.starArms}" alt="" style="left:0;top:0;width:100%;height:100%;z-index:7">` : ''}${worn}</div>`;
 }
@@ -103,26 +103,28 @@ const go = {
     screen(`${topbar({ home: false, replay: true })}
       <button class="round" style="position:absolute;bottom:28px;left:28px;z-index:31;width:auto;padding:0 26px;border-radius:999px;font-size:28px;font-weight:700" onclick="openParents()">להורים</button>
       <div class="hero-title"><h1>כוכבות קוראות</h1><p>הכנה משחקית לכיתה א׳</p></div>
-      <div class="worlds">
-        <button class="world active" onclick="go.world()"><img src="${ITEMS.coat.card || ITEMS.coat.img}" alt=""><b>לבוש ואביזרים</b><small>${doneCount()} מתוך 7 אותיות</small></button>
-        <button class="world locked" onclick="Sfx.soft()"><img src="assets/words/tof.png" alt=""><b>הבמה</b><small>5 אותיות</small></button>
-        <button class="world locked" onclick="Sfx.soft()"><img src="assets/words/mara.png" alt=""><b>החדר</b><small>3 אותיות</small></button>
-        <button class="world locked" onclick="Sfx.soft()"><img src="assets/words/shokolad.png" alt=""><b>האוכל</b><small>3 אותיות</small></button>
-        <button class="world locked" onclick="Sfx.soft()"><img src="assets/words/perach.png" alt=""><b>המתנות</b><small>4 אותיות</small></button>
+      <div class="worlds">${WORLDS.map(w => w.soon
+        ? `<button class="world locked" onclick="Sfx.soft()"><img src="${w.icon}" alt=""><b>${w.title}</b><small>${w.soon} אותיות</small></button>`
+        : `<button class="world ${worldDone(w.key) ? 'done' : 'active'}" onclick="Sfx.tap();go.world('${w.key}')"><img src="${w.icon}" alt=""><b>${w.title}</b><small>${doneCount(w.key)} מתוך ${unitsOf(w.key).length} אותיות</small></button>`).join('')}
       </div>${starHTML()}`);
     prompt(['home']);
   },
-  world() {
-    const all = UNITS.every(u => state.done[u.key]);
-    screen(`${topbar({ title: 'לבוש ואביזרים' })}<div class="panel">
-      <div class="units">${UNITS.map(u => `<button class="unit ${state.done[u.key] ? 'done' : ''}" onclick="Sfx.tap();Unit.start('${u.key}')" aria-label="האות ${u.letter}"><span class="big">${u.letter}</span><img src="${ITEMS[u.item].card || ITEMS[u.item].img}" alt="${ITEMS[u.item].name}"></button>`).join('')}
-        <button class="unit wardrobe-btn" onclick="Sfx.tap();go.wardrobe()"><span class="count">${state.inv.length}</span><img src="assets/group1-wardrobe-bank.png" style="height:96px;border-radius:16px;object-fit:cover;width:80%;margin:0 0 10px" alt=""><b>חדר ההלבשה</b></button></div>
-      ${all ? '<div class="banner">הלבשת את הכוכבת מכף רגל ועד ראש! ✨ עולם הבמה ייפתח בקרוב.</div>' : ''}</div>${starHTML()}`);
-    prompt(all ? ['world-done'] : ['world-clothes']);
+  world(key = 'clothes') {
+    const W = WORLDS.find(w => w.key === key), list = unitsOf(key), all = worldDone(key), owned = list.filter(u => state.inv.includes(u.item)).length;
+    const placeBtn = key === 'stage'
+      ? `<button class="unit wardrobe-btn" onclick="Sfx.tap();go.stage()"><span class="count">${owned}</span><img src="${ART.stage}" style="height:96px;border-radius:16px;object-fit:cover;width:80%;margin:0 0 10px" alt=""><b>${W.placeName}</b></button>`
+      : `<button class="unit wardrobe-btn" onclick="Sfx.tap();go.wardrobe()"><span class="count">${owned}</span><img src="${ART.wardrobe}" style="height:96px;border-radius:16px;object-fit:cover;width:80%;margin:0 0 10px" alt=""><b>${W.placeName}</b></button>`;
+    screen(`${topbar({ title: W.title })}<div class="panel">
+      <div class="units">${list.map(u => `<button class="unit ${state.done[u.key] ? 'done' : ''}" onclick="Sfx.tap();Unit.start('${u.key}')" aria-label="האות ${u.letter}"><span class="big">${u.letter}</span><img src="${ITEMS[u.item].card || ITEMS[u.item].img}" alt="${ITEMS[u.item].name}"></button>`).join('')}
+        ${placeBtn}</div>
+      ${all ? `<div class="banner">${key === 'stage' ? 'הבמה מוכנה להופעה! ✨' : 'הלבשת את הכוכבת מכף רגל ועד ראש! ✨ עכשיו אפשר לעלות לבמה.'}</div>` : ''}</div>${starHTML()}`);
+    prompt(all ? [key === 'stage' ? 'stage-done' : 'world-done'] : [`world-${key}`]);
   },
+  stage() { StageWorld.open(); },
   wardrobe() { Wardrobe.open(); },
 };
-const doneCount = () => UNITS.filter(u => state.done[u.key]).length;
+const doneCount = w => unitsOf(w).filter(u => state.done[u.key]).length;
+const worldDone = w => unitsOf(w).every(u => state.done[u.key]);
 
 /* ---------- a letter unit: five steps ---------- */
 const Unit = {
@@ -132,7 +134,7 @@ const Unit = {
   render() {
     this.misses = 0; this.found = 0;
     const u = this.u, item = ITEMS[u.item];
-    screen(`${topbar({ back: 'go.world()', title: `${u.letter} — ${item.name}`, steps: this.step })}<div class="panel" id="panel"></div>${starHTML()}`);
+    screen(`${topbar({ back: `go.world('${u.world}')`, title: `${u.letter} — ${item.name}`, steps: this.step })}<div class="panel" id="panel"></div>${starHTML()}`);
     [this.opening, this.words, this.hunt, this.write, this.finish][this.step].call(this);
   },
   wrongTap(el, ids) {
@@ -146,7 +148,7 @@ const Unit = {
   /* 1 — which item starts with the sound */
   opening() {
     const u = this.u;
-    $('#panel').innerHTML = `${promptRow(`איזה פריט מתחיל בצליל <b>${u.sound}</b>?`, [`open-${u.key}`])}
+    $('#panel').innerHTML = `${promptRow(`מה מתחיל בצליל <b>${u.sound}</b>?`, [`open-${u.key}`])}
       <div class="cards three">${shuffle(u.options).map(k => `<button class="card" data-ok="${k === u.item ? 1 : 0}" onclick="Unit.pickItem(this,'${k}')"><img src="${ITEMS[k].card || ITEMS[k].img}" alt=""><span class="label">${ITEMS[k].name}</span></button>`).join('')}</div>`;
     prompt([`open-${u.key}`]);
   },
@@ -207,19 +209,23 @@ const Unit = {
 
   /* 5 — reward: the item flies onto the star */
   finish() {
-    const u = this.u, k = u.item, it = ITEMS[k], next = UNITS.slice(UNITS.indexOf(u) + 1).concat(UNITS).find(x => !state.done[x.key] && x !== u);
+    const u = this.u, k = u.item, it = ITEMS[k], list = unitsOf(u.world), next = list.slice(list.indexOf(u) + 1).concat(list).find(x => !state.done[x.key] && x !== u), onStage = u.world === 'stage';
     const fresh = !state.inv.includes(k);
-    state.done[u.key] = true; if (fresh) state.inv.push(k); save();
+    state.done[u.key] = true; if (fresh) state.inv.push(k); if (onStage && !state.stage[k]) state.stage[k] = { x: it.stage.x, y: it.stage.y }; save();
     $('#panel').innerHTML = `<div class="finish-title">איזו כוכבת! הרווחת ${it.name}</div><div class="reward-card" id="rewardCard"><img src="${it.card || it.img}" alt="${it.name}"></div>
-      <div class="collection-label">אספת ${state.inv.length} מתוך 7 פריטים</div>
-      <div class="collection">${UNITS.map(x => `<span class="${state.inv.includes(x.item) ? (x.item === k && fresh ? 'new' : '') : 'miss'}"><img src="${ITEMS[x.item].card || ITEMS[x.item].img}" alt=""></span>`).join('')}</div>
+      <div class="collection-label">אספת ${list.filter(x => state.inv.includes(x.item)).length} מתוך ${list.length} ${onStage ? 'דברים להופעה' : 'פריטים'}</div>
+      <div class="collection">${list.map(x => `<span class="${state.inv.includes(x.item) ? (x.item === k && fresh ? 'new' : '') : 'miss'}"><img src="${ITEMS[x.item].card || ITEMS[x.item].img}" alt=""></span>`).join('')}</div>
       <div class="finish-actions" id="finishActions" style="opacity:0;transition:opacity .4s">
         ${next ? `<button class="next" style="position:static;transform:none;animation:none;height:84px;font-size:32px" onclick="Sfx.tap();Unit.start('${next.key}')">לאות ${next.letter} ${ICON.next}</button>` : ''}
-        <button class="pill" onclick="Sfx.tap();go.wardrobe()">${ICON.closet} חדר ההלבשה</button>
-        <button class="pill" onclick="go.world()">כל האותיות</button>
+        <button class="pill" onclick="Sfx.tap();${onStage ? 'go.stage()' : 'go.wardrobe()'}">${ICON.closet} ${onStage ? 'לבמה' : 'חדר ההלבשה'}</button>
+        <button class="pill" onclick="go.world('${u.world}')">כל האותיות</button>
         <a class="pill" style="text-decoration:none;color:inherit" href="worksheets/letter-worksheet.html?l=${encodeURIComponent(u.letter)}" target="_blank" rel="noopener">${ICON.print} דף עבודה</a></div>`;
     Sfx.done(); confetti(); say(`done-${u.key}`);
-    setTimeout(() => this.dress(k), 1500);
+    setTimeout(() => onStage ? this.toStage() : this.dress(k), 1500);
+  },
+  toStage() {
+    const rc = $('#rewardCard'); if (rc) { sparkleOn(rc, 24); Sfx.snap(); }
+    const a = $('#finishActions'); if (a) a.style.opacity = 1;
   },
   dress(k) {
     const card = $('#rewardCard img'); if (!card) return;
@@ -313,8 +319,8 @@ const Writer = {
 /* ---------- dressing room ---------- */
 const Wardrobe = {
   open() {
-    const loose = state.inv.filter(k => !state.outfit[k]);
-    screen(`${topbar({ back: 'go.world()', title: 'חדר ההלבשה' })}
+    const loose = state.inv.filter(k => !ITEMS[k].world && !state.outfit[k]);
+    screen(`${topbar({ back: "go.world('clothes')", title: 'חדר ההלבשה' })}
       ${loose.map(k => this.cubbyImg(k)).join('')}${starHTML()}<div class="drop-glow" id="dropGlow" style="left:${STAR_BOX.x - 60}px;top:${STAR_BOX.y - 40}px;width:${STAR_BOX.w + 120}px;height:${STAR_BOX.h + 60}px"></div>
       <div class="wardrobe-bar">${Object.keys(state.outfit).length ? `<button class="pill" onclick="Wardrobe.undressAll()">${ICON.undress} הכול חוזר לארון</button>` : ''}</div>`, { bg: ART.wardrobe });
     this.bindStar();
@@ -386,6 +392,46 @@ const Wardrobe = {
     const bar = $('.wardrobe-bar'); if (bar) bar.innerHTML = Object.keys(state.outfit).length ? `<button class="pill" onclick="Wardrobe.undressAll()">${ICON.undress} הכול חוזר לארון</button>` : '';
   },
   undressAll() { state.outfit = {}; save(); this.open(); say('back-shelf'); },
+};
+
+/* ---------- the stage: place earned props anywhere ---------- */
+const StageWorld = {
+  TRAY: { x: 30, w: 170, top: 140, gap: 150 },
+  owned() { return unitsOf('stage').map(u => u.item).filter(k => state.inv.includes(k)); },
+  slot(i) { return { x: this.TRAY.x + this.TRAY.w / 2, y: this.TRAY.top + 70 + i * this.TRAY.gap }; },
+  propHTML(k, i) {
+    const it = ITEMS[k], p = state.stage[k], w = p ? it.stage.w : Math.min(130, 130 / it.ar), h = w * it.ar, at = p || this.slot(i);
+    return `<img class="prop ${p ? 'placed' : 'in-tray'}" data-item="${k}" src="${it.img}" alt="${it.name}" draggable="false" style="left:${at.x - w / 2}px;top:${at.y - h / 2}px;width:${w}px;z-index:${p ? it.z : 21}">`;
+  },
+  open() {
+    const owned = this.owned(), dx = STAGE_CENTER - (STAR_BOX.x + STAR_BOX.w / 2);
+    screen(`${topbar({ back: "go.world('stage')", title: 'הבמה' })}
+      <div class="tray" style="left:${this.TRAY.x}px;top:${this.TRAY.top}px;width:${this.TRAY.w}px;height:${this.TRAY.gap * 5 + 10}px"><b>הארגז</b></div>
+      ${owned.map((k, i) => this.propHTML(k, i)).join('')}
+      <div class="on-stage" style="transform:translateX(${dx}px)">${starHTML()}</div>
+      <div class="wardrobe-bar" style="left:auto;right:40px">${Object.keys(state.stage).length ? `<button class="pill" onclick="StageWorld.clear()">${ICON.undress} הכול חוזר לארגז</button>` : ''}</div>`, { bg: ART.stage });
+    stage.querySelector('.veil')?.remove();
+    stage.querySelectorAll('.prop').forEach(el => el.addEventListener('pointerdown', e => this.drag(el, e)));
+    prompt([owned.length ? 'stage' : 'stage-empty']);
+  },
+  inTray(p) { return p.x < this.TRAY.x + this.TRAY.w + 20; },
+  drag(el, e) {
+    e.preventDefault(); if (this.active) return; this.active = true;
+    const k = el.dataset.item, it = ITEMS[k], id = e.pointerId; Sfx.tap();
+    el.style.zIndex = 50; el.classList.add('dragging');
+    const place = ev => { const p = toStage(ev), w = this.inTray(p) ? Math.min(130, 130 / it.ar) : it.stage.w, h = w * it.ar; Object.assign(el.style, { width: w + 'px', left: p.x - w / 2 + 'px', top: p.y - h / 2 + 'px' }); };
+    const move = ev => { if (ev.pointerId === id) place(ev); };
+    const up = ev => {
+      if (ev.pointerId !== id) return;
+      removeEventListener('pointermove', move); removeEventListener('pointerup', up); removeEventListener('pointercancel', up); this.active = false;
+      const p = toStage(ev);
+      if (this.inTray(p)) { delete state.stage[k]; save(); Sfx.soft(); this.open(); say('stage-back'); return; }
+      state.stage[k] = { x: Math.round(Math.max(60, Math.min(W - 60, p.x))), y: Math.round(Math.max(60, Math.min(H - 40, p.y))) }; save();
+      this.open(); sparkle(state.stage[k].x, state.stage[k].y, 16); Sfx.snap(); hop(); say('placed');
+    };
+    place(e); addEventListener('pointermove', move); addEventListener('pointerup', up); addEventListener('pointercancel', up);
+  },
+  clear() { state.stage = {}; save(); this.open(); say('stage-back'); },
 };
 
 /* ---------- parents ---------- */

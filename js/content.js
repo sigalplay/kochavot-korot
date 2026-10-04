@@ -41,7 +41,7 @@ const WORDS = {
   ner: ['נר', 'assets/words/ner.png'], notza: ['נוצה', 'assets/words/notza.png'], nachash: ['נחש', 'assets/words/nachash.png'],
   sefer: ['ספר', 'assets/words/sefer.png'], sira: ['סירה', 'assets/words/sira.png'], sukariya: ['סוכרייה', 'assets/words/sukariya.png'],
   tzav: ['צב', 'assets/words/tzav.png'], tzalachat: ['צלחת', 'assets/words/tzalachat.png'], tzipor: ['ציפור', 'assets/words/tzipor.png'],
-  chalon: ['חלון', 'assets/words/chalon.svg'], chatul: ['חתול', 'assets/words/chatul.svg'], chalav: ['חלב', 'assets/words/chalav.svg'],
+  chalon: ['חלון', 'assets/words/chalon.png'], chatul: ['חתול', 'assets/words/chatul.png'], chalav: ['חלב', 'assets/words/chalav.png'],
 };
 
 /* Writing paths: strokes in a 100×100 box (y down), in the order they are written. */

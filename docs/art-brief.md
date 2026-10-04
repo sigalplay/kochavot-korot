@@ -43,10 +43,11 @@
 
 > [משפט הסגנון] Wide 16:10 background of a dreamy pink-lilac dressing room for a young pop star: curtains, a tall mirror with light bulbs, a vanity table, soft glowing lights. No people. Keep the right quarter of the image simple and uncluttered.
 
-### ד. תמונות מילים: 1024×1024, רקע שקוף, חפץ אחד במרכז
+### ד. תמונות מילים: ✅ מוכנות
 
-| אות | מילים (נכונות) | קבצים |
-|---|---|---|
+כל 24 תמונות המילים של עולם הלבוש מצוירות ונמצאות ב-`assets/words/`. לעולמות הבאים: גיליון של תמונות, כל חפץ לבד על רקע שקוף. אני גוזר אותן.
+
+---|---|---|
 | מ | מפתח, מראה, מטרייה | `words/mafteach.png`, `words/mara.png`, `words/mitriya.png` |
 | ש | שמש, שעון, שוקולד | `words/shemesh.png`, `words/shaon.png`, `words/shokolad.png` |
 | ל | לימון, לחם, לב | `words/limon.png`, `words/lechem.png` (הלב לקוח מהפריט) |

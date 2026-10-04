@@ -91,40 +91,6 @@ ART['assets/item-skirt.svg'] = svg(PINK + PINK_SOFT + GOLD, '''
 # ---------- word cards ----------
 
 SPIRAL = 'M' + ' L'.join(f'{150+r*math.cos(t):.1f} {118+r*math.sin(t):.1f}' for t, r in ((i/12, 4+i/12*4.3) for i in range(0, 170)))
-ART['assets/words/chalon.svg'] = svg(grad('sky', (0, '#cdebfa'), (1, '#fde3ef'), x2=0) + PINK_SOFT + LILAC, '''
-  <path d="M60 254 L60 120 Q60 46 150 46 Q240 46 240 120 L240 254 Z" fill="url(#sky)" stroke="#9f84d4" stroke-width="14" stroke-linejoin="round"/>
-  <path d="M150 50 L150 254 M64 150 L236 150" stroke="url(#lilac)" stroke-width="10"/>
-  <ellipse cx="108" cy="110" rx="22" ry="10" fill="#fff"/><ellipse cx="124" cy="104" rx="16" ry="10" fill="#fff"/>
-  <path d="M190 190 l7 15 16 1 -12 10 4 16 -15 -9 -15 9 4 -16 -12 -10 16 -1z" fill="#fff4c9" stroke="#e1b65b" stroke-width="3"/>
-  <path d="M40 254 L260 254" stroke="url(#pinks)" stroke-width="18" stroke-linecap="round"/>
-  <path d="M40 254 L260 254" stroke="#c4709c" stroke-width="3" stroke-linecap="round" opacity=".5"/>
-''')
-
-ART['assets/words/chatul.svg'] = svg(grad('ct', (0, '#fff0d8'), (.55, '#f6c58c'), (1, '#d9925a')), '''
-  <path d="M200 236 C250 240 266 190 240 168" fill="none" stroke="#b56f3a" stroke-width="20" stroke-linecap="round"/>
-  <path d="M200 236 C250 240 266 190 240 168" fill="none" stroke="url(#ct)" stroke-width="12" stroke-linecap="round"/>
-  <path d="M90 250 C70 190 96 150 150 150 C204 150 230 190 210 250 Z" fill="url(#ct)" stroke="#b56f3a" stroke-width="6" stroke-linejoin="round"/>
-  <path d="M84 70 L96 122 L130 94 Z M216 70 L204 122 L170 94 Z" fill="url(#ct)" stroke="#b56f3a" stroke-width="6" stroke-linejoin="round"/>
-  <path d="M92 86 L100 110 L116 98 Z M208 86 L200 110 L184 98 Z" fill="#f6b3c9"/>
-  <ellipse cx="150" cy="134" rx="70" ry="56" fill="url(#ct)" stroke="#b56f3a" stroke-width="6"/>
-  <ellipse cx="124" cy="128" rx="8" ry="11" fill="#3d3045"/><ellipse cx="176" cy="128" rx="8" ry="11" fill="#3d3045"/>
-  <circle cx="127" cy="124" r="3" fill="#fff"/><circle cx="179" cy="124" r="3" fill="#fff"/>
-  <path d="M144 146 L156 146 L150 153 Z" fill="#e46b8f"/>
-  <path d="M150 153 Q142 162 134 158 M150 153 Q158 162 166 158" fill="none" stroke="#7a4b3a" stroke-width="3" stroke-linecap="round"/>
-  <path d="M96 146 L66 140 M96 154 L68 160 M204 146 L234 140 M204 154 L232 160" stroke="#7a4b3a" stroke-width="3" stroke-linecap="round"/>
-  <circle cx="110" cy="152" r="7" fill="#f6a8c2" opacity=".7"/><circle cx="190" cy="152" r="7" fill="#f6a8c2" opacity=".7"/>
-  <path d="M120 182 Q150 196 180 182" fill="none" stroke="#e46b8f" stroke-width="7" stroke-linecap="round"/>
-''')
-
-ART['assets/words/chalav.svg'] = svg(grad('ml', (0, '#ffffff'), (1, '#e6eef7')) + PINK + grad('bl', (0, '#bfe3f6'), (1, '#7db8dc')), '''
-  <path d="M90 100 L120 52 L180 52 L210 100 Z" fill="url(#bl)" stroke="#4a86ad" stroke-width="6" stroke-linejoin="round"/>
-  <rect x="122" y="34" width="56" height="22" rx="5" fill="url(#pink)" stroke="#b9618f" stroke-width="5"/>
-  <rect x="90" y="100" width="120" height="152" rx="10" fill="url(#ml)" stroke="#4a86ad" stroke-width="6"/>
-  <path d="M90 150 Q150 130 210 150 L210 200 Q150 218 90 200 Z" fill="url(#bl)" opacity=".9"/>
-  <path d="M150 156 C142 146 128 148 128 160 C128 172 150 184 150 184 C150 184 172 172 172 160 C172 148 158 146 150 156 Z" fill="url(#pink)" stroke="#b9618f" stroke-width="3"/>
-  <path d="M106 116 L106 236" stroke="#fff" stroke-width="8" stroke-linecap="round"/>
-''')
-
 for rel, text in ART.items():
     path = ROOT / rel
     path.parent.mkdir(parents=True, exist_ok=True)

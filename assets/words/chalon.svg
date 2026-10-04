@@ -1,8 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300"><defs><filter id="sh" x="-30%" y="-30%" width="160%" height="170%"><feDropShadow dx="0" dy="7" stdDeviation="6" flood-color="#6f466e" flood-opacity=".24"/></filter><linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#cdebfa"/><stop offset="1" stop-color="#fde3ef"/></linearGradient><linearGradient id="pinks" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff0f6"/><stop offset="0.6" stop-color="#fbc4da"/><stop offset="1" stop-color="#ee9fc2"/></linearGradient><linearGradient id="lilac" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#efe4ff"/><stop offset="0.6" stop-color="#c9b1ee"/><stop offset="1" stop-color="#9f84d4"/></linearGradient></defs><g filter="url(#sh)">
-  <path d="M60 254 L60 120 Q60 46 150 46 Q240 46 240 120 L240 254 Z" fill="url(#sky)" stroke="#9f84d4" stroke-width="14" stroke-linejoin="round"/>
-  <path d="M150 50 L150 254 M64 150 L236 150" stroke="url(#lilac)" stroke-width="10"/>
-  <ellipse cx="108" cy="110" rx="22" ry="10" fill="#fff"/><ellipse cx="124" cy="104" rx="16" ry="10" fill="#fff"/>
-  <path d="M190 190 l7 15 16 1 -12 10 4 16 -15 -9 -15 9 4 -16 -12 -10 16 -1z" fill="#fff4c9" stroke="#e1b65b" stroke-width="3"/>
-  <path d="M40 254 L260 254" stroke="url(#pinks)" stroke-width="18" stroke-linecap="round"/>
-  <path d="M40 254 L260 254" stroke="#c4709c" stroke-width="3" stroke-linecap="round" opacity=".5"/>
-</g></svg>

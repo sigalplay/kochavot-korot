@@ -315,9 +315,8 @@ const Wardrobe = {
   open() {
     const loose = state.inv.filter(k => !state.outfit[k]);
     screen(`${topbar({ back: 'go.world()', title: 'חדר ההלבשה' })}
-      <div class="cabinet">${CABINET.map(([x, y, w, h]) => `<i style="left:${x - 60}px;top:${y - 120}px;width:${w}px;height:${h}px"></i>`).join('')}</div>
       ${loose.map(k => this.cubbyImg(k)).join('')}${starHTML()}<div class="drop-glow" id="dropGlow" style="left:${STAR_BOX.x - 60}px;top:${STAR_BOX.y - 40}px;width:${STAR_BOX.w + 120}px;height:${STAR_BOX.h + 60}px"></div>
-      <div class="wardrobe-bar">${Object.keys(state.outfit).length ? `<button class="pill" onclick="Wardrobe.undressAll()">${ICON.undress} הכול חוזר לארון</button>` : ''}</div>`, { bg: ART.room });
+      <div class="wardrobe-bar">${Object.keys(state.outfit).length ? `<button class="pill" onclick="Wardrobe.undressAll()">${ICON.undress} הכול חוזר לארון</button>` : ''}</div>`, { bg: ART.wardrobe });
     this.bindStar();
     stage.querySelectorAll('.closet-item').forEach(el => this.draggable(el));
     prompt([state.inv.length ? 'wardrobe' : 'wardrobe-empty']);

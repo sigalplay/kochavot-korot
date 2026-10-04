@@ -39,7 +39,7 @@
 | קובץ | גודל | תוכן |
 |---|---|---|
 | ✅ `assets/scene/room.jpg` | 1600×1000 | חדר הלבשה ורוד־לילך: וילונות, מראה עם נורות, שולחן איפור. **בצד ימין (בערך 420 פיקסלים) יהיה פנוי ונקי**, כי שם עומדת הכוכבת |
-| `assets/scene/wardrobe.jpg` | 1600×1000 | אותו חדר, ובצד שמאל ארון עם **7 תאים מוארים** (3 למעלה, 4 למטה). אחרי שתביאי אותו אמדוד מחדש את מיקום התאים |
+| ✅ `assets/scene/wardrobe.jpg` | 1600×1000 | אותו חדר, ובצד שמאל ארון עם **7 תאים מוארים** (3 למעלה, 4 למטה). אחרי שתביאי אותו אמדוד מחדש את מיקום התאים |
 
 > [משפט הסגנון] Wide 16:10 background of a dreamy pink-lilac dressing room for a young pop star: curtains, a tall mirror with light bulbs, a vanity table, soft glowing lights. No people. Keep the right quarter of the image simple and uncluttered.
 

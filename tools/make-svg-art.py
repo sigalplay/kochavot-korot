@@ -89,20 +89,6 @@ ART['assets/item-skirt.svg'] = svg(PINK + PINK_SOFT + GOLD, '''
 ''' + sparkles((120, 190, 5), (186, 170, 4), (210, 214, 5), (100, 218, 3), (244, 60, 13)), vb='0 0 300 280')
 
 # ---------- word cards ----------
-ART['assets/words/limon.svg'] = svg(grad('y', (0, '#fff6b8'), (.55, '#ffe066'), (1, '#e8b52e')) + grad('lf', (0, '#bfe8a8'), (1, '#6fb36a')), '''
-  <path d="M150 62 Q190 40 214 70" fill="none" stroke="#7a9c4e" stroke-width="7" stroke-linecap="round"/>
-  <path d="M188 60 C220 30 258 42 262 56 C236 78 206 78 188 60 Z" fill="url(#lf)" stroke="#5c8f4e" stroke-width="5"/>
-  <path d="M40 168 C36 112 92 72 150 72 C208 72 264 112 260 168 C264 222 208 252 150 250 C92 252 36 222 40 168 Z" fill="url(#y)" stroke="#c99a2a" stroke-width="6"/>
-  <path d="M30 168 L44 162 L44 176 Z M270 168 L256 162 L256 176 Z" fill="#e8b52e" stroke="#c99a2a" stroke-width="4" stroke-linejoin="round"/>
-  <path d="M80 130 C96 108 120 100 140 100" fill="none" stroke="#fff" stroke-opacity=".8" stroke-width="10" stroke-linecap="round"/>
-  <g fill="#e2b13a" opacity=".5"><circle cx="110" cy="170" r="3"/><circle cx="170" cy="150" r="3"/><circle cx="200" cy="200" r="3"/><circle cx="140" cy="215" r="3"/></g>
-''')
-
-ART['assets/words/lechem.svg'] = svg(grad('br', (0, '#ffe2b0'), (.55, '#eab06a'), (1, '#c27c3a')), '''
-  <path d="M38 196 C30 120 70 86 150 86 C230 86 270 120 262 196 Q262 232 230 232 L70 232 Q38 232 38 196 Z" fill="url(#br)" stroke="#a5652c" stroke-width="6"/>
-  <path d="M96 116 Q110 150 98 186 M150 106 Q166 146 152 186 M204 116 Q218 150 206 186" fill="none" stroke="#fff3dc" stroke-width="9" stroke-linecap="round"/>
-  <path d="M60 150 C66 124 86 108 110 102" fill="none" stroke="#fff" stroke-opacity=".7" stroke-width="8" stroke-linecap="round"/>
-''')
 
 ART['assets/words/ner.svg'] = svg(PINK + grad('fl', (0, '#fff7c0'), (.5, '#ffc94d'), (1, '#f08a3c'), x2=0) + GOLD, '''
   <ellipse cx="150" cy="128" rx="44" ry="20" fill="#fff4b8" opacity=".55"/>

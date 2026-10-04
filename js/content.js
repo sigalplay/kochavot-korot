@@ -37,7 +37,7 @@ const WORDS = {
   mafteach: ['מפתח', 'assets/words/mafteach.png'], mara: ['מראה', 'assets/words/mara.png'], mitriya: ['מטרייה', 'assets/words/mitriya.png'],
   tof: ['תוף', 'assets/words/tof.png'], kadur: ['כדור', 'assets/words/kadur.png'], shaon: ['שעון', 'assets/words/shaon.png'],
   shemesh: ['שמש', 'assets/words/shemesh.png'], perach: ['פרח', 'assets/words/perach.png'], shokolad: ['שוקולד', 'assets/words/shokolad.png'],
-  limon: ['לימון', 'assets/words/limon.svg'], lechem: ['לחם', 'assets/words/lechem.svg'], lev: ['לב', 'assets/items/heart.png'],
+  limon: ['לימון', 'assets/words/limon.png'], lechem: ['לחם', 'assets/words/lechem.png'], lev: ['לב', 'assets/words/lev.png'],
   ner: ['נר', 'assets/words/ner.svg'], notza: ['נוצה', 'assets/words/notza.svg'], nachash: ['נחש', 'assets/words/nachash.svg'],
   sefer: ['ספר', 'assets/words/sefer.svg'], sira: ['סירה', 'assets/words/sira.svg'], sukariya: ['סוכרייה', 'assets/words/sukariya.svg'],
   tzav: ['צב', 'assets/words/tzav.svg'], tzalachat: ['צלחת', 'assets/words/tzalachat.svg'], tzipor: ['ציפור', 'assets/words/tzipor.svg'],

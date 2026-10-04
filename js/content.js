@@ -4,8 +4,7 @@
 const ART = {
   star: 'assets/scene/star.png',            // the star, transparent, standing, base clothes
   starArms: 'assets/scene/star-arms.png',   // same size: only her forearms and hands, drawn over skirts and coats
-  room: 'assets/scene/room-soft.jpg',       // backdrop for the activities
-  wardrobe: 'assets/scene/wardrobe-room.jpg', // dressing room with 7 cubbies, no star
+  room: 'assets/scene/room.jpg',            // the star's dressing room (1600×1000, right side kept clear for her)
 };
 
 // Where the star stands on the 1600×1000 stage (same spot on every screen).
@@ -29,9 +28,11 @@ const WRISTS = [{ cx: .24, cy: .558 }, { cx: .774, cy: .558 }];
 
 // Cubby for each item in the dressing room (stage px, centre-bottom + width).
 const CUBBIES = {
-  skirt: { x: 302, b: 393, w: 150 }, coat: { x: 621, b: 393, w: 205 }, boots: { x: 942, b: 393, w: 165 },
-  watch: { x: 277, b: 713, w: 74 },  heart: { x: 517, b: 713, w: 112 }, pin: { x: 749, b: 713, w: 128 }, bracelet: { x: 986, b: 713, w: 128 },
+  skirt: { x: 230, b: 450, w: 190 }, coat: { x: 535, b: 450, w: 210 }, boots: { x: 840, b: 450, w: 170 },
+  watch: { x: 192, b: 850, w: 70 },  heart: { x: 422, b: 850, w: 130 }, pin: { x: 652, b: 850, w: 140 }, bracelet: { x: 882, b: 850, w: 140 },
 };
+// the glowing cabinet in the dressing room: [x, y, w, h] per cubby (top row 3, bottom row 4)
+const CABINET = [[90, 150, 280, 330], [395, 150, 280, 330], [700, 150, 280, 330], [90, 540, 205, 330], [320, 540, 205, 330], [550, 540, 205, 330], [780, 540, 205, 330]];
 
 const WORDS = {
   mafteach: ['מפתח', 'assets/words/mafteach.png'], mara: ['מראה', 'assets/words/mara.png'], mitriya: ['מטרייה', 'assets/words/mitriya.png'],

@@ -8,7 +8,6 @@ button{font:inherit;color:inherit;border:0;background:none;padding:0;cursor:poin
 #stage{position:absolute;left:0;top:0;width:1600px;height:1000px;transform-origin:0 0;overflow:hidden;background:#f6e6f1}
 .layer{position:absolute;inset:0}
 .bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;pointer-events:none}
-.bg.wardrobe{height:1066.7px;top:-33.3px;object-fit:fill}
 .veil{position:absolute;inset:0;background:linear-gradient(90deg,#fff6fb55 0,#fff6fb22 62%,transparent 75%);pointer-events:none}
 
 /* top bar */
@@ -110,6 +109,11 @@ button{font:inherit;color:inherit;border:0;background:none;padding:0;cursor:poin
 .drop-glow{position:absolute;border-radius:50% 50% 40% 40%;background:radial-gradient(ellipse,#fff6c955 0,transparent 70%);box-shadow:0 0 0 0 transparent;z-index:11;pointer-events:none;opacity:0;transition:opacity .2s}
 .drop-glow.on{opacity:1;animation:twinkle 1s infinite alternate}
 .wardrobe-bar{position:absolute;left:120px;bottom:40px;display:flex;gap:18px;z-index:30}
+
+/* the dressing-room cabinet */
+.cabinet{position:absolute;left:60px;top:120px;width:950px;height:790px;border-radius:40px 40px 26px 26px;background:linear-gradient(180deg,#fff4f8f0,#fbe3eef0);box-shadow:0 0 0 12px #f4c3d6,0 0 0 16px #fff1cf,0 24px 50px #6b3f7a55;z-index:9}
+.cabinet i{position:absolute;border-radius:120px 120px 18px 18px;background:radial-gradient(ellipse at 50% 15%,#fffdf4 0,#fde9ef 55%,#f6d3e2 100%);box-shadow:inset 0 0 0 6px #f7d9a6,inset 0 -26px 0 #f3cfdd,0 0 18px #ffe6a888}
+.cabinet i:before{content:"";position:absolute;inset:-7px;border-radius:126px 126px 22px 22px;background:radial-gradient(circle,#fffbe6 0 3px,#ffe7a8 4px,transparent 6px) 0 0/30px 30px;-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;padding:7px;animation:twinkle 2s ease-in-out infinite alternate}
 
 /* finish */
 .reward-card{position:absolute;left:365px;top:140px;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,#fffbe9 0,#ffe9f2 60%,#ffe9f200 72%);display:grid;place-items:center;animation:popIn .6s both}

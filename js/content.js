@@ -4,26 +4,26 @@
 const ART = {
   star: 'assets/scene/star.png',            // the star, transparent, standing, base clothes
   room: 'assets/scene/room-soft.jpg',       // backdrop for the activities
-  wardrobe: 'assets/group1-wardrobe-bank.png', // dressing room with 7 cubbies
+  wardrobe: 'assets/scene/wardrobe-room.jpg', // dressing room with 7 cubbies, no star
 };
 
 // Where the star stands on the 1600×1000 stage (same spot on every screen).
-const STAR_BOX = { x: 1115, y: 216, w: 288, h: 739 };
+const STAR_BOX = { x: 1114, y: 216, w: 289, h: 739 };
 
 /* Items. Positions are fractions of the star box:
    cx/cy = centre of the item on the star, w = width as a share of the star's width.
    snap: 'body' = clicks into place, 'wrist' = either wrist, 'free' = stays where dropped.
    layer: true = the image is the same size as star.png and already sits on her body (best fit). */
 const ITEMS = {
-  coat:     { name: 'מעיל',   img: 'assets/item-coat-open-transparent.png', card: 'assets/item-coat-transparent.png', ar: .72,  w: .835, cx: .437, cy: .414, z: 6, snap: 'body' },
-  watch:    { name: 'שעון',   img: 'assets/item-watch-transparent.png', ar: 1.515, w: .15,  cx: .088, cy: .605, z: 8, snap: 'wrist' },
-  heart:    { name: 'לב',     img: 'assets/item-heart.svg',     ar: .9,   w: .25,  cx: .60,  cy: .47,  z: 9, snap: 'free' },
-  boots:    { name: 'נעליים', img: 'assets/item-boots.svg',     ar: .833, w: .692, cx: .534, cy: .883, z: 5, snap: 'body' },
-  pin:      { name: 'סיכה',   img: 'assets/item-pin.svg',       ar: 1,    w: .23,  cx: .29,  cy: .06,  z: 9, snap: 'free' },
-  bracelet: { name: 'צמיד',   img: 'assets/item-bracelet.svg',  ar: 1,    w: .21,  cx: .808, cy: .600, z: 8, snap: 'wrist' },
-  skirt:    { name: 'חצאית',  img: 'assets/item-skirt.svg',     ar: .933, w: .857, cx: .437, cy: .591, z: 5, snap: 'body' },
+  coat:     { name: 'מעיל',   img: 'assets/item-coat-open-transparent.png', card: 'assets/item-coat-transparent.png', ar: .72,  w: .66,  cx: .50,  cy: .392, z: 6, snap: 'body' },
+  watch:    { name: 'שעון',   img: 'assets/item-watch-transparent.png', ar: 1.515, w: .13,  cx: .24,  cy: .558, z: 8, snap: 'wrist' },
+  heart:    { name: 'לב',     img: 'assets/item-heart.svg',     ar: .9,   w: .20,  cx: .50,  cy: .40,  z: 9, snap: 'free' },
+  boots:    { name: 'נעליים', img: 'assets/item-boots.svg',     ar: .833, w: .70,  cx: .495, cy: .899, z: 5, snap: 'body' },
+  pin:      { name: 'סיכה',   img: 'assets/item-pin.svg',       ar: 1,    w: .20,  cx: .712, cy: .091,  z: 9, snap: 'free' },
+  bracelet: { name: 'צמיד',   img: 'assets/item-bracelet.svg',  ar: 1,    w: .18,  cx: .774, cy: .558, z: 8, snap: 'wrist' },
+  skirt:    { name: 'חצאית',  img: 'assets/item-skirt.svg',     ar: .933, w: .93,  cx: .50,  cy: .597, z: 5, snap: 'body' },
 };
-const WRISTS = [{ cx: .088, cy: .605 }, { cx: .808, cy: .600 }];
+const WRISTS = [{ cx: .24, cy: .558 }, { cx: .774, cy: .558 }];
 
 // Cubby for each item in the dressing room (stage px, centre-bottom + width).
 const CUBBIES = {

@@ -1,9 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300"><defs><filter id="sh" x="-30%" y="-30%" width="160%" height="170%"><feDropShadow dx="0" dy="7" stdDeviation="6" flood-color="#6f466e" flood-opacity=".24"/></filter><linearGradient id="gr" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#d8f2c2"/><stop offset="0.55" stop-color="#9bd38a"/><stop offset="1" stop-color="#5fa266"/></linearGradient></defs><g filter="url(#sh)">
-  <path d="M58 230 C40 200 70 178 120 186 C176 194 222 196 226 166 C230 134 186 128 150 132 C110 136 86 116 98 92 C108 72 140 66 170 74" fill="none" stroke="#4f8a57" stroke-width="40" stroke-linecap="round"/>
-  <path d="M58 230 C40 200 70 178 120 186 C176 194 222 196 226 166 C230 134 186 128 150 132 C110 136 86 116 98 92 C108 72 140 66 170 74" fill="none" stroke="url(#gr)" stroke-width="30" stroke-linecap="round"/>
-  <path d="M90 194 C120 188 160 200 200 188 M118 120 C130 128 150 128 170 124" fill="none" stroke="#fff" stroke-opacity=".55" stroke-width="6" stroke-linecap="round"/>
-  <ellipse cx="190" cy="76" rx="34" ry="26" fill="url(#gr)" stroke="#4f8a57" stroke-width="5"/>
-  <circle cx="196" cy="68" r="7" fill="#3d3045"/><circle cx="198" cy="66" r="2.5" fill="#fff"/>
-  <path d="M222 82 L242 84 M242 84 L250 78 M242 84 L250 90" stroke="#e46b8f" stroke-width="4" stroke-linecap="round"/>
-  <circle cx="184" cy="88" r="5" fill="#f6a8c2" opacity=".8"/>
-</g></svg>

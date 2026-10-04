@@ -38,9 +38,9 @@ const WORDS = {
   tof: ['תוף', 'assets/words/tof.png'], kadur: ['כדור', 'assets/words/kadur.png'], shaon: ['שעון', 'assets/words/shaon.png'],
   shemesh: ['שמש', 'assets/words/shemesh.png'], perach: ['פרח', 'assets/words/perach.png'], shokolad: ['שוקולד', 'assets/words/shokolad.png'],
   limon: ['לימון', 'assets/words/limon.png'], lechem: ['לחם', 'assets/words/lechem.png'], lev: ['לב', 'assets/words/lev.png'],
-  ner: ['נר', 'assets/words/ner.svg'], notza: ['נוצה', 'assets/words/notza.svg'], nachash: ['נחש', 'assets/words/nachash.svg'],
-  sefer: ['ספר', 'assets/words/sefer.svg'], sira: ['סירה', 'assets/words/sira.svg'], sukariya: ['סוכרייה', 'assets/words/sukariya.svg'],
-  tzav: ['צב', 'assets/words/tzav.svg'], tzalachat: ['צלחת', 'assets/words/tzalachat.svg'], tzipor: ['ציפור', 'assets/words/tzipor.svg'],
+  ner: ['נר', 'assets/words/ner.png'], notza: ['נוצה', 'assets/words/notza.png'], nachash: ['נחש', 'assets/words/nachash.png'],
+  sefer: ['ספר', 'assets/words/sefer.png'], sira: ['סירה', 'assets/words/sira.png'], sukariya: ['סוכרייה', 'assets/words/sukariya.png'],
+  tzav: ['צב', 'assets/words/tzav.png'], tzalachat: ['צלחת', 'assets/words/tzalachat.png'], tzipor: ['ציפור', 'assets/words/tzipor.png'],
   chalon: ['חלון', 'assets/words/chalon.svg'], chatul: ['חתול', 'assets/words/chatul.svg'], chalav: ['חלב', 'assets/words/chalav.svg'],
 };
 

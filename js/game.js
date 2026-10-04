@@ -66,7 +66,7 @@ function itemBox(key, pos) {
 function starHTML() {
   const worn = Object.entries(state.outfit).filter(([k]) => ITEMS[k] && state.inv.includes(k))
     .map(([k, p]) => { const b = itemBox(k, p); return `<img class="worn" data-item="${k}" src="${ITEMS[k].img}" alt="${ITEMS[k].name}" style="left:${b.x - STAR_BOX.x}px;top:${b.y - STAR_BOX.y}px;width:${b.w}px;z-index:${ITEMS[k].z}">`; }).join('');
-  return `<div class="star" id="star" style="left:${STAR_BOX.x}px;top:${STAR_BOX.y}px;width:${STAR_BOX.w}px;height:${STAR_BOX.h}px"><img src="${ART.star}" alt="הכוכבת" style="left:0;top:0;width:100%;height:100%;z-index:4">${worn}</div>`;
+  return `<div class="star" id="star" style="left:${STAR_BOX.x}px;top:${STAR_BOX.y}px;width:${STAR_BOX.w}px;height:${STAR_BOX.h}px"><img src="${ART.star}" alt="הכוכבת" style="left:0;top:0;width:100%;height:100%;z-index:4">${worn ? `<img src="${ART.starArms}" alt="" style="left:0;top:0;width:100%;height:100%;z-index:7">` : ''}${worn}</div>`;
 }
 function hop() { const s = $('#star'); if (!s) return; s.classList.remove('hop'); void s.offsetWidth; s.classList.add('hop'); }
 function sparkle(x, y, n = 14) {
@@ -322,7 +322,7 @@ const Wardrobe = {
     stage.querySelectorAll('.closet-item').forEach(el => this.draggable(el));
     prompt([state.inv.length ? 'wardrobe' : 'wardrobe-empty']);
   },
-  cubbyRect(k) { const c = CUBBIES[k], it = ITEMS[k], ar = it.card ? .70 : it.ar, h = c.w * ar; return { x: c.x - c.w / 2, y: c.b - h, w: c.w }; },
+  cubbyRect(k) { const c = CUBBIES[k], it = ITEMS[k], ar = it.cardAr || it.ar, h = c.w * ar; return { x: c.x - c.w / 2, y: c.b - h, w: c.w }; },
   cubbyImg(k) { const r = this.cubbyRect(k), it = ITEMS[k]; return `<img class="closet-item arrive" data-item="${k}" src="${it.card || it.img}" alt="${it.name}" draggable="false" style="left:${r.x}px;top:${r.y}px;width:${r.w}px">`; },
   liftable(el) {
     el.style.pointerEvents = 'auto'; el.style.cursor = 'grab'; el.style.touchAction = 'none';

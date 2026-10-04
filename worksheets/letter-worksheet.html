@@ -10,13 +10,13 @@
 <body><main class="sheet" id="sheet"></main><button class="print" onclick="print()">הדפסה</button>
 <script>
 const SHEETS={
- 'מ':{item:'מעיל',img:'item-coat-open-transparent.png',pics:[['מפתח','words/mafteach.png'],['תוף','words/tof.png'],['מראה','words/mara.png'],['כדור','words/kadur.png'],['מטרייה','words/mitriya.png'],['שמש','words/shemesh.png']],bank:'מטנמשסמבכמתלמע'},
- 'ש':{item:'שעון',img:'item-watch-transparent.png',pics:[['שמש','words/shemesh.png'],['פרח','words/perach.png'],['שוקולד','words/shokolad.png'],['כדור','words/kadur.png'],['שעון','words/shaon.png'],['מפתח','words/mafteach.png']],bank:'שעשצטשמתשסנשבג'},
- 'ל':{item:'לב',img:'item-heart.svg',pics:[['לימון','words/limon.svg'],['תוף','words/tof.png'],['לחם','words/lechem.svg'],['שמש','words/shemesh.png'],['לב','item-heart.svg'],['מפתח','words/mafteach.png']],bank:'לרלדולזכלבנלמת'},
- 'נ':{item:'נעליים',img:'item-boots.svg',pics:[['נר','words/ner.svg'],['כדור','words/kadur.png'],['נוצה','words/notza.svg'],['פרח','words/perach.png'],['נחש','words/nachash.svg'],['מראה','words/mara.png']],bank:'נגנכבנוזנרדנלמ'},
- 'ס':{item:'סיכה',img:'item-pin.svg',pics:[['ספר','words/sefer.svg'],['תוף','words/tof.png'],['סירה','words/sira.svg'],['פרח','words/perach.png'],['סוכרייה','words/sukariya.svg'],['מטרייה','words/mitriya.png']],bank:'סטסושסמעססהתסב'},
- 'צ':{item:'צמיד',img:'item-bracelet.svg',pics:[['צב','words/tzav.svg'],['כדור','words/kadur.png'],['צלחת','words/tzalachat.svg'],['שמש','words/shemesh.png'],['ציפור','words/tzipor.svg'],['מפתח','words/mafteach.png']],bank:'צעצשטצמגצנבצסת'},
- 'ח':{item:'חצאית',img:'item-skirt.svg',pics:[['חלון','words/chalon.svg'],['שמש','words/shemesh.png'],['חתול','words/chatul.svg'],['תוף','words/tof.png'],['חלב','words/chalav.svg'],['מראה','words/mara.png']],bank:'חהחתרחדוחכבחמנ'}
+ 'מ':{item:'מעיל',img:'items/coat.png',pics:[['מפתח','words/mafteach.png'],['תוף','words/tof.png'],['מראה','words/mara.png'],['כדור','words/kadur.png'],['מטרייה','words/mitriya.png'],['שמש','words/shemesh.png']],bank:'מטנמשסמבכמתלמע'},
+ 'ש':{item:'שעון',img:'items/watch.png',pics:[['שמש','words/shemesh.png'],['פרח','words/perach.png'],['שוקולד','words/shokolad.png'],['כדור','words/kadur.png'],['שעון','words/shaon.png'],['מפתח','words/mafteach.png']],bank:'שעשצטשמתשסנשבג'},
+ 'ל':{item:'לב',img:'items/heart.png',pics:[['לימון','words/limon.svg'],['תוף','words/tof.png'],['לחם','words/lechem.svg'],['שמש','words/shemesh.png'],['לב','items/heart.png'],['מפתח','words/mafteach.png']],bank:'לרלדולזכלבנלמת'},
+ 'נ':{item:'נעליים',img:'items/boots.png',pics:[['נר','words/ner.svg'],['כדור','words/kadur.png'],['נוצה','words/notza.svg'],['פרח','words/perach.png'],['נחש','words/nachash.svg'],['מראה','words/mara.png']],bank:'נגנכבנוזנרדנלמ'},
+ 'ס':{item:'סיכה',img:'items/pin.png',pics:[['ספר','words/sefer.svg'],['תוף','words/tof.png'],['סירה','words/sira.svg'],['פרח','words/perach.png'],['סוכרייה','words/sukariya.svg'],['מטרייה','words/mitriya.png']],bank:'סטסושסמעססהתסב'},
+ 'צ':{item:'צמיד',img:'items/bracelet.png',pics:[['צב','words/tzav.svg'],['כדור','words/kadur.png'],['צלחת','words/tzalachat.svg'],['שמש','words/shemesh.png'],['ציפור','words/tzipor.svg'],['מפתח','words/mafteach.png']],bank:'צעצשטצמגצנבצסת'},
+ 'ח':{item:'חצאית',img:'items/skirt.png',pics:[['חלון','words/chalon.svg'],['שמש','words/shemesh.png'],['חתול','words/chatul.svg'],['תוף','words/tof.png'],['חלב','words/chalav.svg'],['מראה','words/mara.png']],bank:'חהחתרחדוחכבחמנ'}
 };
 const l=new URLSearchParams(location.search).get('l'),d=SHEETS[l]||SHEETS['מ'],L=SHEETS[l]?l:'מ';
 document.title=`דף פעילות — האות ${L}׳`;

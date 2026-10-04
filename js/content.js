@@ -3,6 +3,7 @@
 
 const ART = {
   star: 'assets/scene/star.png',            // the star, transparent, standing, base clothes
+  starArms: 'assets/scene/star-arms.png',   // same size: only her forearms and hands, drawn over skirts and coats
   room: 'assets/scene/room-soft.jpg',       // backdrop for the activities
   wardrobe: 'assets/scene/wardrobe-room.jpg', // dressing room with 7 cubbies, no star
 };
@@ -15,13 +16,14 @@ const STAR_BOX = { x: 1114, y: 216, w: 289, h: 739 };
    snap: 'body' = clicks into place, 'wrist' = either wrist, 'free' = stays where dropped.
    layer: true = the image is the same size as star.png and already sits on her body (best fit). */
 const ITEMS = {
-  coat:     { name: 'מעיל',   img: 'assets/item-coat-open-transparent.png', card: 'assets/item-coat-transparent.png', ar: .72,  w: .66,  cx: .50,  cy: .392, z: 6, snap: 'body' },
-  watch:    { name: 'שעון',   img: 'assets/item-watch-transparent.png', ar: 1.515, w: .13,  cx: .24,  cy: .558, z: 8, snap: 'wrist' },
-  heart:    { name: 'לב',     img: 'assets/item-heart.svg',     ar: .9,   w: .20,  cx: .50,  cy: .40,  z: 9, snap: 'free' },
-  boots:    { name: 'נעליים', img: 'assets/item-boots.svg',     ar: .833, w: .70,  cx: .495, cy: .899, z: 5, snap: 'body' },
-  pin:      { name: 'סיכה',   img: 'assets/item-pin.svg',       ar: 1,    w: .20,  cx: .712, cy: .091,  z: 9, snap: 'free' },
-  bracelet: { name: 'צמיד',   img: 'assets/item-bracelet.svg',  ar: 1,    w: .18,  cx: .774, cy: .558, z: 8, snap: 'wrist' },
-  skirt:    { name: 'חצאית',  img: 'assets/item-skirt.svg',     ar: .933, w: .93,  cx: .50,  cy: .597, z: 5, snap: 'body' },
+  coat:     { name: 'מעיל',   img: 'assets/items/coat.png',     ar: .825, w: .64,  cx: .50,  cy: .396, z: 6, snap: 'body' },
+  watch:    { name: 'שעון',   img: 'assets/items/watch.png',    ar: 1.878, w: .12, cx: .24,  cy: .558, z: 8, snap: 'wrist' },
+  heart:    { name: 'לב',     img: 'assets/items/heart.png',    ar: .80,  w: .20,  cx: .50,  cy: .40,  z: 9, snap: 'free' },
+  // boots: the card is the new painting; on the body we still use the front-facing placeholder until an "on feet" version exists
+  boots:    { name: 'נעליים', img: 'assets/item-boots.svg', card: 'assets/items/boots.png', cardAr: .957, ar: .833, w: .70, cx: .495, cy: .899, z: 5, snap: 'body' },
+  pin:      { name: 'סיכה',   img: 'assets/items/pin.png',      ar: .846, w: .20,  cx: .712, cy: .091, z: 9, snap: 'free' },
+  bracelet: { name: 'צמיד',   img: 'assets/items/bracelet.png', ar: .772, w: .15,  cx: .774, cy: .552, z: 8, snap: 'wrist' },
+  skirt:    { name: 'חצאית',  img: 'assets/items/skirt.png',    ar: .703, w: .80,  cx: .50,  cy: .605, z: 5, snap: 'body' },
 };
 const WRISTS = [{ cx: .24, cy: .558 }, { cx: .774, cy: .558 }];
 
@@ -35,7 +37,7 @@ const WORDS = {
   mafteach: ['מפתח', 'assets/words/mafteach.png'], mara: ['מראה', 'assets/words/mara.png'], mitriya: ['מטרייה', 'assets/words/mitriya.png'],
   tof: ['תוף', 'assets/words/tof.png'], kadur: ['כדור', 'assets/words/kadur.png'], shaon: ['שעון', 'assets/words/shaon.png'],
   shemesh: ['שמש', 'assets/words/shemesh.png'], perach: ['פרח', 'assets/words/perach.png'], shokolad: ['שוקולד', 'assets/words/shokolad.png'],
-  limon: ['לימון', 'assets/words/limon.svg'], lechem: ['לחם', 'assets/words/lechem.svg'], lev: ['לב', 'assets/item-heart.svg'],
+  limon: ['לימון', 'assets/words/limon.svg'], lechem: ['לחם', 'assets/words/lechem.svg'], lev: ['לב', 'assets/items/heart.png'],
   ner: ['נר', 'assets/words/ner.svg'], notza: ['נוצה', 'assets/words/notza.svg'], nachash: ['נחש', 'assets/words/nachash.svg'],
   sefer: ['ספר', 'assets/words/sefer.svg'], sira: ['סירה', 'assets/words/sira.svg'], sukariya: ['סוכרייה', 'assets/words/sukariya.svg'],
   tzav: ['צב', 'assets/words/tzav.svg'], tzalachat: ['צלחת', 'assets/words/tzalachat.svg'], tzipor: ['ציפור', 'assets/words/tzipor.svg'],

@@ -26,26 +26,13 @@
 הכוכבת הסופית נמצאת בקובץ `assets/scene/star.png`: שיער שחור, קוקו לצד, גופייה ומכנסיים קצרים בצבע שמנת. **מצרפים אותה כתמונת ייחוס לכל בקשה**, ולא משנים לה תנוחה.
 אביזרי שיער ממקמים בצד ימין של הראש (מצד הצופה), כי הקוקו בצד שמאל.
 
-### ב. שבעת הפריטים: שני קבצים לכל פריט
+### ב. שבעת הפריטים: ✅ כמעט מוכנים
 
-**קובץ 1, "על הגוף" (`item-X-on.png`):** אותו גודל בדיוק כמו star.png (‏730×1865), שקוף, ורק הפריט מצויר בו, במקום המדויק על הגוף.
-איך מייצרים: מבקשים מהכלי לצייר את **אותה כוכבת** (מצרפים את star.png) לובשת את הפריט, ואז מוחקים הכול חוץ מהפריט. זו הדרך היחידה שבה הבגד יתאים לגוף בדיוק.
+הפריטים המצוירים נמצאים ב-`assets/items/` ומשמשים גם בכרטיסים, גם בארון וגם על הכוכבת.
+הידיים של הכוכבת מצוירות אוטומטית מעל החצאית והמעיל (`assets/scene/star-arms.png`).
 
-**קובץ 2, "כרטיס" (`item-X-card.png`):** הפריט לבד, מוצג יפה, 1024×1024, רקע שקוף. משמש בכרטיסי הבחירה ובארון.
-
-| פריט | אות | שמות קבצים | הערות לבקשה |
-|---|---|---|---|
-| מעיל | מ | `item-coat-on.png`, `item-coat-card.png` | Cropped pink jacket, open at the front |
-| שעון | ש | `item-watch-on.png`, `item-watch-card.png` | Pink strap, gold face with a star; on the **left** wrist (הצמדה גם לימין נעשית במשחק) |
-| לב | ל | `item-heart-card.png` בלבד | לב ורוד מבריק עם כוכב קטן. ממוקם בחופשיות, ולכן אין צורך בקובץ "על הגוף" |
-| נעליים | נ | `item-boots-on.png`, `item-boots-card.png` | Pink lace-up ankle boots, on both feet |
-| סיכה | ס | `item-pin-card.png` בלבד | Hair clip with a pink bow and a gold star. ממוקמת בחופשיות |
-| צמיד | צ | `item-bracelet-on.png`, `item-bracelet-card.png` | Thin gold bangle with pink beads; on the **right** wrist |
-| חצאית | ח | `item-skirt-on.png`, `item-skirt-card.png` | Layered pink tulle skirt at the waist, above the knees |
-
-**בקשה לכלי (דוגמה לחצאית):**
-> [משפט הסגנון] The exact same girl as in the reference image, same pose, same proportions, same framing, now wearing a layered pink tulle skirt at the waist. Do not change anything else.
-אחר כך מוחקים את הכוכבת ומשאירים רק את החצאית.
+**חסר רק דבר אחד: נעליים "על הרגליים".** הנעליים המצוירות מוצגות בזווית מהצד, זוג צמוד, ולכן אי אפשר להלביש אותן על שתי הרגליים. כרגע הכוכבת נועלת נעליים זמניות.
+> [משפט הסגנון] The same pink lace-up boots as in the reference, seen from the front, worn by the girl in the reference image, same pose. Then keep only the boots on a transparent background, same canvas size as the girl.
 
 ### ג. רקעים (בלי הכוכבת)
 

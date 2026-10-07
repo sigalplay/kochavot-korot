@@ -1,10 +1,11 @@
 /* Voice + sound effects.
-   Order of preference for every line: a recording made in studio.html (kept on this device)
+   Order of preference for every line: a recording made in studio.html on this device
+   → a recording uploaded with the site (audio/recordings.json, exported from studio.html)
    → a file in audio/ listed in audio/manifest.json (e.g. "open-mem.mp3") → the computer voice. */
 
 const Voice = (() => {
   const DB = 'kochavot-voice', STORE = 'clips';
-  let db = null, files = new Map(), current = null, token = 0, voices = [];
+  let db = null, files = new Map(), bundle = {}, current = null, token = 0, voices = [];
 
   function openDb() {
     return new Promise(res => {
@@ -19,6 +20,7 @@ const Voice = (() => {
   }
   async function ready() {
     db = await openDb();
+    try { const r = await fetch('audio/recordings.json', { cache: 'no-cache' }); if (r.ok) bundle = await r.json(); } catch {}
     try { const r = await fetch('audio/manifest.json', { cache: 'no-cache' }); if (r.ok) files = new Map((await r.json()).map(f => [f.replace(/\.[^.]+$/, ''), f])); } catch {}
   }
   function tx(mode, fn) {
@@ -50,8 +52,8 @@ const Voice = (() => {
   function playUrl(url) {
     return new Promise(res => {
       const a = new Audio(url); current = a;
-      a.onended = a.onerror = () => res();
-      a.play().catch(() => res());
+      a.onended = () => res(true); a.onerror = () => res(false);
+      a.play().catch(() => res(false));
     });
   }
   function stop() {
@@ -64,8 +66,9 @@ const Voice = (() => {
     if (!line) return;
     const clip = await getClip(id);
     if (my !== token) return;
-    if (clip) { const url = URL.createObjectURL(clip); await playUrl(url); URL.revokeObjectURL(url); return; }
-    if (files.has(id)) return playUrl(`audio/${files.get(id)}`);
+    if (clip) { const url = URL.createObjectURL(clip), ok = await playUrl(url); URL.revokeObjectURL(url); if (ok || my !== token) return; }
+    if (bundle[id] && (await playUrl(bundle[id]) || my !== token)) return;
+    if (files.has(id) && (await playUrl(`audio/${files.get(id)}`) || my !== token)) return;
     return tts(line[1] || line[0]);
   }
   /** Say one or more line ids in a row; a new call interrupts the previous one. */
@@ -75,7 +78,7 @@ const Voice = (() => {
     for (const id of ids.flat()) { if (my !== token) return; await one(id, my); }
     if (my === token) document.body.classList.remove('talking');
   }
-  return { ready, say, stop, getClip, putClip, delClip, listClips, playUrl };
+  return { ready, say, stop, getClip, putClip, delClip, listClips, playUrl, bundle: () => bundle };
 })();
 
 /* Little synthesized sound effects — no files needed. */

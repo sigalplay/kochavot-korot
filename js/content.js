@@ -19,11 +19,11 @@ const STAR_BOX = { x: 1114, y: 216, w: 289, h: 739 };
    fit = where the item is inside that layer [x, y, w, h] as fractions (used for the fly-in animation). */
 const ITEMS = {
   coat: { name: 'מעיל', img: 'assets/items/coat-on.png', fit: [.170, .273, .675, .225], card: 'assets/items/coat.png', cardAr: 0.825, layer: true, ar: 2.555, w: 1, cx: .5, cy: .5, z: 6, snap: 'body' },
-  watch:    { name: 'שעון',   img: 'assets/items/watch.png',    ar: 1.878, w: .105, cx: .216, cy: .527, rot: 10, z: 8, snap: 'wrist' },
+  watch:    { name: 'שעון',   img: 'assets/items/watch.png',    ar: 1.878, w: .082, cx: .216, cy: .527, turn: 90, z: 8, snap: 'wrist' },
   heart:    { name: 'לב',     img: 'assets/items/heart.png',    ar: .80,  w: .20,  cx: .50,  cy: .40,  z: 9, snap: 'free' },
   boots: { name: 'נעליים', img: 'assets/items/boots-on.png', fit: [.159, .852, .703, .148], card: 'assets/items/boots.png', cardAr: 0.957, layer: true, ar: 2.555, w: 1, cx: .5, cy: .5, z: 5, snap: 'body' },
   pin:      { name: 'סיכה',   img: 'assets/items/pin.png',      ar: .846, w: .20,  cx: .712, cy: .091, z: 9, snap: 'free' },
-  bracelet: { name: 'צמיד',   img: 'assets/items/bracelet.png', ar: .772, w: .15,  cx: .779, cy: .548, rot: -10, z: 8, snap: 'wrist' },
+  bracelet: { name: 'צמיד',   img: 'assets/items/bracelet.png', ar: .772, w: .15,  cx: .779, cy: .548, z: 8, snap: 'wrist' },
   skirt: { name: 'חצאית', img: 'assets/items/skirt-on.png', fit: [.049, .438, .921, .223], card: 'assets/items/skirt.png', cardAr: 0.703, layer: true, ar: 2.555, w: 1, cx: .5, cy: .5, z: 5, snap: 'body' },
 };
 // Stage world: props the child places on the stage. stage = default centre (stage px) and width when placed.
@@ -47,7 +47,8 @@ Object.assign(ITEMS, {
   hat:        { world: 'gifts', name: 'כובע',     img: 'assets/gifts/hat.png',       ar: .663, stage: { x: 830, y: 490, w: 210 }, z: 10 },
 });
 
-// measured on star.png: the narrowest point of each forearm, and the arm's tilt
+// measured on star.png: the narrowest point of each forearm, and the arm's tilt.
+// turn = how much the item's own picture is rotated to lie across the wrist (the watch picture is drawn upright)
 const WRISTS = [{ cx: .216, cy: .527, rot: 10 }, { cx: .779, cy: .536, rot: -10 }];
 
 // Cubby for each item in the dressing room (stage px, centre-bottom + width).

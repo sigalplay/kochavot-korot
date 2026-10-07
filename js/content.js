@@ -6,7 +6,7 @@ const ART = {
   starArms: 'assets/scene/star-arms.png',   // same size: only her forearms and hands, drawn over skirts and coats
   wardrobe: 'assets/scene/wardrobe.jpg',    // dressing room with the 7-cubby cabinet
   room: 'assets/scene/room.jpg',
-  stage: 'assets/stage/stage-temp.svg',      // the concert stage (temporary)            // the star's dressing room (1600×1000, right side kept clear for her)
+  stage: 'assets/stage/stage.jpg',           // the concert stage            // the star's dressing room (1600×1000, right side kept clear for her)
 };
 
 // Where the star stands on the 1600×1000 stage (same spot on every screen).
@@ -28,11 +28,11 @@ const ITEMS = {
 };
 // Stage world: props the child places on the stage. stage = default centre (stage px) and width when placed.
 Object.assign(ITEMS, {
-  drums:     { world: 'stage', name: 'תופים',    img: 'assets/stage/drums.svg',     ar: .8,  stage: { x: 450, y: 640, w: 300 }, z: 10 },
-  guitar:    { world: 'stage', name: 'גיטרה',    img: 'assets/stage/guitar.svg',    ar: 2.2, stage: { x: 1110, y: 620, w: 150 }, z: 11 },
-  audience:  { world: 'stage', name: 'קהל',      img: 'assets/stage/audience.svg',  ar: .3,  stage: { x: 800, y: 905, w: 1150 }, z: 14 },
-  fireworks: { world: 'stage', name: 'זיקוקים',  img: 'assets/stage/fireworks.svg', ar: .5,  stage: { x: 800, y: 175, w: 640 }, z: 5 },
-  speaker:   { world: 'stage', name: 'רמקול',    img: 'assets/stage/speaker.svg',   ar: 1.5, stage: { x: 1380, y: 640, w: 190 }, z: 11 },
+  drums:     { world: 'stage', name: 'תופים',    img: 'assets/stage/drums.png',     ar: .843, stage: { x: 450, y: 650, w: 330 }, z: 10 },
+  guitar:    { world: 'stage', name: 'גיטרה',    img: 'assets/stage/guitar.png',    ar: 2.336, stage: { x: 1100, y: 640, w: 130 }, z: 11 },
+  audience:  { world: 'stage', name: 'קהל',      img: 'assets/stage/audience.png',  ar: .34,  stage: { x: 800, y: 950, w: 660 }, z: 14 },
+  fireworks: { world: 'stage', name: 'זיקוקים',  img: 'assets/stage/fireworks.png', ar: .492, stage: { x: 800, y: 170, w: 720 }, z: 5 },
+  speaker:   { world: 'stage', name: 'רמקול',    img: 'assets/stage/speaker.png',   ar: 2.587, stage: { x: 1360, y: 610, w: 140 }, z: 11 },
 });
 const STAGE_CENTER = 800; // where the star stands on the stage
 
@@ -52,11 +52,11 @@ const WORDS = {
   ner: ['נר', 'assets/words/ner.png'], notza: ['נוצה', 'assets/words/notza.png'], nachash: ['נחש', 'assets/words/nachash.png'],
   sefer: ['ספר', 'assets/words/sefer.png'], sira: ['סירה', 'assets/words/sira.png'], sukariya: ['סוכרייה', 'assets/words/sukariya.png'],
   tzav: ['צב', 'assets/words/tzav.png'], tzalachat: ['צלחת', 'assets/words/tzalachat.png'], tzipor: ['ציפור', 'assets/words/tzipor.png'],
-  tapuach: ['תפוח', 'assets/words/tapuach.svg'], tut: ['תות', 'assets/words/tut.svg'], tik: ['תיק', 'assets/words/tik.svg'],
-  glida: ['גלידה', 'assets/words/glida.svg'], gamal: ['גמל', 'assets/words/gamal.svg'], gezer: ['גזר', 'assets/words/gezer.svg'],
-  koof: ['קוף', 'assets/words/koof.svg'], keshet: ['קשת', 'assets/words/keshet.svg'], kaktus: ['קקטוס', 'assets/words/kaktus.svg'],
-  zebra: ['זברה', 'assets/words/zebra.svg'], zer: ['זר פרחים', 'assets/words/zer.svg'], zayit: ['זית', 'assets/words/zayit.svg'],
-  rakevet: ['רכבת', 'assets/words/rakevet.svg'], rimon: ['רימון', 'assets/words/rimon.svg'], robot: ['רובוט', 'assets/words/robot.svg'],
+  tapuach: ['תפוח', 'assets/words/tapuach.png'], tut: ['תות', 'assets/words/tut.png'], tik: ['תיק', 'assets/words/tik.png'],
+  glida: ['גלידה', 'assets/words/glida.png'], gamal: ['גמל', 'assets/words/gamal.png'], gezer: ['גזר', 'assets/words/gezer.png'],
+  koof: ['קוף', 'assets/words/koof.png'], keshet: ['קשת', 'assets/words/keshet.png'], kaktus: ['קקטוס', 'assets/words/kaktus.png'],
+  zebra: ['זברה', 'assets/words/zebra.png'], zer: ['זר פרחים', 'assets/words/zer.png'], zayit: ['זית', 'assets/words/zayit.png'],
+  rakevet: ['רכבת', 'assets/words/rakevet.png'], rimon: ['רימון', 'assets/words/rimon.png'], robot: ['רובוט', 'assets/words/robot.png'],
   chalon: ['חלון', 'assets/words/chalon.png'], chatul: ['חתול', 'assets/words/chatul.png'], chalav: ['חלב', 'assets/words/chalav.png'],
 };
 

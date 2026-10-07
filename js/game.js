@@ -198,7 +198,7 @@ const Unit = {
   write() {
     $('#panel').innerHTML = `${promptRow(`כותבות את האות <b>${this.u.letter}</b>`, [`write-${this.u.key}`])}<div class="round-tag" id="roundTag">1 / 2</div>
       <div class="board"><canvas id="guide" width="730" height="600"></canvas><canvas id="ink" class="trace" width="730" height="600"></canvas></div>
-      <div class="write-tools"><button class="pill" onclick="Writer.reset()">${ICON.erase} מתחילות מחדש</button></div>`;
+      <div class="write-tools"><button class="pill" onclick="Writer.reset()">${ICON.erase} מתחילות מחדש</button><button class="pill" onclick="Writer.done()">סיימתי ✓</button></div>`;
     Writer.begin(this.u, 1);
   },
 
@@ -240,7 +240,7 @@ const Writer = {
   u: null, round: 1, strokes: [], si: 0, pi: 0, down: false, ink: null, g: null,
   P(p) { return [365 + (p[0] - 50) * 8, 300 + (p[1] - 52) * 8]; }, // 100×100 letter box → 730×600 board
   begin(u, round) {
-    this.u = u; this.round = round; this.si = 0; this.pi = 0;
+    this.u = u; this.round = round; this.si = 0; this.pi = 0; this.tries = 0; this.finished = false;
     // resample each stroke every ~14px so progress can be checked point by point
     this.strokes = u.strokes.map(st => { const pts = this.smooth(st).map(p => this.P(p)), out = [pts[0]]; for (let i = 1; i < pts.length; i++) { const [x0, y0] = pts[i - 1], [x1, y1] = pts[i], n = Math.max(1, Math.round(Math.hypot(x1 - x0, y1 - y0) / 14)); for (let j = 1; j <= n; j++) out.push([x0 + (x1 - x0) * j / n, y0 + (y1 - y0) * j / n]); } return out; });
     this.covered = this.strokes.map(s => s.map(() => false));
@@ -282,28 +282,38 @@ const Writer = {
     this.star(g, sx, sy, 26); g.fillStyle = '#fff'; g.font = '800 24px Arial'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(this.si + 1, sx, sy + 2);
   },
   star(g, x, y, r) { g.beginPath(); for (let i = 0; i < 10; i++) { const a = -Math.PI / 2 + i * Math.PI / 5, rr = i % 2 ? r * .5 : r; g.lineTo(x + Math.cos(a) * rr, y + Math.sin(a) * rr); } g.closePath(); g.fillStyle = '#f0b54a'; g.fill(); },
+  // forgiving check: a guide point counts once the finger passes anywhere near it, in any order or direction
+  NEAR: 72, STROKE_OK: .55, ROUND2_OK: .5, DONE_OK: .3,
+  share(i) { const c = this.covered[i]; return c.filter(Boolean).length / c.length; },
+  total() { const all = this.covered.flat(); return all.filter(Boolean).length / all.length; },
   move(e) {
     const p = this.pt(e), ink = this.ink;
-    ink.lineCap = ink.lineJoin = 'round'; ink.strokeStyle = '#d0619b'; ink.lineWidth = 30;
+    ink.lineCap = ink.lineJoin = 'round'; ink.strokeStyle = '#d0619b'; ink.lineWidth = 34;
     if (this.last) { ink.beginPath(); ink.moveTo(...this.last); ink.lineTo(...p); ink.stroke(); }
     this.last = p;
+    this.strokes.forEach((st, i) => st.forEach((q, j) => { if (Math.hypot(q[0] - p[0], q[1] - p[1]) < this.NEAR) this.covered[i][j] = true; }));
     if (this.round === 1) {
-      const st = this.strokes[this.si]; if (!st) return;
-      // advance along the current stroke while the finger stays close to the next points
-      for (let k = this.pi; k < Math.min(st.length, this.pi + 4); k++) if (Math.hypot(st[k][0] - p[0], st[k][1] - p[1]) < 40) { this.pi = k + 1; }
-      if (this.pi >= st.length) { this.si++; this.pi = 0; Sfx.snap(); if (this.si >= this.strokes.length) return this.passed(); }
+      const before = this.si;
+      while (this.si < this.strokes.length && this.share(this.si) >= this.STROKE_OK) this.si++;
+      if (this.si !== before) Sfx.snap();
+      const st = this.strokes[this.si]; this.pi = st ? Math.max(0, st.findIndex((_, j) => !this.covered[this.si][j])) : 0;
+      if (this.si >= this.strokes.length) return this.passed();
       this.drawGuide();
-    } else {
-      this.strokes.forEach((st, i) => st.forEach((q, j) => { if (Math.hypot(q[0] - p[0], q[1] - p[1]) < 42) this.covered[i][j] = true; }));
     }
   },
   check() {
-    if (this.round === 1) { if (this.si < this.strokes.length && this.pi > 0 && this.pi < this.strokes[this.si].length) { /* lifted mid-stroke: keep progress */ } return; }
-    const all = this.covered.flat(), share = all.filter(Boolean).length / all.length;
-    if (share >= .85) this.passed(); else if (share > .2) { Sfx.soft(); say('write-again'); }
+    if (this.round === 1) return;
+    if (this.total() >= this.ROUND2_OK && this.covered.every((_, i) => this.share(i) >= .3)) this.passed();
+  },
+  // the "I'm done" button: accept a reasonable try, and never leave a child stuck
+  done() {
+    if (this.finished) return;
+    if (this.total() >= this.DONE_OK || ++this.tries >= 2) return this.passed();
+    Sfx.soft(); say('write-again');
   },
   reset() { Sfx.tap(); this.begin(this.u, this.round); },
   passed() {
+    if (this.finished) return; this.finished = true;
     const c = $('#ink'); c.onpointerdown = c.onpointermove = c.onpointerup = null; this.down = false;
     Sfx.good(); hop(); sparkleOn($('.board'), 24);
     if (this.round === 1) { say(yay()); setTimeout(() => { this.begin(this.u, 2); }, 1300); }

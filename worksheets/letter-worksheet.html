@@ -21,7 +21,17 @@ const SHEETS={
  'ג':{item:'גיטרה',img:'stage/guitar.png',pics:[['גלידה','words/glida.png'],['שמש','words/shemesh.png'],['גמל','words/gamal.png'],['לימון','words/limon.png'],['גזר','words/gezer.png'],['צב','words/tzav.png']],bank:'גנגזורגדכגבפגל'},
  'ק':{item:'קהל',img:'stage/audience.png',pics:[['קוף','words/koof.png'],['שמש','words/shemesh.png'],['קשת','words/keshet.png'],['פרח','words/perach.png'],['קקטוס','words/kaktus.png'],['סירה','words/sira.png']],bank:'קהקחרקפלקתוקדה'},
  'ז':{item:'זיקוקים',img:'stage/fireworks.png',pics:[['זברה','words/zebra.png'],['מפתח','words/mafteach.png'],['זר פרחים','words/zer.png'],['ספר','words/sefer.png'],['זית','words/zayit.png'],['חתול','words/chatul.png']],bank:'זוזןרזדגזניזטל'},
- 'ר':{item:'רמקול',img:'stage/speaker.png',pics:[['רכבת','words/rakevet.png'],['לימון','words/limon.png'],['רימון','words/rimon.png'],['כדור','words/kadur.png'],['רובוט','words/robot.png'],['ציפור','words/tzipor.png']],bank:'רדרךהרוזרכבחרת'}
+ 'ר':{item:'רמקול',img:'stage/speaker.png',pics:[['רכבת','words/rakevet.png'],['לימון','words/limon.png'],['רימון','words/rimon.png'],['כדור','words/kadur.png'],['רובוט','words/robot.png'],['ציפור','words/tzipor.png']],bank:'רדרךהרוזרכבחרת'},
+ 'ד':{item:'דלת',img:'room/door.png',pics:[['דג','words/dag.png'],['כדור','words/kadur.png'],['דבורה','words/dvora.png'],['פרח','words/perach.png'],['דובי','words/dubi.png'],['נר','words/ner.png']],bank:'דרדךהדוזדכבדחת'},
+ 'ו':{item:'וילון',img:'room/curtain.png',pics:[['ורד','words/vered.png'],['כדור','words/kadur.png'],['ופל','words/vafel.png'],['שמש','words/shemesh.png'],['וטרינרית','words/veterinarit.png'],['צב','words/tzav.png']],bank:'וזוןיורדונגוטל'},
+ 'ט':{item:'טלוויזיה',img:'room/tv.png',pics:[['טלפון','words/telefon.png'],['שמש','words/shemesh.png'],['טרקטור','words/traktor.png'],['פרח','words/perach.png'],['טווס','words/tavas.png'],['לימון','words/limon.png']],bank:'טמטשעטצסטבנטתה'},
+ 'י':{item:'ירקות',img:'food/vegetables.png',pics:[['יונה','words/yona.png'],['כדור','words/kadur.png'],['ינשוף','words/yanshuf.png'],['פרח','words/perach.png'],['ילקוט','words/yalkut.png'],['שמש','words/shemesh.png']],bank:'יויזןירידנגיט'},
+ 'ה':{item:'המבורגר',img:'food/hamburger.png',pics:[['הר','words/har.png'],['כדור','words/kadur.png'],['היפופוטם','words/hipopotam.png'],['סירה','words/sira.png'],['הליקופטר','words/helikopter.png'],['לימון','words/limon.png']],bank:'החהתרהדכהקבהפו'},
+ 'א':{item:'ארטיק',img:'food/popsicle.png',pics:[['אריה','words/arye.png'],['שמש','words/shemesh.png'],['אבטיח','words/avatiach.png'],['כדור','words/kadur.png'],['אוטובוס','words/otobus.png'],['צב','words/tzav.png']],bank:'אעאצטאמשאגנאבס'},
+ 'ע':{item:'עגילים',img:'gifts/earrings.png',pics:[['עוגה','words/uga.png'],['כדור','words/kadur.png'],['עכבר','words/achbar.png'],['פרח','words/perach.png'],['ענן','words/anan.png'],['סירה','words/sira.png']],bank:'עצעשטעמאעגנעבס'},
+ 'ב':{item:'בלון',img:'gifts/balloon.png',pics:[['בננה','words/banana.png'],['כדור','words/kadur.png'],['ברווז','words/barvaz.png'],['שמש','words/shemesh.png'],['בית','words/bayit.png'],['לימון','words/limon.png']],bank:'בכבנגבפמבררבדת'},
+ 'פ':{item:'פרח',img:'gifts/flower.png',pics:[['פיל','words/pil.png'],['כדור','words/kadur.png'],['פרפר','words/parpar.png'],['שמש','words/shemesh.png'],['פינגווין','words/pinguin.png'],['סירה','words/sira.png']],bank:'פבפכרפדהפקספונ'},
+ 'כ':{item:'כובע',img:'gifts/hat.png',pics:[['כוכב','words/kochav.png'],['שמש','words/shemesh.png'],['כלב','words/kelev.png'],['פרח','words/perach.png'],['כוס','words/kos.png'],['סירה','words/sira.png']],bank:'כבכנפכגמכרדכתק'}
 };
 const l=new URLSearchParams(location.search).get('l'),d=SHEETS[l]||SHEETS['מ'],L=SHEETS[l]?l:'מ';
 document.title=`דף פעילות — האות ${L}׳`;

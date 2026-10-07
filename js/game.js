@@ -12,6 +12,10 @@ function fit() {
   stage.style.top = (innerHeight - H * scale) / 2 + 'px';
 }
 addEventListener('resize', fit); fit();
+// no pinch-zoom or double-tap zoom on tablets and phones (iOS ignores user-scalable=no)
+['gesturestart', 'gesturechange'].forEach(t => document.addEventListener(t, e => e.preventDefault()));
+document.addEventListener('touchmove', e => { if (e.touches.length > 1) e.preventDefault(); }, { passive: false });
+let lastTouch = 0; document.addEventListener('touchend', e => { const now = Date.now(); if (now - lastTouch < 300) e.preventDefault(); lastTouch = now; }, { passive: false });
 function toStage(e) { const r = stage.getBoundingClientRect(); return { x: (e.clientX - r.left) / scale, y: (e.clientY - r.top) / scale }; }
 function rectOf(el) { const r = el.getBoundingClientRect(), s = stage.getBoundingClientRect(); return { x: (r.left - s.left) / scale, y: (r.top - s.top) / scale, w: r.width / scale, h: r.height / scale }; }
 
@@ -63,9 +67,11 @@ function itemBox(key, pos) {
   const p = pos || it, w = it.w * STAR_BOX.w, h = w * it.ar;
   return { x: STAR_BOX.x + p.cx * STAR_BOX.w - w / 2, y: STAR_BOX.y + p.cy * STAR_BOX.h - h / 2, w, h };
 }
+// wrist items always sit exactly on one of the two wrists (also fixes outfits saved before the wrists were measured)
+function nearestWrist(p) { return WRISTS.reduce((a, b) => Math.hypot(a.cx - p.cx, a.cy - p.cy) <= Math.hypot(b.cx - p.cx, b.cy - p.cy) ? a : b); }
 function starHTML() {
   const worn = Object.entries(state.outfit).filter(([k]) => ITEMS[k] && !ITEMS[k].world && state.inv.includes(k))
-    .map(([k, p]) => { const b = itemBox(k, p); return `<img class="worn" data-item="${k}" src="${ITEMS[k].img}" alt="${ITEMS[k].name}" style="left:${b.x - STAR_BOX.x}px;top:${b.y - STAR_BOX.y}px;width:${b.w}px;z-index:${ITEMS[k].z}">`; }).join('');
+    .map(([k, p]) => { p = ITEMS[k].snap === 'wrist' ? nearestWrist(p) : p; const b = itemBox(k, p), rot = p.rot ?? ITEMS[k].rot ?? 0; return `<img class="worn" data-item="${k}" src="${ITEMS[k].img}" alt="${ITEMS[k].name}" style="left:${b.x - STAR_BOX.x}px;top:${b.y - STAR_BOX.y}px;width:${b.w}px;z-index:${ITEMS[k].z};transform:rotate(${rot}deg)">`; }).join('');
   return `<div class="star" id="star" style="left:${STAR_BOX.x}px;top:${STAR_BOX.y}px;width:${STAR_BOX.w}px;height:${STAR_BOX.h}px"><img src="${ART.star}" alt="הכוכבת" style="left:0;top:0;width:100%;height:100%;z-index:4">${worn ? `<img src="${ART.starArms}" alt="" style="left:0;top:0;width:100%;height:100%;z-index:7">` : ''}${worn}</div>`;
 }
 function hop() { const s = $('#star'); if (!s) return; s.classList.remove('hop'); void s.offsetWidth; s.classList.add('hop'); }
@@ -384,7 +390,7 @@ const Wardrobe = {
     if (this.overStar(p)) {
       let pos;
       if (it.snap === 'body') pos = defaultPos(k);
-      else if (it.snap === 'wrist') { const fx = (p.x - STAR_BOX.x) / STAR_BOX.w, fy = (p.y - STAR_BOX.y) / STAR_BOX.h; pos = WRISTS.reduce((a, b) => Math.hypot(a.cx - fx, a.cy - fy) < Math.hypot(b.cx - fx, b.cy - fy) ? a : b); pos = { cx: pos.cx, cy: pos.cy }; }
+      else if (it.snap === 'wrist') { const fx = (p.x - STAR_BOX.x) / STAR_BOX.w, fy = (p.y - STAR_BOX.y) / STAR_BOX.h; pos = { ...nearestWrist({ cx: fx, cy: fy }) }; }
       else pos = { cx: +((p.x - STAR_BOX.x) / STAR_BOX.w).toFixed(3), cy: +((p.y - STAR_BOX.y) / STAR_BOX.h).toFixed(3) };
       state.outfit[k] = pos; save(); el.remove();
       const s = $('#star'); s.outerHTML = starHTML(); this.bindStar();

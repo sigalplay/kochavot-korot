@@ -159,3 +159,12 @@ button{font:inherit;color:inherit;border:0;background:none;padding:0;cursor:poin
 @keyframes sparkle{from{transform:translate(0,0) scale(.4);opacity:1}to{transform:translate(var(--dx),var(--dy)) scale(1.4);opacity:0}}
 @keyframes spin{to{transform:rotate(360deg)}}
 @keyframes fall{to{transform:translateY(1080px) rotate(720deg)}}
+
+/* phones held upright: ask to rotate */
+#rotate{display:none}
+@media (orientation:portrait) and (max-width:900px){
+  #rotate{display:flex;position:fixed;inset:0;z-index:999;flex-direction:column;align-items:center;justify-content:center;gap:14px;background:radial-gradient(circle at 50% 40%,#5a3f68,#2a1f33);color:#fff;text-align:center;font-family:'School Print Hebrew',Arial,sans-serif}
+  #rotate .phone{font-size:90px;animation:turn 2s ease-in-out infinite}
+  #rotate b{font-size:30px}#rotate span{font-size:20px;opacity:.8}
+}
+@keyframes turn{0%,30%{transform:rotate(0)}60%,100%{transform:rotate(-90deg)}}

@@ -7,7 +7,7 @@ const FB = (() => {
   const ART = {
     star: A + 'player.png',              // the player, transparent, standing, white shirt and navy shorts
     wardrobe: A + 'locker-room.jpg',     // dressing room with the cubbies (1600×1000)
-    room: A + 'locker-room.jpg',         // home screen background until the stadium picture arrives
+    room: A + 'stadium/stadium-full.jpg', // home and menu screens: the finished stadium
   };
   // where the player stands on the 1600×1000 stage (same spot on every screen); player.png is 351×924 (40px of empty room on each side, for the boots)
   const STAR_BOX = { x: 1190, y: 212, w: 281, h: 740 };
@@ -19,8 +19,8 @@ const FB = (() => {
     jersey:    L('חולצה',     'jersey',    [.128, .271, .741, .274], .979, 6),
     shorts:    L('מכנסיים',   'shorts',    [.236, .534, .530, .126], .893, 5),
     boots:     { ...L('נעליים',    'boots',     [.071, .758, .883, .242], .612, 5), base: A + 'player-nofeet.png' }, // shown on the player without bare feet
-    armband:   L('סרט קפטן',  'armband',   [.154, .408, .148, .030], .669, 8),
-    wristband: L('צמיד',      'wristband', [.123, .525, .111, .030], 1.079, 8),
+    armband:   L('סרט קפטן',  'armband',   [.142, .404, .177, .042], .669, 8),
+    wristband: L('צמיד',      'wristband', [.103, .521, .142, .041], 1.079, 8),
   };
   // the other worlds: things the child places on the picture. stage = where it lands first (centre, stage px) and its width
   const P = (world, name, k, ar, x, y, w, z = 10) => ({ world, name, img: `${A}${world}/${k}.png`, ar, stage: { x, y, w }, z });
@@ -37,10 +37,15 @@ const FB = (() => {
     drum: { ...P('fans', 'תוף', 'drum', .93, 870, 320, 80, 8), slot: true },
     speaker: { ...P('fans', 'רמקול', 'speaker', 1.672, 440, 280, 90, 5), slot: true },
     screen: { ...P('fans', 'טלוויזיה', 'screen', .878, 1090, 240, 200, 4), slot: true },
-    hamburger: P('snack', 'המבורגר', 'hamburger', .956, 420, 760, 230), popcorn: P('snack', 'פופקורן', 'popcorn', 1.429, 680, 720, 180),
-    waffle: P('snack', 'ופל', 'waffle', .986, 930, 780, 200),
-    cup: P('party', 'גביע', 'cup', 1.386, 845, 470, 130, 8), cake: P('party', 'עוגה', 'cake', 1.062, 660, 420, 130, 8),
-    balloons: P('party', 'בלונים', 'balloons', 1.799, 330, 470, 230, 9), fireworks: { ...P('party', 'זיקוקים', 'fireworks', 2.687, 1000, 330, 230, 1), card: A + 'party/fireworks-card.png' }, // see-through: a dark card for the menus
+    // the snack stand: the food stands on the counter
+    hamburger: { ...P('snack', 'המבורגר', 'hamburger', .956, 560, 288, 110), slot: true },
+    popcorn: { ...P('snack', 'פופקורן', 'popcorn', 1.429, 662, 282, 80), slot: true },
+    waffle: { ...P('snack', 'ופל', 'waffle', .986, 765, 292, 100), slot: true },
+    // the celebration: the cup on the winners' podium, the cake on the table, balloons by the stage, fireworks in the sky
+    cup: { ...P('party', 'גביע', 'cup', 1.386, 845, 456, 110, 8), slot: true },
+    cake: { ...P('party', 'עוגה', 'cake', 1.062, 668, 388, 120, 8), slot: true },
+    balloons: { ...P('party', 'בלונים', 'balloons', 1.799, 380, 330, 190, 9), slot: true },
+    fireworks: { ...P('party', 'זיקוקים', 'fireworks', 2.687, 1000, 330, 230, 1), card: A + 'party/fireworks-card.png', slot: true }, // see-through: a dark card for the menus
   });
   // cubby for each item in the locker room (stage px, centre-bottom + width)
   const CUBBIES = {
@@ -78,8 +83,8 @@ const FB = (() => {
       intro: 'בחדר ההלבשה כל אות נותנת לי עוד חלק מהמדים. בחרו אות!', doneText: 'השחקן לבוש ומוכן למשחק! ⚽', doneLine: 'יש לי מדים מלאים! אני מוכן לעלות למגרש!' },
     { key: 'field', title: 'המגרש', icon: A + 'field/goal.png', placeName: 'המגרש', bg: A + 'stadium/base.jpg', noVeil: true, intro: 'במגרש כל אות מוסיפה משהו למשחק. בחרו אות!', place: 'בואו נבנה את המגרש! גררו כל דבר למגרש, והוא ייכנס למקום שלו.', doneText: 'המגרש מוכן! ⚽', doneLine: 'המגרש מוכן! בואו נשחק!' },
     { key: 'fans', title: 'האוהדים', icon: A + 'fans/drum.png', placeName: 'היציע', bg: A + 'stadium/stadium.jpg', noVeil: true, intro: 'ביציע כל אות מביאה עוד עידוד. בחרו אות!', place: 'גררו כל דבר ליציע, והוא ייכנס למקום שלו!', doneText: 'היציע מלא! ⚽', doneLine: 'איזה עידוד! תודה!' },
-    { key: 'snack', title: 'הדוכן', icon: A + 'snack/hamburger.png', placeName: 'דוכן האוכל', bg: A + 'snack/stand.jpg', intro: 'בדוכן כל אות מביאה משהו טעים. בחרו אות!', place: 'גררו אוכל לדוכן!', doneText: 'הדוכן מלא! בתיאבון! ⚽', doneLine: 'איזה דוכן! בתיאבון!' },
-    { key: 'party', title: 'החגיגה', icon: A + 'party/cup.png', placeName: 'החגיגה', bg: A + 'party/party.jpg', noVeil: true, intro: 'בחגיגה כל אות מביאה עוד הפתעה. בחרו אות!', place: 'גררו דברים לחגיגה!', doneText: 'ניצחנו! ⚽', doneLine: 'ניצחנו! זאת החגיגה הכי שווה!' },
+    { key: 'snack', title: 'הדוכן', icon: A + 'snack/hamburger.png', placeName: 'דוכן האוכל', bg: A + 'snack/stand.jpg', noVeil: true, intro: 'בדוכן כל אות מביאה משהו טעים. בחרו אות!', place: 'גררו את האוכל לדוכן, והוא יעלה על הדלפק!', doneText: 'הדוכן מלא! בתיאבון! ⚽', doneLine: 'איזה דוכן! בתיאבון!' },
+    { key: 'party', title: 'החגיגה', icon: A + 'party/cup.png', placeName: 'החגיגה', bg: A + 'party/party.jpg', noVeil: true, intro: 'בחגיגה כל אות מביאה עוד הפתעה. בחרו אות!', place: 'גררו כל דבר לחגיגה, והוא ייכנס למקום שלו!', doneText: 'ניצחנו! ⚽', doneLine: 'ניצחנו! זאת החגיגה הכי שווה!' },
   ];
 
   // item names that the girls' game already recorded (same word), so they are not recorded twice

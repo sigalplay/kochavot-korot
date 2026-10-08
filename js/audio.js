@@ -66,10 +66,27 @@ const Voice = (() => {
   }
   // iPad/iPhone only let a page play sound right after a tap. One audio element is "unlocked"
   // on the first tap and then reused for every line, so later lines are allowed to play.
-  const SILENT = 'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA=';
-  const el = new Audio(); el.preload = 'auto';
+  const el = new Audio(); el.preload = 'auto'; el.setAttribute('playsinline', '');
+  // a real 0.1 s silent WAV (an empty one is rejected by Safari)
+  const SILENT = (() => { const n = 800, b = new Uint8Array(44 + n), v = new DataView(b.buffer), w = (o, t) => [...t].forEach((c, i) => b[o + i] = c.charCodeAt(0));
+    w(0, 'RIFF'); v.setUint32(4, 36 + n, true); w(8, 'WAVEfmt '); v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 1, true);
+    v.setUint32(24, 8000, true); v.setUint32(28, 8000, true); v.setUint16(32, 1, true); v.setUint16(34, 8, true); w(36, 'data'); v.setUint32(40, n, true); b.fill(128, 44);
+    return URL.createObjectURL(new Blob([b], { type: 'audio/wav' })); })();
+  // recordings arrive as text (data URLs). Safari refuses some of them, e.g. "audio/mp4; codecs=…" with a space,
+  // so each one is turned into a real audio file in memory before it is played.
+  const blobs = new Map();
+  function playable(url) {
+    if (!url.startsWith('data:')) return url;
+    if (blobs.has(url)) return blobs.get(url);
+    try {
+      const comma = url.indexOf(','), type = url.slice(5, comma).split(';')[0].trim() || 'audio/mp4', bin = atob(url.slice(comma + 1)), bytes = new Uint8Array(bin.length);
+      for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+      const out = URL.createObjectURL(new Blob([bytes], { type })); blobs.set(url, out); return out;
+    } catch { return url; }
+  }
   let unlocked = false, pending = null;
   function unlock() {
+    try { if (navigator.audioSession) navigator.audioSession.type = 'playback'; } catch {} // iPad: play even when the device is on silent
     if (unlocked) return; unlocked = true;
     try { el.src = SILENT; el.play().catch(() => { unlocked = false; }); } catch { unlocked = false; }
     try { if ('speechSynthesis' in window) { const u = new SpeechSynthesisUtterance(' '); u.volume = 0; speechSynthesis.speak(u); } } catch {}
@@ -81,7 +98,7 @@ const Voice = (() => {
       try { a.pause(); } catch {}
       a.onended = () => res(true); a.onerror = () => res(false);
       a.preservesPitch = a.webkitPreservesPitch = a.mozPreservesPitch = true; // faster, same voice (no chipmunk)
-      a.src = url; a.defaultPlaybackRate = RECORDING_SPEED; a.playbackRate = RECORDING_SPEED;
+      a.src = playable(url); a.defaultPlaybackRate = RECORDING_SPEED; a.playbackRate = RECORDING_SPEED;
       a.onloadedmetadata = () => { a.playbackRate = RECORDING_SPEED; };
       a.play().catch(() => res(false));
     });
@@ -124,7 +141,7 @@ const Sfx = (() => {
     } catch {}
   }
   return {
-    unlock() { try { const c = ac(); if (c.state !== 'running') c.resume(); } catch {} },
+    unlock() { try { const c = ac(); if (c.state !== 'running') c.resume(); if (!this.primed) { const s = c.createBufferSource(); s.buffer = c.createBuffer(1, 1, 22050); s.connect(c.destination); s.start(0); this.primed = true; } } catch {} },
     tap() { tone(660, 0, .08, 'triangle', .08); },
     good() { [523, 659, 784].forEach((f, i) => tone(f, i * .09, .35, 'triangle')); },
     soft() { tone(330, 0, .18, 'sine', .1); tone(262, .13, .25, 'sine', .1); },

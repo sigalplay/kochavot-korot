@@ -31,7 +31,9 @@ const Voice = (() => {
     // recordings uploaded with the site come in several small files (GitHub refuses one big file)
     const load = async name => { try { const r = await fetch(`audio/${name}`, { cache: 'no-cache' }); if (r.ok) { Object.assign(bundle, await r.json()); return true; } } catch {} return false; };
     await load('recordings.json');
-    await Promise.all(recGroups().map(async g => { for (let n = 1; n < 20 && await load(`rec-${g}-${n}.json`); n++); }));
+    let index = null; try { const r = await fetch('audio/rec-index.json', { cache: 'no-cache' }); if (r.ok) index = await r.json(); } catch {}
+    if (index) await Promise.all(index.map(load));
+    else await Promise.all(recGroups().map(async g => { for (let n = 1; n < 20 && await load(`rec-${g}-${n}.json`); n++); }));
     try { const r = await fetch('audio/manifest.json', { cache: 'no-cache' }); if (r.ok) files = new Map((await r.json()).map(f => [f.replace(/\.[^.]+$/, ''), f])); } catch {}
   }
   function tx(mode, fn) {

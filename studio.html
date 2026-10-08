@@ -68,6 +68,7 @@ async function exportAll(){
     for(const [id,data] of Object.entries(all)){if(recGroupOf(id)!==g)continue;if(size+data.length>LIMIT)flush();part[id]=data;size+=data.length}
     flush();
   }
+  files.push(new File([JSON.stringify(files.map(f=>f.name))],'rec-index.json',{type:'application/json'}));
   document.getElementById('expInfo').innerHTML=`נוצרו ${files.length} קבצים: ${files.map(f=>`<b>${f.name}</b> (${(f.size/1e6).toFixed(1)}MB)`).join(', ')}. מעלים את כולם ביחד לכאן: <a href="https://github.com/sigalplay/kochavot-korot/upload/main/audio" target="_blank" rel="noopener">העלאה לאתר</a>`;
   if(navigator.canShare?.({files})){try{await navigator.share({files,title:'הקלטות'});return}catch{}}
   for(const f of files){const a=document.createElement('a');a.href=URL.createObjectURL(f);a.download=f.name;a.click();await new Promise(r=>setTimeout(r,400))}

@@ -21,7 +21,7 @@ function rectOf(el) { const r = el.getBoundingClientRect(), s = stage.getBoundin
 
 /* ---------- per-game settings: a game can override any of these in its content file (const GAME = {...}) ---------- */
 const CFG = Object.assign({
-  saveKey: 'kochavot-v2', title: 'כוכבות קוראות', subtitle: 'הכנה משחקית לכיתה א׳', heroAlt: 'הכוכבת', worksheets: true,
+  autoPlace: true, saveKey: 'kochavot-v2', title: 'כוכבות קוראות', subtitle: 'הכנה משחקית לכיתה א׳', heroAlt: 'הכוכבת', worksheets: true,
   colors: { ink: '#d0619b', path: '#efe2f5', path2: '#f5edf8', dots: '#c58fc0', dotsOff: '#dcc4e2', confetti: ['#f29cc3', '#b69add', '#f3c86b', '#9fd8c6', '#ffd2e4'] },
 }, typeof GAME !== 'undefined' ? GAME : {});
 const T = Object.assign({
@@ -225,7 +225,7 @@ const Unit = {
   finish() {
     const u = this.u, k = u.item, it = ITEMS[k], list = unitsOf(u.world), next = list.slice(list.indexOf(u) + 1).concat(list).find(x => !state.done[x.key] && x !== u), onStage = u.world !== 'clothes', W = WORLDS.find(w => w.key === u.world);
     const fresh = !state.inv.includes(k);
-    state.done[u.key] = true; if (fresh) state.inv.push(k); if (onStage && !state.stage[k]) state.stage[k] = { x: it.stage.x, y: it.stage.y }; save();
+    state.done[u.key] = true; if (fresh) state.inv.push(k); if (onStage && CFG.autoPlace && !state.stage[k]) state.stage[k] = { x: it.stage.x, y: it.stage.y }; save();
     $('#panel').innerHTML = `<div class="finish-title">${T.won} ${it.name}</div><div class="reward-card" id="rewardCard"><img src="${it.card || it.img}" alt="${it.name}"></div>
       <div class="collection-label">${T.collected} ${list.filter(x => state.inv.includes(x.item)).length} מתוך ${list.length} ${onStage ? 'דברים' : 'פריטים'}</div>
       <div class="collection">${list.map(x => `<span class="${state.inv.includes(x.item) ? (x.item === k && fresh ? 'new' : '') : 'miss'}"><img src="${ITEMS[x.item].card || ITEMS[x.item].img}" alt=""></span>`).join('')}</div>
@@ -447,10 +447,13 @@ const Place = {
   owned() { return unitsOf(this.key).map(u => u.item).filter(k => state.inv.includes(k)); },
   placed() { return this.owned().filter(k => state.stage[k]); },
   slot(i) { return { x: this.TRAY.x + this.TRAY.w / 2, y: this.TRAY.top + 70 + i * this.TRAY.gap }; },
-  trayW(it) { return Math.min(130, 120 / it.ar); },
+  // in the tray (and while carried) an item can show a card picture instead: e.g. a patch of grass for a layer that covers the whole field
+  look(it, small) { return small && it.card ? { src: it.card, ar: it.cardAr } : { src: it.img, ar: it.ar }; },
+  trayW(it) { return Math.min(130, 120 / this.look(it, true).ar); },
+  // slot: the item always clicks into its own place (a goal at the end of the pitch); scene: a full-picture layer (the grass)
   propHTML(k, i) {
-    const it = ITEMS[k], p = state.stage[k], w = p ? it.stage.w : this.trayW(it), h = w * it.ar, at = p || this.slot(i);
-    return `<img class="prop ${p ? 'placed' : 'in-tray'}" data-item="${k}" src="${it.img}" alt="${it.name}" draggable="false" style="left:${at.x - w / 2}px;top:${at.y - h / 2}px;width:${w}px;z-index:${p ? it.z : 21}">`;
+    const it = ITEMS[k], p = state.stage[k], v = this.look(it, !p), w = p ? it.stage.w : this.trayW(it), h = w * v.ar, at = p ? (it.slot ? it.stage : p) : this.slot(i);
+    return `<img class="prop ${p ? 'placed' : 'in-tray'}${p && it.scene ? ' scene' : ''}" data-item="${k}" src="${v.src}" alt="${it.name}" draggable="false" style="left:${at.x - w / 2}px;top:${at.y - h / 2}px;width:${w}px;z-index:${p ? it.z : 21}">`;
   },
   open(key = this.key) {
     this.key = key;
@@ -461,7 +464,7 @@ const Place = {
       <div class="on-stage" style="transform:translateX(${dx}px)">${starHTML()}</div>
       <div class="wardrobe-bar" style="left:${this.TRAY.x + this.TRAY.w + 30}px">${this.placed().length ? `<button class="pill" onclick="Place.clear()">${ICON.undress} הכול חוזר לארגז</button>` : ''}</div>`, { bg: W.bg });
     if (W.noVeil) stage.querySelector('.veil')?.remove();
-    stage.querySelectorAll('.prop').forEach(el => el.addEventListener('pointerdown', e => this.drag(el, e)));
+    stage.querySelectorAll('.prop:not(.scene)').forEach(el => el.addEventListener('pointerdown', e => this.drag(el, e)));
     prompt([owned.length ? `place-${key}` : 'place-empty']);
   },
   inTray(p) { return p.x < this.TRAY.x + this.TRAY.w + 20; },
@@ -469,14 +472,18 @@ const Place = {
     e.preventDefault(); if (this.active) return; this.active = true;
     const k = el.dataset.item, it = ITEMS[k], id = e.pointerId; Sfx.tap();
     el.style.zIndex = 50; el.classList.add('dragging');
-    const place = ev => { const p = toStage(ev), w = this.inTray(p) ? this.trayW(it) : it.stage.w, h = w * it.ar; Object.assign(el.style, { width: w + 'px', left: p.x - w / 2 + 'px', top: p.y - h / 2 + 'px' }); };
+    const place = ev => {
+      const p = toStage(ev), small = this.inTray(p) || it.scene, v = this.look(it, small), w = small ? this.trayW(it) * (this.inTray(p) ? 1 : 1.5) : it.stage.w, h = w * v.ar;
+      if (el.getAttribute('src') !== v.src) el.src = v.src;
+      Object.assign(el.style, { width: w + 'px', left: p.x - w / 2 + 'px', top: p.y - h / 2 + 'px' });
+    };
     const move = ev => { if (ev.pointerId === id) place(ev); };
     const up = ev => {
       if (ev.pointerId !== id) return;
       removeEventListener('pointermove', move); removeEventListener('pointerup', up); removeEventListener('pointercancel', up); this.active = false;
       const p = toStage(ev);
       if (this.inTray(p)) { delete state.stage[k]; save(); Sfx.soft(); this.open(); say('place-back'); return; }
-      state.stage[k] = { x: Math.round(Math.max(60, Math.min(W - 60, p.x))), y: Math.round(Math.max(60, Math.min(H - 40, p.y))) }; save();
+      state.stage[k] = it.slot ? { x: it.stage.x, y: it.stage.y } : { x: Math.round(Math.max(60, Math.min(W - 60, p.x))), y: Math.round(Math.max(60, Math.min(H - 40, p.y))) }; save();
       this.open(); sparkle(state.stage[k].x, state.stage[k].y, 16); Sfx.snap(); hop(); say('placed');
     };
     place(e); addEventListener('pointermove', move); addEventListener('pointerup', up); addEventListener('pointercancel', up);

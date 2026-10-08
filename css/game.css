@@ -168,3 +168,4 @@ button{font:inherit;color:inherit;border:0;background:none;padding:0;cursor:poin
 .closet-item.hint{animation:hintGlow 1s ease-in-out infinite;filter:drop-shadow(0 0 14px #ffe08a) drop-shadow(0 6px 8px #5b446844)}
 .finish-actions{gap:12px}
 .finish-actions .pill,.finish-actions .next{white-space:nowrap;padding:0 22px!important;font-size:26px!important;height:76px!important}
+.prop.scene{pointer-events:none}

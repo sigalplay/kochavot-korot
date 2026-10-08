@@ -2,13 +2,21 @@
 
 כל פרומפט כאן שלם: מעתיקים אותו כמו שהוא ומדביקים. הסגנון כבר כתוב בפנים, כדי שהכול ייראה כמו חדר ההלבשה וגיליון הבגדים.
 
-**מה כבר מוכן:** הכול: השחקן, חמשת הרקעים וכל הפריטים.
+**מה כבר מוכן:** השחקן, כל הרקעים וכל הפריטים. המגרש והיציע הם עכשיו אצטדיון אחד שהילד בונה: הדשא מכסה את כל המגרש, וכל דבר שגוררים נכנס למקום הקבוע שלו.
 
-**חסר רק:** קונוסים (ק׳). עד שיגיע ציור, יש במשחק קונוסים שציירתי. הפרומפט שלהם נמצא בעולם 2 למטה.
+## מה עוד חסר: 3 ציורים
 
-**ציור עודף שלא בשימוש:** קהל הילדים מגבם (`football/assets/fans/crowd.png`), כי לאוהדים בחרתי את שלושת הילדים המעודדים.
+**1 + 2. היציע והאוהדים.** שתי עריכות של התמונה `football/assets/fans/stadium.jpg`. מעלים אותה לתוכנה וכותבים:
 
-**איך שולחים:** אפשר לשלוח לי ישר בצ׳אט. לא צריך להוריד רקע או לחתוך, את זה אני עושה.
+> Edit this picture: put rows of royal blue plastic stadium seats on all the grey concrete stands. Keep everything else exactly the same: same picture size, same angle, same grass, same sky, same style. No people.
+
+אחר כך מעלים את התוצאה וכותבים:
+
+> Edit this picture: fill the blue seats on the stands with happy children fans sitting and cheering, wearing royal blue and white shirts, some waving blue and white scarves and flags. Keep everything else exactly the same: same picture size, same angle, same style.
+
+**3. הקבוצה (ק׳):**
+
+> A football team of 5 children standing in a row, front view, full body, smiling, in royal blue shirts with white collars, royal blue shorts, white and blue socks and football boots. Different hair and skin colours. Bold clean cartoon style with thick dark outlines, flat bright colours with simple shading, plain white background. No text, no logos, no numbers.
 
 ---
 

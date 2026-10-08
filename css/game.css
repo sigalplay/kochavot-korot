@@ -169,3 +169,4 @@ button{font:inherit;color:inherit;border:0;background:none;padding:0;cursor:poin
 .finish-actions{gap:12px}
 .finish-actions .pill,.finish-actions .next{white-space:nowrap;padding:0 22px!important;font-size:26px!important;height:76px!important}
 .prop.scene{pointer-events:none}
+.bg-built{position:absolute;inset:0;z-index:0;pointer-events:none}.bg-piece{position:absolute;pointer-events:none}

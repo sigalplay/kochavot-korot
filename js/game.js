@@ -108,7 +108,16 @@ function topbar({ home = true, back = null, title = '', steps = null, replay = t
 }
 function screen(html, { bg = ART.room, bgClass = '' } = {}) {
   Voice.stop();
-  stage.innerHTML = `<img class="bg ${bgClass}" src="${bg}" alt=""><div class="veil"></div>${html}`;
+  stage.innerHTML = `<img class="bg ${bgClass}" src="${bg}" alt="">${bg === ART.room ? builtHTML() : ''}<div class="veil"></div>${html}`;
+}
+// A game can grow its menu background as the child builds it (football: the stadium starts as a bare pitch and
+// shows every piece already placed in the worlds listed in CFG.roomWorlds, exactly where it was placed).
+function builtHTML() {
+  if (!CFG.roomWorlds) return '';
+  return '<div class="bg-built">' + CFG.roomWorlds.flatMap(unitsOf).map(u => u.item).filter(k => state.inv.includes(k) && state.stage[k]).map(k => {
+    const it = ITEMS[k], at = it.slot ? it.stage : state.stage[k], w = it.stage.w, h = w * it.ar;
+    return `<img class="bg-piece" src="${it.img}" alt="" style="left:${at.x - w / 2}px;top:${at.y - h / 2}px;width:${w}px;z-index:${it.z}">`;
+  }).join('') + '</div>';
 }
 function promptRow(text, ids) { return `<div class="prompt"><span>${text}</span><button class="say-btn" onclick="say(${JSON.stringify(ids).replace(/"/g, "'")})" aria-label="להשמיע">${ICON.speak}</button></div>`; }
 function showNext(onclick, label = T.next) {

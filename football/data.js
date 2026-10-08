@@ -7,7 +7,7 @@ const FB = (() => {
   const ART = {
     star: A + 'player.png',              // the player, transparent, standing, white shirt and navy shorts
     wardrobe: A + 'locker-room.jpg',     // dressing room with the cubbies (1600×1000)
-    room: A + 'stadium/stadium-full.jpg', // home and menu screens: the finished stadium
+    room: A + 'stadium/base.jpg',        // home and menu screens: the bare pitch; what the child built is drawn on it (GAME.roomWorlds)
   };
   // where the player stands on the 1600×1000 stage (same spot on every screen); player.png is 351×924 (40px of empty room on each side, for the boots)
   const STAR_BOX = { x: 1190, y: 212, w: 281, h: 740 };

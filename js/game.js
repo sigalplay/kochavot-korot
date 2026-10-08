@@ -217,12 +217,13 @@ const Unit = {
       <div class="collection-label">אספת ${list.filter(x => state.inv.includes(x.item)).length} מתוך ${list.length} ${onStage ? 'דברים' : 'פריטים'}</div>
       <div class="collection">${list.map(x => `<span class="${state.inv.includes(x.item) ? (x.item === k && fresh ? 'new' : '') : 'miss'}"><img src="${ITEMS[x.item].card || ITEMS[x.item].img}" alt=""></span>`).join('')}</div>
       <div class="finish-actions" id="finishActions" style="opacity:0;transition:opacity .4s">
-        ${next ? `<button class="next" style="position:static;transform:none;animation:none;height:84px;font-size:32px" onclick="Sfx.tap();Unit.start('${next.key}')">לאות ${next.letter} ${ICON.next}</button>` : ''}
-        <button class="pill" onclick="Sfx.tap();go.place('${u.world}')">${ICON.closet} ${W.placeName}</button>
+        ${!onStage && !state.outfit[k] ? `<button class="next" style="position:static;transform:none;animation:none;height:84px;font-size:32px" onclick="Sfx.tap();Wardrobe.open('${k}')">${ICON.closet} בואי נלביש את הכוכבת!</button>` : ''}
+        ${next ? `<button class="${!onStage && !state.outfit[k] ? 'pill' : 'next'}" style="position:static;transform:none;animation:none;height:84px;font-size:32px" onclick="Sfx.tap();Unit.start('${next.key}')">לאות ${next.letter} ${!onStage && !state.outfit[k] ? '' : ICON.next}</button>` : ''}
+        ${onStage || state.outfit[k] ? `<button class="pill" onclick="Sfx.tap();go.place('${u.world}')">${ICON.closet} ${W.placeName}</button>` : ''}
         <button class="pill" onclick="go.world('${u.world}')">כל האותיות</button>
         <a class="pill" style="text-decoration:none;color:inherit" href="worksheets/letter-worksheet.html?l=${encodeURIComponent(u.letter)}" target="_blank" rel="noopener">${ICON.print} דף עבודה</a></div>`;
     Sfx.done(); confetti(); say(`done-${u.key}`);
-    setTimeout(() => onStage ? this.toStage() : this.dress(k), 1500);
+    setTimeout(() => this.toStage(), 1500);
   },
   toStage() {
     const rc = $('#rewardCard'); if (rc) { sparkleOn(rc, 24); Sfx.snap(); }
@@ -329,14 +330,16 @@ const Writer = {
 
 /* ---------- dressing room ---------- */
 const Wardrobe = {
-  open() {
+  open(fresh = null) {
     const loose = state.inv.filter(k => !ITEMS[k].world && !state.outfit[k]);
+    this.fresh = fresh;
     screen(`${topbar({ back: "go.world('clothes')", title: 'חדר ההלבשה' })}
       ${loose.map(k => this.cubbyImg(k)).join('')}${starHTML()}<div class="drop-glow" id="dropGlow" style="left:${STAR_BOX.x - 60}px;top:${STAR_BOX.y - 40}px;width:${STAR_BOX.w + 120}px;height:${STAR_BOX.h + 60}px"></div>
       <div class="wardrobe-bar">${Object.keys(state.outfit).length ? `<button class="pill" onclick="Wardrobe.undressAll()">${ICON.undress} הכול חוזר לארון</button>` : ''}</div>`, { bg: ART.wardrobe });
     this.bindStar();
     stage.querySelectorAll('.closet-item').forEach(el => this.draggable(el));
-    prompt([state.inv.length ? 'wardrobe' : 'wardrobe-empty']);
+    if (fresh) stage.querySelector(`.closet-item[data-item="${fresh}"]`)?.classList.add('hint');
+    prompt([fresh ? 'wardrobe-new' : state.inv.length ? 'wardrobe' : 'wardrobe-empty']);
   },
   cubbyRect(k) { const c = CUBBIES[k], it = ITEMS[k], ar = it.cardAr || it.ar, h = c.w * ar; return { x: c.x - c.w / 2, y: c.b - h, w: c.w }; },
   cubbyImg(k) { const r = this.cubbyRect(k), it = ITEMS[k]; return `<img class="closet-item arrive" data-item="${k}" src="${it.card || it.img}" alt="${it.name}" draggable="false" style="left:${r.x}px;top:${r.y}px;width:${r.w}px">`; },
@@ -377,7 +380,7 @@ const Wardrobe = {
   startDrag(el, e) {
     if (this.active) return;
     Sfx.tap(); const k = el.dataset.item, id = e.pointerId;
-    this.active = true; el.classList.remove('arrive'); el.classList.add('dragging');
+    this.active = true; el.classList.remove('arrive', 'hint'); el.classList.add('dragging');
     const glow = $('#dropGlow');
     const place = ev => { const p = toStage(ev), over = this.overStar(p), v = this.view(k, over), h = v.w * v.ar; if (el.getAttribute('src') !== v.src) el.src = v.src; Object.assign(el.style, { width: v.w + 'px', left: p.x - v.w / 2 + 'px', top: p.y - h / 2 + 'px' }); glow?.classList.toggle('on', over); };
     const move = ev => { if (ev.pointerId === id) place(ev); };

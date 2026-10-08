@@ -160,11 +160,11 @@ button{font:inherit;color:inherit;border:0;background:none;padding:0;cursor:poin
 @keyframes spin{to{transform:rotate(360deg)}}
 @keyframes fall{to{transform:translateY(1080px) rotate(720deg)}}
 
-/* phones held upright: ask to rotate */
+/* phones held upright: the game still shows; a small hint under it */
 #rotate{display:none}
 @media (orientation:portrait) and (max-width:900px){
-  #rotate{display:flex;position:fixed;inset:0;z-index:999;flex-direction:column;align-items:center;justify-content:center;gap:14px;background:radial-gradient(circle at 50% 40%,#5a3f68,#2a1f33);color:#fff;text-align:center;font-family:'School Print Hebrew',Arial,sans-serif}
-  #rotate .phone{font-size:90px;animation:turn 2s ease-in-out infinite}
-  #rotate b{font-size:30px}#rotate span{font-size:20px;opacity:.8}
+  #rotate{display:block;position:fixed;left:0;right:0;bottom:calc(18px + env(safe-area-inset-bottom));text-align:center;color:#fff;font:600 17px 'School Print Hebrew',Arial,sans-serif;opacity:.85;pointer-events:none}
 }
-@keyframes turn{0%,30%{transform:rotate(0)}60%,100%{transform:rotate(-90deg)}}
+.closet-item.hint{animation:hintGlow 1s ease-in-out infinite;filter:drop-shadow(0 0 14px #ffe08a) drop-shadow(0 6px 8px #5b446844)}
+.finish-actions{gap:12px}
+.finish-actions .pill,.finish-actions .next{white-space:nowrap;padding:0 22px!important;font-size:26px!important;height:76px!important}

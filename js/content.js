@@ -108,7 +108,7 @@ const UNITS = [
   { key: 'mem', world: 'clothes', letter: 'מ', name: 'מֵם', sound: 'מְ', item: 'coat',
     options: ['coat', 'watch', 'boots'], words: ['mafteach', 'mara', 'mitriya'], wrong: ['tof', 'kadur', 'shaon'],
     near: ['ט', 'ש', 'נ', 'ס', 'ב', 'כ', 'ת', 'ל', 'ע', 'ה'],
-    strokes: [[[30, 34], [41, 47]], [[41, 47], [50, 35, 1], [73, 35, 1], [73, 58], [73, 80], [55, 80]], [[41, 49], [37, 64], [33, 80]]] },
+    strokes: [[[41, 47], [50, 35, 1], [73, 35, 1], [73, 58], [73, 80], [55, 80]], [[41, 49], [37, 64], [33, 80]], [[30, 34], [41, 47]]] }, // the small slanted line comes last
   { key: 'shin', world: 'clothes', letter: 'ש', name: 'שִׁין', sound: 'שְׁ', item: 'watch',
     options: ['watch', 'skirt', 'boots'], words: ['shemesh', 'shaon', 'shokolad'], wrong: ['kadur', 'perach', 'mafteach'],
     near: ['ע', 'צ', 'ט', 'מ', 'ת', 'ס', 'נ', 'ב', 'ג', 'ר'],

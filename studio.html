@@ -35,9 +35,9 @@ main{max-width:980px;margin:0 auto;padding:16px}
 <script src="js/content.js"></script>
 <script src="js/audio.js"></script>
 <script>
-const groups={'הכול':()=>true,'הוראות':id=>/^(open|words|hunt|write|write2|done|yes)-/.test(id),'מילים ופריטים':id=>/^(w|i)-/.test(id),'אותיות וצלילים':id=>/^(name|sound|letter)-/.test(id),'כללי':id=>!/^(open|words|hunt|write|write2|done|yes|name|sound|w|i|letter)-/.test(id)};
-let filter='הכול',have=new Set(),rec=null;
-async function refresh(){have=new Set(await Voice.listClips()||[]);document.getElementById('count').textContent=[...have].filter(k=>LINES[k]).length;render()}
+const groups={'עוד לא הוקלט':id=>!have.has(id)&&!Voice.bundle()[id],'הכול':()=>true,'הוראות':id=>/^(open|words|hunt|write|write2|done|yes)-/.test(id),'מילים ופריטים':id=>/^(w|i)-/.test(id),'אותיות וצלילים':id=>/^(name|sound|letter)-/.test(id),'כללי':id=>!/^(open|words|hunt|write|write2|done|yes|name|sound|w|i|letter)-/.test(id)};
+let filter='עוד לא הוקלט',have=new Set(),rec=null;
+async function refresh(){have=new Set(await Voice.listClips()||[]);document.getElementById('count').textContent=Object.keys(LINES).filter(k=>have.has(k)||Voice.bundle()[k]).length;render()}
 function render(){
   document.getElementById('total').textContent=Object.keys(LINES).length;
   document.getElementById('filters').innerHTML=Object.keys(groups).map(g=>`<button class="${g===filter?'on':''}" onclick="filter='${g}';render()">${g}</button>`).join('');

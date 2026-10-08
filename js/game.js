@@ -459,7 +459,7 @@ const Place = {
       <div class="tray" style="left:${this.TRAY.x}px;top:${this.TRAY.top}px;width:${this.TRAY.w}px;height:${this.TRAY.gap * 5 + 10}px"><b>הארגז</b></div>
       ${owned.map((k, i) => this.propHTML(k, i)).join('')}
       <div class="on-stage" style="transform:translateX(${dx}px)">${starHTML()}</div>
-      <div class="wardrobe-bar" style="left:auto;right:40px">${this.placed().length ? `<button class="pill" onclick="Place.clear()">${ICON.undress} הכול חוזר לארגז</button>` : ''}</div>`, { bg: W.bg });
+      <div class="wardrobe-bar" style="left:${this.TRAY.x + this.TRAY.w + 30}px">${this.placed().length ? `<button class="pill" onclick="Place.clear()">${ICON.undress} הכול חוזר לארגז</button>` : ''}</div>`, { bg: W.bg });
     if (W.noVeil) stage.querySelector('.veil')?.remove();
     stage.querySelectorAll('.prop').forEach(el => el.addEventListener('pointerdown', e => this.drag(el, e)));
     prompt([owned.length ? `place-${key}` : 'place-empty']);

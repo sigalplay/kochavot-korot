@@ -246,8 +246,8 @@ function defaultPos(k) { const it = ITEMS[k]; return { cx: it.cx, cy: it.cy }; }
 const Writer = {
   u: null, round: 1, strokes: [], si: 0, pi: 0, down: false, ink: null, g: null,
   P(p) { return [365 + (p[0] - 50) * 8, 300 + (p[1] - 52) * 8]; }, // 100×100 letter box → 730×600 board
-  begin(u, round) {
-    this.u = u; this.round = round; this.si = 0; this.pi = 0; this.tries = 0; this.finished = false;
+  begin(u, round, help = false) {
+    this.u = u; this.round = round; this.si = 0; this.pi = 0; this.tries = 0; this.finished = false; this.help = !!help; this.inkAll = 0; this.inkOn = 0;
     // resample each stroke every ~14px so progress can be checked point by point
     this.strokes = u.strokes.map(st => { const pts = this.smooth(st).map(p => this.P(p)), out = [pts[0]]; for (let i = 1; i < pts.length; i++) { const [x0, y0] = pts[i - 1], [x1, y1] = pts[i], n = Math.max(1, Math.round(Math.hypot(x1 - x0, y1 - y0) / 14)); for (let j = 1; j <= n; j++) out.push([x0 + (x1 - x0) * j / n, y0 + (y1 - y0) * j / n]); } return out; });
     this.covered = this.strokes.map(s => s.map(() => false));
@@ -276,7 +276,7 @@ const Writer = {
   drawGuide() {
     const g = this.g; g.clearRect(0, 0, 730, 600); g.lineCap = g.lineJoin = 'round';
     for (const st of this.strokes) { this.path(g, st); g.strokeStyle = this.round === 1 ? '#efe2f5' : '#f5edf8'; g.lineWidth = 64; g.stroke(); }
-    if (this.round !== 1) return;
+    if (this.round !== 1 && !this.help) return;
     this.strokes.forEach((st, si) => {
       // dotted centre line
       g.setLineDash([2, 18]); this.path(g, st); g.strokeStyle = si === this.si ? '#c58fc0' : '#dcc4e2'; g.lineWidth = 9; g.stroke(); g.setLineDash([]);
@@ -289,34 +289,54 @@ const Writer = {
     this.star(g, sx, sy, 26); g.fillStyle = '#fff'; g.font = '800 24px Arial'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(this.si + 1, sx, sy + 2);
   },
   star(g, x, y, r) { g.beginPath(); for (let i = 0; i < 10; i++) { const a = -Math.PI / 2 + i * Math.PI / 5, rr = i % 2 ? r * .5 : r; g.lineTo(x + Math.cos(a) * rr, y + Math.sin(a) * rr); } g.closePath(); g.fillStyle = '#f0b54a'; g.fill(); },
-  // forgiving check: a guide point counts once the finger passes anywhere near it, in any order or direction
-  NEAR: 72, STROKE_OK: .55, ROUND2_OK: .5, DONE_OK: .3,
+  // Two checks, both kind to small hands:
+  //  coverage — the finger passed near most of every line of the letter (any order, any direction);
+  //  accuracy — most of what the child drew is ON the letter, so scribbling over the whole board does not count.
+  NEAR: 55, ON: 62, STROKE_OK: .6, ROUND2_OK: .6, ACCURACY_OK: .7,
   share(i) { const c = this.covered[i]; return c.filter(Boolean).length / c.length; },
   total() { const all = this.covered.flat(); return all.filter(Boolean).length / all.length; },
+  accuracy() { return this.inkAll ? this.inkOn / this.inkAll : 0; },
   move(e) {
     const p = this.pt(e), ink = this.ink;
     ink.lineCap = ink.lineJoin = 'round'; ink.strokeStyle = '#d0619b'; ink.lineWidth = 34;
+    // sample the drawn line every few pixels so fast and slow fingers count the same
+    const from = this.last || p, steps = Math.max(1, Math.ceil(Math.hypot(p[0] - from[0], p[1] - from[1]) / 8));
     if (this.last) { ink.beginPath(); ink.moveTo(...this.last); ink.lineTo(...p); ink.stroke(); }
     this.last = p;
-    this.strokes.forEach((st, i) => st.forEach((q, j) => { if (Math.hypot(q[0] - p[0], q[1] - p[1]) < this.NEAR) this.covered[i][j] = true; }));
+    for (let k = 1; k <= steps; k++) {
+      const q = [from[0] + (p[0] - from[0]) * k / steps, from[1] + (p[1] - from[1]) * k / steps];
+      let best = Infinity;
+      this.strokes.forEach((st, i) => st.forEach((g, j) => { const d = Math.hypot(g[0] - q[0], g[1] - q[1]); if (d < best) best = d; if (d < this.NEAR) this.covered[i][j] = true; }));
+      this.inkAll++; if (best < this.ON) this.inkOn++;
+    }
     if (this.round === 1) {
       const before = this.si;
       while (this.si < this.strokes.length && this.share(this.si) >= this.STROKE_OK) this.si++;
       if (this.si !== before) Sfx.snap();
       const st = this.strokes[this.si]; this.pi = st ? Math.max(0, st.findIndex((_, j) => !this.covered[this.si][j])) : 0;
-      if (this.si >= this.strokes.length) return this.passed();
+      if (this.si >= this.strokes.length) { if (this.accuracy() >= this.ACCURACY_OK) return this.passed(); return this.offLetter(); }
       this.drawGuide();
     }
   },
   check() {
-    if (this.round === 1) return;
-    if (this.total() >= this.ROUND2_OK && this.covered.every((_, i) => this.share(i) >= .3)) this.passed();
+    if (this.round === 1 || this.finished) return;
+    if (this.total() >= this.ROUND2_OK && this.covered.every((_, i) => this.share(i) >= .4)) {
+      if (this.accuracy() >= this.ACCURACY_OK) this.passed(); else this.offLetter();
+    }
   },
-  // the "I'm done" button: accept a reasonable try, and never leave a child stuck
+  // drew all over the board: wipe it and ask again; after two tries the dotted path comes back to help
+  offLetter() {
+    this.down = false; this.tries++;
+    Sfx.soft(); say('write-on-letter');
+    const help = this.help || this.tries >= 2;
+    setTimeout(() => { const t = this.tries; this.begin(this.u, this.round, help); this.tries = t; }, 700);
+  },
   done() {
     if (this.finished) return;
-    if (this.total() >= this.DONE_OK || ++this.tries >= 2) return this.passed();
-    Sfx.soft(); say('write-again');
+    if (this.total() >= .45 && this.accuracy() >= this.ACCURACY_OK - .05) return this.passed();
+    if (this.accuracy() < this.ACCURACY_OK - .05 && this.inkAll > 20) return this.offLetter();
+    this.tries++; Sfx.soft(); say('write-again');
+    if (this.tries >= 2 && !this.help) { this.help = true; this.drawGuide(); }
   },
   reset() { Sfx.tap(); this.begin(this.u, this.round); },
   passed() {

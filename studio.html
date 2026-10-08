@@ -29,8 +29,8 @@ main{max-width:980px;margin:0 auto;padding:16px}
 <p>לחצי <b>הקלטה</b>, אמרי את המשפט, ולחצי <b>עצירה</b>. ההקלטה נשמרת במכשיר הזה, והמשחק משתמש בה במקום בקול הממוחשב.<br>
 טיפ: בצלילים (למשל „מְ”) אומרים רק את הצליל הקצר, בלי שם האות. הוקלטו <span class="count" id="count">0</span> מתוך <span id="total"></span>.</p>
 <div class="filters" id="filters"></div>
-<div class="sync"><button class="big" onclick="exportAll()">⬆ שמירת כל ההקלטות לקובץ אחד</button>
-<span>אחרי השמירה מעלים את הקובץ <b>recordings.json</b> לכאן: <a href="https://github.com/sigalplay/kochavot-korot/upload/main/audio" target="_blank" rel="noopener">העלאה לאתר</a>. מאותו רגע ההקלטות נשמעות בכל מכשיר.</span></div></header>
+<div class="sync"><button class="big" onclick="exportAll()">⬆ שמירת כל ההקלטות לקבצים</button>
+<span id="expInfo">אחרי השמירה מעלים את <b>כל הקבצים</b> שנוצרו (אפשר לבחור את כולם ביחד) לכאן: <a href="https://github.com/sigalplay/kochavot-korot/upload/main/audio" target="_blank" rel="noopener">העלאה לאתר</a>. מאותו רגע ההקלטות נשמעות בכל מכשיר.</span></div></header>
 <main id="list"></main>
 <script src="js/content.js"></script>
 <script src="js/audio.js"></script>
@@ -56,13 +56,21 @@ async function play(id){const b=await Voice.getClip(id);if(b){const u=URL.create
 async function del(id){await Voice.delClip(id);refresh()}
 async function download(id){const b=await Voice.getClip(id);if(!b)return;const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=id+(b.type.includes('mp4')?'.m4a':'.webm');a.click()}
 // one file with every recording (the ones already on the site + the ones on this device), ready to upload
+// every recording (the ones already on the site + the ones on this device), split into small files GitHub accepts
 async function exportAll(){
-  const out={...Voice.bundle()},ids=await Voice.listClips()||[];
-  for(const id of ids){const b=await Voice.getClip(id);if(b)out[id]=await new Promise(r=>{const f=new FileReader();f.onload=()=>r(f.result);f.readAsDataURL(b)})}
-  if(!Object.keys(out).length){alert('עוד אין הקלטות');return}
-  const file=new File([JSON.stringify(out)],'recordings.json',{type:'application/json'});
-  if(navigator.canShare?.({files:[file]})){try{await navigator.share({files:[file],title:'recordings.json'});return}catch{}}
-  const a=document.createElement('a');a.href=URL.createObjectURL(file);a.download='recordings.json';a.click();
+  const all={...Voice.bundle()},ids=await Voice.listClips()||[];
+  for(const id of ids){const b=await Voice.getClip(id);if(b)all[id]=await new Promise(r=>{const f=new FileReader();f.onload=()=>r(f.result);f.readAsDataURL(b)})}
+  if(!Object.keys(all).length){alert('עוד אין הקלטות');return}
+  const LIMIT=12e6,files=[];
+  for(const g of recGroups()){
+    let part={},size=0,n=1;
+    const flush=()=>{if(Object.keys(part).length)files.push(new File([JSON.stringify(part)],`rec-${g}-${n++}.json`,{type:'application/json'}));part={};size=0};
+    for(const [id,data] of Object.entries(all)){if(recGroupOf(id)!==g)continue;if(size+data.length>LIMIT)flush();part[id]=data;size+=data.length}
+    flush();
+  }
+  document.getElementById('expInfo').innerHTML=`נוצרו ${files.length} קבצים: ${files.map(f=>`<b>${f.name}</b> (${(f.size/1e6).toFixed(1)}MB)`).join(', ')}. מעלים את כולם ביחד לכאן: <a href="https://github.com/sigalplay/kochavot-korot/upload/main/audio" target="_blank" rel="noopener">העלאה לאתר</a>`;
+  if(navigator.canShare?.({files})){try{await navigator.share({files,title:'הקלטות'});return}catch{}}
+  for(const f of files){const a=document.createElement('a');a.href=URL.createObjectURL(f);a.download=f.name;a.click();await new Promise(r=>setTimeout(r,400))}
 }
 Voice.ready().then(refresh);
 </script>

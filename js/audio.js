@@ -1,7 +1,15 @@
 /* Voice + sound effects.
    Order of preference for every line: a recording made in studio.html on this device
-   → a recording uploaded with the site (audio/recordings.json, exported from studio.html)
+   → a recording uploaded with the site (audio/rec-<group>-<n>.json files, exported from studio.html)
    → a file in audio/ listed in audio/manifest.json (e.g. "open-mem.mp3") → the computer voice. */
+
+// which upload file a spoken line belongs to: one per world, plus shared words and general lines
+function recGroups() { return ['general', 'words', ...WORLDS.map(w => w.key)]; }
+function recGroupOf(id) {
+  if (/^(w|i|letter)-/.test(id)) return 'words';
+  const u = UNITS.find(u => id.endsWith('-' + u.key));
+  return u ? u.world : 'general';
+}
 
 const Voice = (() => {
   const DB = 'kochavot-voice', STORE = 'clips';
@@ -20,7 +28,10 @@ const Voice = (() => {
   }
   async function ready() {
     db = await openDb();
-    try { const r = await fetch('audio/recordings.json', { cache: 'no-cache' }); if (r.ok) bundle = await r.json(); } catch {}
+    // recordings uploaded with the site come in several small files (GitHub refuses one big file)
+    const load = async name => { try { const r = await fetch(`audio/${name}`, { cache: 'no-cache' }); if (r.ok) { Object.assign(bundle, await r.json()); return true; } } catch {} return false; };
+    await load('recordings.json');
+    await Promise.all(recGroups().map(async g => { for (let n = 1; n < 20 && await load(`rec-${g}-${n}.json`); n++); }));
     try { const r = await fetch('audio/manifest.json', { cache: 'no-cache' }); if (r.ok) files = new Map((await r.json()).map(f => [f.replace(/\.[^.]+$/, ''), f])); } catch {}
   }
   function tx(mode, fn) {

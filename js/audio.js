@@ -64,12 +64,25 @@ const Voice = (() => {
       setTimeout(res, 9000);
     });
   }
+  // iPad/iPhone only let a page play sound right after a tap. One audio element is "unlocked"
+  // on the first tap and then reused for every line, so later lines are allowed to play.
+  const SILENT = 'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA=';
+  const el = new Audio(); el.preload = 'auto';
+  let unlocked = false, pending = null;
+  function unlock() {
+    if (unlocked) return; unlocked = true;
+    try { el.src = SILENT; el.play().catch(() => { unlocked = false; }); } catch { unlocked = false; }
+    try { if ('speechSynthesis' in window) { const u = new SpeechSynthesisUtterance(' '); u.volume = 0; speechSynthesis.speak(u); } } catch {}
+  }
   function playUrl(url) {
     return new Promise(res => {
-      const a = new Audio(url); current = a;
-      a.preservesPitch = a.webkitPreservesPitch = true; // faster, same voice (no chipmunk)
-      a.playbackRate = RECORDING_SPEED;
+      const a = el; current = a;
+      if (pending) pending(false); pending = res; // the line that was playing is cut off
+      try { a.pause(); } catch {}
       a.onended = () => res(true); a.onerror = () => res(false);
+      a.preservesPitch = a.webkitPreservesPitch = a.mozPreservesPitch = true; // faster, same voice (no chipmunk)
+      a.src = url; a.defaultPlaybackRate = RECORDING_SPEED; a.playbackRate = RECORDING_SPEED;
+      a.onloadedmetadata = () => { a.playbackRate = RECORDING_SPEED; };
       a.play().catch(() => res(false));
     });
   }
@@ -95,7 +108,7 @@ const Voice = (() => {
     for (const id of ids.flat()) { if (my !== token) return; await one(id, my); }
     if (my === token) document.body.classList.remove('talking');
   }
-  return { ready, say, stop, getClip, putClip, delClip, listClips, playUrl, bundle: () => bundle };
+  return { ready, say, stop, unlock, getClip, putClip, delClip, listClips, playUrl, bundle: () => bundle };
 })();
 
 /* Little synthesized sound effects — no files needed. */
@@ -111,7 +124,7 @@ const Sfx = (() => {
     } catch {}
   }
   return {
-    unlock() { try { ac().resume(); } catch {} },
+    unlock() { try { const c = ac(); if (c.state !== 'running') c.resume(); } catch {} },
     tap() { tone(660, 0, .08, 'triangle', .08); },
     good() { [523, 659, 784].forEach((f, i) => tone(f, i * .09, .35, 'triangle')); },
     soft() { tone(330, 0, .18, 'sine', .1); tone(262, .13, .25, 'sine', .1); },
@@ -120,3 +133,6 @@ const Sfx = (() => {
     snap() { tone(880, 0, .07, 'square', .05); tone(1320, .05, .12, 'triangle', .08); },
   };
 })();
+
+// every tap keeps sound alive on tablets (iOS suspends audio after the app goes to the background)
+['pointerdown', 'touchend'].forEach(t => document.addEventListener(t, () => { Voice.unlock(); Sfx.unlock(); }, { capture: true, passive: true }));

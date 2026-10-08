@@ -29,7 +29,7 @@ const FB = (() => {
     // the stand and its fans fill the empty space behind it, and the rest clicks into its own place (slot)
     grass: { ...P('field', 'דשא', 'grass', .625, 800, 500, 1600, 1), img: A + 'stadium/grass-on.png', card: A + 'field/grass.png', cardAr: .764, slot: true, scene: true },
     goal: { ...P('field', 'שער', 'goal', .625, 800, 500, 1600, 2), img: A + 'stadium/goals-on.png', card: A + 'field/goal.png', cardAr: 1.057, slot: true, scene: true },
-    team: { ...P('field', 'קבוצה', 'team', .861, 730, 640, 230, 7), slot: true },
+    team: { ...P('field', 'קבוצה', 'team', 1.67, 560, 610, 170, 7), slot: true },
     scoreboard: { ...P('field', 'לוח תוצאות', 'scoreboard', .695, 1090, 250, 170, 5), slot: true },
     ball: { ...P('field', 'כדור', 'ball', 1.097, 730, 490, 34, 9), slot: true },
     stand: { ...P('fans', 'יציע', 'stand', .625, 800, 500, 1600, 2), img: A + 'stadium/stand-on.png', card: A + 'fans/stand.png', cardAr: .425, slot: true, scene: true },

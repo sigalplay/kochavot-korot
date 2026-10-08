@@ -12,6 +12,7 @@ header p{margin:6px 0 0;line-height:1.5}
 .filters{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
 .filters button{border:0;border-radius:999px;padding:8px 16px;background:#f2e3ef;font:inherit;cursor:pointer}
 .filters button.on{background:#a76a9c;color:#fff}
+.letters button{min-width:44px;font-size:22px;font-weight:700;padding:4px 12px}.letters .world{background:none;cursor:default;font-size:15px;font-weight:700;color:#8b5fa0;padding:4px 2px}
 main{max-width:980px;margin:0 auto;padding:16px}
 .line{display:flex;align-items:center;gap:12px;background:#fff;border-radius:20px;padding:12px 16px;margin:10px 0;box-shadow:0 4px 12px #8d5f9f18}
 .line .t{flex:1;font-size:22px;line-height:1.4}
@@ -29,6 +30,7 @@ main{max-width:980px;margin:0 auto;padding:16px}
 <p>לחצי <b>הקלטה</b>, אמרי את המשפט, ולחצי <b>עצירה</b>. ההקלטה נשמרת במכשיר הזה, והמשחק משתמש בה במקום בקול הממוחשב.<br>
 טיפ: בצלילים (למשל „מְ”) אומרים רק את הצליל הקצר, בלי שם האות. הוקלטו <span class="count" id="count">0</span> מתוך <span id="total"></span>.</p>
 <div class="filters" id="filters"></div>
+<div class="filters letters" id="letters"></div>
 <div class="sync"><button class="big" onclick="exportAll()">⬆ שמירת כל ההקלטות לקבצים</button>
 <span id="expInfo">אחרי השמירה מעלים את <b>כל הקבצים</b> שנוצרו (אפשר לבחור את כולם ביחד) לכאן: <a href="https://github.com/sigalplay/kochavot-korot/upload/main/audio" target="_blank" rel="noopener">העלאה לאתר</a>. מאותו רגע ההקלטות נשמעות בכל מכשיר.</span></div></header>
 <main id="list"></main>
@@ -38,11 +40,18 @@ main{max-width:980px;margin:0 auto;padding:16px}
 const groups={'עוד לא הוקלט':id=>!have.has(id)&&!Voice.bundle()[id],'הכול':()=>true,'הוראות':id=>/^(open|words|hunt|write|write2|done|yes)-/.test(id),'מילים ופריטים':id=>/^(w|i)-/.test(id),'אותיות וצלילים':id=>/^(name|sound|letter)-/.test(id),'כללי':id=>!/^(open|words|hunt|write|write2|done|yes|name|sound|w|i|letter)-/.test(id)};
 let filter='עוד לא הוקלט',have=new Set(),rec=null;
 async function refresh(){have=new Set(await Voice.listClips()||[]);document.getElementById('count').textContent=Object.keys(LINES).filter(k=>have.has(k)||Voice.bundle()[k]).length;render()}
+function letterIds(key){
+  const u=UNITS.find(x=>x.key===key),ids=new Set(Object.keys(LINES).filter(id=>id.endsWith('-'+u.key)&&!/^(w|i|letter)-/.test(id)));
+  ids.add('letter-'+LETTER_KEYS[u.letter]);u.options.forEach(k=>ids.add('i-'+k));[...u.words,...u.wrong].forEach(w=>ids.add('w-'+w));
+  return ids;
+}
+const pred=f=>f.startsWith('L:')?(s=>id=>s.has(id))(letterIds(f.slice(2))):groups[f];
 function render(){
   document.getElementById('total').textContent=Object.keys(LINES).length;
   document.getElementById('filters').innerHTML=Object.keys(groups).map(g=>`<button class="${g===filter?'on':''}" onclick="filter='${g}';render()">${g}</button>`).join('');
-  document.getElementById('list').innerHTML=Object.entries(LINES).filter(([id])=>groups[filter](id)).map(([id,[text]])=>`<div class="line ${have.has(id)?'has':''}" id="L-${id}"><div class="t">${text}<small>${id}</small>${Voice.bundle()[id]?'<span class="site">✓ באתר</span>':''}</div>
-   <button class="rec" onclick="toggle('${id}',this)">הקלטה</button>${have.has(id)?`<button onclick="play('${id}')">▶ השמעה</button><button onclick="download('${id}')">הורדה</button><button onclick="del('${id}')">מחיקה</button>`:`<button onclick="Voice.say('${id}')">▶ קול ממוחשב</button>`}</div>`).join('');
+  document.getElementById('letters').innerHTML=WORLDS.map(w=>`<span class="world">${w.title}:</span>`+unitsOf(w.key).map(u=>`<button class="${filter==='L:'+u.key?'on':''}" onclick="filter='L:${u.key}';render()">${u.letter}</button>`).join('')).join('');
+  document.getElementById('list').innerHTML=Object.entries(LINES).filter(([id])=>pred(filter)(id)).map(([id,[text]])=>`<div class="line ${have.has(id)?'has':''}" id="L-${id}"><div class="t">${text}<small>${id}</small>${Voice.bundle()[id]?'<span class="site">✓ באתר</span>':''}</div>
+   <button class="rec" onclick="toggle('${id}',this)">הקלטה</button>${have.has(id)?`<button onclick="play('${id}')">▶ השמעה</button><button onclick="download('${id}')">הורדה</button><button onclick="del('${id}')">מחיקה</button>`:Voice.bundle()[id]?`<button onclick="Voice.playUrl(Voice.bundle()['${id}'])">▶ ההקלטה שבאתר</button>`:`<button onclick="Voice.say('${id}')">▶ קול ממוחשב</button>`}</div>`).join('');
 }
 async function toggle(id,btn){
   if(rec){rec.stop();return}

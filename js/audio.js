@@ -12,7 +12,7 @@ function recGroupOf(id) {
 }
 
 // recordings play a bit faster than they were recorded
-const RECORDING_SPEED = 1.5;
+const RECORDING_SPEED = 1.25;
 
 const Voice = (() => {
   const DB = 'kochavot-voice', STORE = 'clips';

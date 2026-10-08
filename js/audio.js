@@ -11,6 +11,9 @@ function recGroupOf(id) {
   return u ? u.world : 'general';
 }
 
+// recordings play a bit faster than they were recorded
+const RECORDING_SPEED = 1.5;
+
 const Voice = (() => {
   const DB = 'kochavot-voice', STORE = 'clips';
   let db = null, files = new Map(), bundle = {}, current = null, token = 0, voices = [];
@@ -64,6 +67,8 @@ const Voice = (() => {
   function playUrl(url) {
     return new Promise(res => {
       const a = new Audio(url); current = a;
+      a.preservesPitch = a.webkitPreservesPitch = true; // faster, same voice (no chipmunk)
+      a.playbackRate = RECORDING_SPEED;
       a.onended = () => res(true); a.onerror = () => res(false);
       a.play().catch(() => res(false));
     });

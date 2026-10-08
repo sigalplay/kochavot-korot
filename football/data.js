@@ -9,18 +9,18 @@ const FB = (() => {
     wardrobe: A + 'locker-room.jpg',     // dressing room with the cubbies (1600×1000)
     room: A + 'locker-room.jpg',         // home screen background until the stadium picture arrives
   };
-  // where the player stands on the 1600×1000 stage (same spot on every screen); player.png is 271×924
-  const STAR_BOX = { x: 1222, y: 212, w: 217, h: 740 };
+  // where the player stands on the 1600×1000 stage (same spot on every screen); player.png is 351×924 (40px of empty room on each side, for the boots)
+  const STAR_BOX = { x: 1190, y: 212, w: 281, h: 740 };
 
   // Dressing room: every item is a full-size layer drawn over player.png (made by football/assets/make-layers.py,
   // armband and wristband placed by measurement). fit = where the item is inside the layer, for the fly-in.
-  const L = (name, k, fit, cardAr, z) => ({ name, img: `${A}items/${k}-on.png`, card: `${A}items/${k}.png`, cardAr, fit, layer: true, ar: 924 / 271, w: 1, cx: .5, cy: .5, z, snap: 'body' });
+  const L = (name, k, fit, cardAr, z) => ({ name, img: `${A}items/${k}-on.png`, card: `${A}items/${k}.png`, cardAr, fit, layer: true, ar: 924 / 351, w: 1, cx: .5, cy: .5, z, snap: 'body' });
   const ITEMS = {
-    jersey:    L('חולצה',     'jersey',    [.018, .271, .959, .274], .979, 6),
-    shorts:    L('מכנסיים',   'shorts',    [.159, .534, .686, .126], .893, 5),
-    boots:     L('נעליים',    'boots',     [.030, .758, .956, .239], .612, 5),
-    armband:   L('סרט קפטן',  'armband',   [.052, .408, .192, .030], .669, 8),
-    wristband: L('צמיד',      'wristband', [.011, .525, .144, .030], 1.079, 8),
+    jersey:    L('חולצה',     'jersey',    [.128, .271, .741, .274], .979, 6),
+    shorts:    L('מכנסיים',   'shorts',    [.236, .534, .530, .126], .893, 5),
+    boots:     { ...L('נעליים',    'boots',     [.071, .758, .883, .242], .612, 5), base: A + 'player-nofeet.png' }, // shown on the player without bare feet
+    armband:   L('סרט קפטן',  'armband',   [.154, .408, .148, .030], .669, 8),
+    wristband: L('צמיד',      'wristband', [.123, .525, .111, .030], 1.079, 8),
   };
   // the other worlds: names only until their pictures arrive (img is filled in then)
   const P = (world, name) => ({ world, name, img: '', ar: 1, stage: { x: 800, y: 600, w: 220 }, z: 10 });

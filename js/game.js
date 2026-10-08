@@ -83,7 +83,9 @@ function nearestWrist(p) { return WRISTS.reduce((a, b) => Math.hypot(a.cx - p.cx
 function starHTML() {
   const worn = Object.entries(state.outfit).filter(([k]) => ITEMS[k] && !ITEMS[k].world && state.inv.includes(k))
     .map(([k, p]) => { p = ITEMS[k].snap === 'wrist' ? nearestWrist(p) : p; const b = itemBox(k, p), rot = (ITEMS[k].turn || 0) + (p.rot || 0); return `<img class="worn" data-item="${k}" src="${ITEMS[k].img}" alt="${ITEMS[k].name}" style="left:${b.x - STAR_BOX.x}px;top:${b.y - STAR_BOX.y}px;width:${b.w}px;z-index:${ITEMS[k].z};transform:rotate(${rot}deg)">`; }).join('');
-  return `<div class="star" id="star" style="left:${STAR_BOX.x}px;top:${STAR_BOX.y}px;width:${STAR_BOX.w}px;height:${STAR_BOX.h}px"><img src="${ART.star}" alt="${CFG.heroAlt}" style="left:0;top:0;width:100%;height:100%;z-index:4">${worn && ART.starArms ? `<img src="${ART.starArms}" alt="" style="left:0;top:0;width:100%;height:100%;z-index:7">` : ''}${worn}</div>`;
+  // an item can swap the figure underneath it (football boots: the player without bare feet, so no toes peek out)
+  const base = Object.keys(state.outfit).filter(k => ITEMS[k] && !ITEMS[k].world && state.inv.includes(k)).map(k => ITEMS[k].base).find(Boolean) || ART.star;
+  return `<div class="star" id="star" style="left:${STAR_BOX.x}px;top:${STAR_BOX.y}px;width:${STAR_BOX.w}px;height:${STAR_BOX.h}px"><img src="${base}" alt="${CFG.heroAlt}" style="left:0;top:0;width:100%;height:100%;z-index:4">${worn && ART.starArms ? `<img src="${ART.starArms}" alt="" style="left:0;top:0;width:100%;height:100%;z-index:7">` : ''}${worn}</div>`;
 }
 function hop() { const s = $('#star'); if (!s) return; s.classList.remove('hop'); void s.offsetWidth; s.classList.add('hop'); }
 function sparkle(x, y, n = 14) {

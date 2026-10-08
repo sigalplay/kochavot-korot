@@ -1,3 +1,4 @@
+# Note: made for the original 271px-wide player.png; run make-padding.py afterwards (it widens everything to 351px).
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont, ImageFilter
 from scipy import ndimage as nd

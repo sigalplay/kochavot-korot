@@ -34,10 +34,13 @@ main{max-width:980px;margin:0 auto;padding:16px}
 <div class="sync"><button class="big" onclick="exportAll()">⬆ שמירת כל ההקלטות לקבצים</button>
 <span id="expInfo">אחרי השמירה מעלים את <b>כל הקבצים</b> שנוצרו (אפשר לבחור את כולם ביחד) לכאן: <a href="https://github.com/sigalplay/kochavot-korot/upload/main/audio" target="_blank" rel="noopener">העלאה לאתר</a>. מאותו רגע ההקלטות נשמעות בכל מכשיר.</span></div></header>
 <main id="list"></main>
+<script src="js/letters.js"></script>
 <script src="js/content.js"></script>
+<script src="football/data.js"></script>
 <script src="js/audio.js"></script>
 <script>
-const groups={'עוד לא הוקלט':id=>!have.has(id)&&!Voice.bundle()[id],'לשון רבים':id=>id.startsWith('pl/'),'הכול':()=>true,'הוראות':id=>/^(open|words|hunt|write|write2|done|yes)-/.test(id),'מילים ופריטים':id=>/^(w|i)-/.test(id),'אותיות וצלילים':id=>/^(name|sound|letter)-/.test(id),'כללי':id=>!id.startsWith('pl/')&&!/^(open|words|hunt|write|write2|done|yes|name|sound|w|i|letter)-/.test(id)};
+Object.assign(LINES, FB.lines()); // the football game's own lines (אלופי האותיות)
+const groups={'עוד לא הוקלט':id=>!have.has(id)&&!Voice.bundle()[id],'לשון רבים':id=>id.startsWith('pl/'),'כדורגל':id=>id.startsWith('fb/'),'הכול':()=>true,'הוראות':id=>/^(open|words|hunt|write|write2|done|yes)-/.test(id),'מילים ופריטים':id=>/^(w|i)-/.test(id),'אותיות וצלילים':id=>/^(name|sound|letter)-/.test(id),'כללי':id=>!/^(pl|fb)\//.test(id)&&!/^(open|words|hunt|write|write2|done|yes|name|sound|w|i|letter)-/.test(id)};
 let filter='עוד לא הוקלט',have=new Set(),rec=null;
 async function refresh(){have=new Set(await Voice.listClips()||[]);document.getElementById('count').textContent=Object.keys(LINES).filter(k=>have.has(k)||Voice.bundle()[k]).length;render()}
 function letterIds(key){

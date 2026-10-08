@@ -19,14 +19,25 @@ let lastTouch = 0; document.addEventListener('touchend', e => { const now = Date
 function toStage(e) { const r = stage.getBoundingClientRect(); return { x: (e.clientX - r.left) / scale, y: (e.clientY - r.top) / scale }; }
 function rectOf(el) { const r = el.getBoundingClientRect(), s = stage.getBoundingClientRect(); return { x: (r.left - s.left) / scale, y: (r.top - s.top) / scale, w: r.width / scale, h: r.height / scale }; }
 
+/* ---------- per-game settings: a game can override any of these in its content file (const GAME = {...}) ---------- */
+const CFG = Object.assign({
+  saveKey: 'kochavot-v2', title: 'כוכבות קוראות', subtitle: 'הכנה משחקית לכיתה א׳', heroAlt: 'הכוכבת', worksheets: true,
+  colors: { ink: '#d0619b', path: '#efe2f5', path2: '#f5edf8', dots: '#c58fc0', dotsOff: '#dcc4e2', confetti: ['#f29cc3', '#b69add', '#f3c86b', '#9fd8c6', '#ffd2e4'] },
+}, typeof GAME !== 'undefined' ? GAME : {});
+const T = Object.assign({
+  next: 'ממשיכות', find3: 'מצאי', findAll: 'מצאי את כל האותיות', writing: 'כותבות את האות', restart: 'מתחילות מחדש',
+  won: 'איזו כוכבת! הרווחת', collected: 'אספת', dress: 'בואי נלביש את הכוכבת!', undressAll: 'הכול חוזר לארון', start: 'בואי<br>נשחק!',
+  parentsReward: 'ו<b>פרס</b> שהכוכבת לובשת מיד', parentsHint: 'אחרי שתי טעויות מופיע רמז מנצנץ, כך שאף ילדה לא נתקעת.',
+}, CFG.text || {});
+
 /* ---------- saved progress ---------- */
-const SAVE_KEY = 'kochavot-v2';
+const SAVE_KEY = CFG.saveKey;
 function loadState() {
   let s = null;
   try { s = JSON.parse(localStorage.getItem(SAVE_KEY)); } catch {}
   if (!s || typeof s !== 'object') s = { done: {}, inv: [], outfit: {}, stage: {} };
   s.done ||= {}; s.inv ||= []; s.outfit ||= {}; s.stage ||= {};
-  if (!s.migrated) { // bring over progress from the earlier prototype
+  if (!s.migrated && SAVE_KEY === 'kochavot-v2') { // bring over progress from the earlier prototype
     try {
       const old = JSON.parse(localStorage.getItem('kochavot-group1-inventory') || '[]');
       const byName = Object.fromEntries(Object.entries(ITEMS).map(([k, v]) => [v.name, k]));
@@ -72,7 +83,7 @@ function nearestWrist(p) { return WRISTS.reduce((a, b) => Math.hypot(a.cx - p.cx
 function starHTML() {
   const worn = Object.entries(state.outfit).filter(([k]) => ITEMS[k] && !ITEMS[k].world && state.inv.includes(k))
     .map(([k, p]) => { p = ITEMS[k].snap === 'wrist' ? nearestWrist(p) : p; const b = itemBox(k, p), rot = (ITEMS[k].turn || 0) + (p.rot || 0); return `<img class="worn" data-item="${k}" src="${ITEMS[k].img}" alt="${ITEMS[k].name}" style="left:${b.x - STAR_BOX.x}px;top:${b.y - STAR_BOX.y}px;width:${b.w}px;z-index:${ITEMS[k].z};transform:rotate(${rot}deg)">`; }).join('');
-  return `<div class="star" id="star" style="left:${STAR_BOX.x}px;top:${STAR_BOX.y}px;width:${STAR_BOX.w}px;height:${STAR_BOX.h}px"><img src="${ART.star}" alt="הכוכבת" style="left:0;top:0;width:100%;height:100%;z-index:4">${worn ? `<img src="${ART.starArms}" alt="" style="left:0;top:0;width:100%;height:100%;z-index:7">` : ''}${worn}</div>`;
+  return `<div class="star" id="star" style="left:${STAR_BOX.x}px;top:${STAR_BOX.y}px;width:${STAR_BOX.w}px;height:${STAR_BOX.h}px"><img src="${ART.star}" alt="${CFG.heroAlt}" style="left:0;top:0;width:100%;height:100%;z-index:4">${worn && ART.starArms ? `<img src="${ART.starArms}" alt="" style="left:0;top:0;width:100%;height:100%;z-index:7">` : ''}${worn}</div>`;
 }
 function hop() { const s = $('#star'); if (!s) return; s.classList.remove('hop'); void s.offsetWidth; s.classList.add('hop'); }
 function sparkle(x, y, n = 14) {
@@ -83,7 +94,7 @@ function sparkle(x, y, n = 14) {
 function sparkleOn(el, n) { const r = rectOf(el); sparkle(r.x + r.w / 2, r.y + r.h / 2, n); }
 function confetti() {
   const box = document.createElement('div'); box.className = 'confetti';
-  const colors = ['#f29cc3', '#b69add', '#f3c86b', '#9fd8c6', '#ffd2e4'];
+  const colors = CFG.colors.confetti;
   for (let i = 0; i < 70; i++) { const c = document.createElement('i'); c.style.left = Math.random() * 100 + '%'; c.style.background = colors[i % colors.length]; c.style.animationDuration = 2 + Math.random() * 2 + 's'; c.style.animationDelay = Math.random() * .8 + 's'; c.style.transform = `rotate(${Math.random() * 360}deg)`; box.appendChild(c); }
   stage.appendChild(box); setTimeout(() => box.remove(), 5000);
 }
@@ -98,7 +109,7 @@ function screen(html, { bg = ART.room, bgClass = '' } = {}) {
   stage.innerHTML = `<img class="bg ${bgClass}" src="${bg}" alt=""><div class="veil"></div>${html}`;
 }
 function promptRow(text, ids) { return `<div class="prompt"><span>${text}</span><button class="say-btn" onclick="say(${JSON.stringify(ids).replace(/"/g, "'")})" aria-label="להשמיע">${ICON.speak}</button></div>`; }
-function showNext(onclick, label = 'ממשיכות') {
+function showNext(onclick, label = T.next) {
   const p = $('.panel'); if (!p || p.querySelector('.next')) return;
   p.insertAdjacentHTML('beforeend', `<button class="next" onclick="${onclick}">${label} ${ICON.next}</button>`);
 }
@@ -108,8 +119,8 @@ const go = {
   home() {
     screen(`${topbar({ home: false, replay: true })}
       <button class="round" style="position:absolute;bottom:28px;left:28px;z-index:31;width:auto;padding:0 26px;border-radius:999px;font-size:28px;font-weight:700" onclick="openParents()">להורים</button>
-      <div class="hero-title"><h1>כוכבות קוראות</h1><p>הכנה משחקית לכיתה א׳</p></div>
-      <div class="worlds">${WORLDS.map(w => `<button class="world ${worldDone(w.key) ? 'done' : 'active'}" onclick="Sfx.tap();go.world('${w.key}')"><img src="${w.icon}" alt=""><b>${w.title}</b><small>${doneCount(w.key)} מתוך ${unitsOf(w.key).length} אותיות</small></button>`).join('')}
+      <div class="hero-title"><h1>${CFG.title}</h1><p>${CFG.subtitle}</p></div>
+      <div class="worlds">${WORLDS.map(w => w.soon ? `<button class="world soon" onclick="Sfx.soft()">${w.icon ? `<img src="${w.icon}" alt="">` : `<span class="emoji">${w.emoji}</span>`}<b>${w.title}</b><small>בקרוב</small></button>` : `<button class="world ${worldDone(w.key) ? 'done' : 'active'}" onclick="Sfx.tap();go.world('${w.key}')"><img src="${w.icon}" alt=""><b>${w.title}</b><small>${doneCount(w.key)} מתוך ${unitsOf(w.key).length} אותיות</small></button>`).join('')}
       </div>${starHTML()}`);
     prompt(['home']);
   },
@@ -165,7 +176,7 @@ const Unit = {
   /* 2 — three more words with the same opening sound */
   words() {
     const u = this.u, cards = shuffle([...u.words.map(w => [w, 1]), ...u.wrong.map(w => [w, 0])]);
-    $('#panel').innerHTML = `${promptRow(`מצאי <b>3</b> תמונות שמתחילות בצליל <b>${u.sound}</b>`, [`words-${u.key}`])}
+    $('#panel').innerHTML = `${promptRow(`${T.find3} <b>3</b> תמונות שמתחילות בצליל <b>${u.sound}</b>`, [`words-${u.key}`])}
       <div class="cards six">${cards.map(([w, ok]) => `<button class="card" data-ok="${ok}" onclick="Unit.pickWord(this,'${w}',${ok})" aria-label="${WORDS[w][0]}"><img src="${WORDS[w][1]}" alt="${WORDS[w][0]}"></button>`).join('')}</div>`;
     prompt([`words-${u.key}`]);
   },
@@ -181,7 +192,7 @@ const Unit = {
   /* 3 — find the letter five times among look-alikes */
   hunt() {
     const u = this.u, bank = shuffle([...Array(5).fill(u.letter), ...u.near]);
-    $('#panel').innerHTML = `${promptRow(`מצאי את כל האותיות <b>${u.letter}</b>`, [`hunt-${u.key}`])}
+    $('#panel').innerHTML = `${promptRow(`${T.findAll} <b>${u.letter}</b>`, [`hunt-${u.key}`])}
       <div class="collect" style="top:150px">${[0, 1, 2, 3, 4].map(i => `<div class="slot" id="slot${i}"></div>`).join('')}</div>
       <div class="bank">${bank.map(ch => `<button class="tile" data-ok="${ch === u.letter ? 1 : 0}" style="transform:rotate(${(Math.random() * 14 - 7).toFixed(1)}deg) translate(${(Math.random() * 16 - 8).toFixed(0)}px,${(Math.random() * 12 - 6).toFixed(0)}px)" onclick="Unit.pickLetter(this,'${ch}')">${ch}</button>`).join('')}</div>`;
     prompt([`hunt-${u.key}`]);
@@ -202,9 +213,9 @@ const Unit = {
 
   /* 4 — writing: round 1 follows the dotted path, round 2 on a faint letter */
   write() {
-    $('#panel').innerHTML = `${promptRow(`כותבות את האות <b>${this.u.letter}</b>`, [`write-${this.u.key}`])}<div class="round-tag" id="roundTag">1 / 2</div>
+    $('#panel').innerHTML = `${promptRow(`${T.writing} <b>${this.u.letter}</b>`, [`write-${this.u.key}`])}<div class="round-tag" id="roundTag">1 / 2</div>
       <div class="board"><canvas id="guide" width="730" height="600"></canvas><canvas id="ink" class="trace" width="730" height="600"></canvas></div>
-      <div class="write-tools"><button class="pill" onclick="Writer.reset()">${ICON.erase} מתחילות מחדש</button><button class="pill" onclick="Writer.done()">סיימתי ✓</button></div>`;
+      <div class="write-tools"><button class="pill" onclick="Writer.reset()">${ICON.erase} ${T.restart}</button><button class="pill" onclick="Writer.done()">סיימתי ✓</button></div>`;
     Writer.begin(this.u, 1);
   },
 
@@ -213,15 +224,15 @@ const Unit = {
     const u = this.u, k = u.item, it = ITEMS[k], list = unitsOf(u.world), next = list.slice(list.indexOf(u) + 1).concat(list).find(x => !state.done[x.key] && x !== u), onStage = u.world !== 'clothes', W = WORLDS.find(w => w.key === u.world);
     const fresh = !state.inv.includes(k);
     state.done[u.key] = true; if (fresh) state.inv.push(k); if (onStage && !state.stage[k]) state.stage[k] = { x: it.stage.x, y: it.stage.y }; save();
-    $('#panel').innerHTML = `<div class="finish-title">איזו כוכבת! הרווחת ${it.name}</div><div class="reward-card" id="rewardCard"><img src="${it.card || it.img}" alt="${it.name}"></div>
-      <div class="collection-label">אספת ${list.filter(x => state.inv.includes(x.item)).length} מתוך ${list.length} ${onStage ? 'דברים' : 'פריטים'}</div>
+    $('#panel').innerHTML = `<div class="finish-title">${T.won} ${it.name}</div><div class="reward-card" id="rewardCard"><img src="${it.card || it.img}" alt="${it.name}"></div>
+      <div class="collection-label">${T.collected} ${list.filter(x => state.inv.includes(x.item)).length} מתוך ${list.length} ${onStage ? 'דברים' : 'פריטים'}</div>
       <div class="collection">${list.map(x => `<span class="${state.inv.includes(x.item) ? (x.item === k && fresh ? 'new' : '') : 'miss'}"><img src="${ITEMS[x.item].card || ITEMS[x.item].img}" alt=""></span>`).join('')}</div>
       <div class="finish-actions" id="finishActions" style="opacity:0;transition:opacity .4s">
-        ${!onStage && !state.outfit[k] ? `<button class="next" style="position:static;transform:none;animation:none;height:84px;font-size:32px" onclick="Sfx.tap();Wardrobe.open('${k}')">${ICON.closet} בואי נלביש את הכוכבת!</button>` : ''}
+        ${!onStage && !state.outfit[k] ? `<button class="next" style="position:static;transform:none;animation:none;height:84px;font-size:32px" onclick="Sfx.tap();Wardrobe.open('${k}')">${ICON.closet} ${T.dress}</button>` : ''}
         ${next ? `<button class="${!onStage && !state.outfit[k] ? 'pill' : 'next'}" style="position:static;transform:none;animation:none;height:84px;font-size:32px" onclick="Sfx.tap();Unit.start('${next.key}')">לאות ${next.letter} ${!onStage && !state.outfit[k] ? '' : ICON.next}</button>` : ''}
         ${onStage || state.outfit[k] ? `<button class="pill" onclick="Sfx.tap();go.place('${u.world}')">${ICON.closet} ${W.placeName}</button>` : ''}
         <button class="pill" onclick="go.world('${u.world}')">כל האותיות</button>
-        <a class="pill" style="text-decoration:none;color:inherit" href="worksheets/letter-worksheet.html?l=${encodeURIComponent(u.letter)}" target="_blank" rel="noopener">${ICON.print} דף עבודה</a></div>`;
+        ${CFG.worksheets ? '' : '<!--'}<a class="pill" style="text-decoration:none;color:inherit" href="worksheets/letter-worksheet.html?l=${encodeURIComponent(u.letter)}" target="_blank" rel="noopener">${ICON.print} דף עבודה</a>${CFG.worksheets ? '' : '-->'}</div>`;
     Sfx.done(); confetti(); say(`done-${u.key}`);
     setTimeout(() => this.toStage(), 1500);
   },
@@ -275,14 +286,14 @@ const Writer = {
   path(ctx, st) { ctx.beginPath(); st.forEach((p, i) => i ? ctx.lineTo(...p) : ctx.moveTo(...p)); },
   drawGuide() {
     const g = this.g; g.clearRect(0, 0, 730, 600); g.lineCap = g.lineJoin = 'round';
-    for (const st of this.strokes) { this.path(g, st); g.strokeStyle = this.round === 1 ? '#efe2f5' : '#f5edf8'; g.lineWidth = 64; g.stroke(); }
+    for (const st of this.strokes) { this.path(g, st); g.strokeStyle = this.round === 1 ? CFG.colors.path : CFG.colors.path2; g.lineWidth = 64; g.stroke(); }
     if (this.round !== 1 && !this.help) return;
     this.strokes.forEach((st, si) => {
       // dotted centre line
-      g.setLineDash([2, 18]); this.path(g, st); g.strokeStyle = si === this.si ? '#c58fc0' : '#dcc4e2'; g.lineWidth = 9; g.stroke(); g.setLineDash([]);
+      g.setLineDash([2, 18]); this.path(g, st); g.strokeStyle = si === this.si ? CFG.colors.dots : CFG.colors.dotsOff; g.lineWidth = 9; g.stroke(); g.setLineDash([]);
       // arrow at the end
       const [x1, y1] = st[st.length - 1], [x0, y0] = st[st.length - 2], a = Math.atan2(y1 - y0, x1 - x0);
-      g.fillStyle = si === this.si ? '#c58fc0' : '#dcc4e2'; g.beginPath(); g.moveTo(x1 + Math.cos(a) * 22, y1 + Math.sin(a) * 22); g.lineTo(x1 + Math.cos(a + 2.5) * 20, y1 + Math.sin(a + 2.5) * 20); g.lineTo(x1 + Math.cos(a - 2.5) * 20, y1 + Math.sin(a - 2.5) * 20); g.fill();
+      g.fillStyle = si === this.si ? CFG.colors.dots : CFG.colors.dotsOff; g.beginPath(); g.moveTo(x1 + Math.cos(a) * 22, y1 + Math.sin(a) * 22); g.lineTo(x1 + Math.cos(a + 2.5) * 20, y1 + Math.sin(a + 2.5) * 20); g.lineTo(x1 + Math.cos(a - 2.5) * 20, y1 + Math.sin(a - 2.5) * 20); g.fill();
     });
     const st = this.strokes[this.si]; if (!st) return;
     const [sx, sy] = st[Math.min(this.pi, st.length - 1)];
@@ -298,7 +309,7 @@ const Writer = {
   accuracy() { return this.inkAll ? this.inkOn / this.inkAll : 0; },
   move(e) {
     const p = this.pt(e), ink = this.ink;
-    ink.lineCap = ink.lineJoin = 'round'; ink.strokeStyle = '#d0619b'; ink.lineWidth = 34;
+    ink.lineCap = ink.lineJoin = 'round'; ink.strokeStyle = CFG.colors.ink; ink.lineWidth = 34;
     // sample the drawn line every few pixels so fast and slow fingers count the same
     const from = this.last || p, steps = Math.max(1, Math.ceil(Math.hypot(p[0] - from[0], p[1] - from[1]) / 8));
     if (this.last) { ink.beginPath(); ink.moveTo(...this.last); ink.lineTo(...p); ink.stroke(); }
@@ -353,9 +364,9 @@ const Wardrobe = {
   open(fresh = null) {
     const loose = state.inv.filter(k => !ITEMS[k].world && !state.outfit[k]);
     this.fresh = fresh;
-    screen(`${topbar({ back: "go.world('clothes')", title: 'חדר ההלבשה' })}
+    screen(`${topbar({ back: "go.world('clothes')", title: WORLDS.find(w => w.key === 'clothes').placeName })}
       ${loose.map(k => this.cubbyImg(k)).join('')}${starHTML()}<div class="drop-glow" id="dropGlow" style="left:${STAR_BOX.x - 60}px;top:${STAR_BOX.y - 40}px;width:${STAR_BOX.w + 120}px;height:${STAR_BOX.h + 60}px"></div>
-      <div class="wardrobe-bar">${Object.keys(state.outfit).length ? `<button class="pill" onclick="Wardrobe.undressAll()">${ICON.undress} הכול חוזר לארון</button>` : ''}</div>`, { bg: ART.wardrobe });
+      <div class="wardrobe-bar">${Object.keys(state.outfit).length ? `<button class="pill" onclick="Wardrobe.undressAll()">${ICON.undress} ${T.undressAll}</button>` : ''}</div>`, { bg: ART.wardrobe });
     this.bindStar();
     stage.querySelectorAll('.closet-item').forEach(el => this.draggable(el));
     if (fresh) stage.querySelector(`.closet-item[data-item="${fresh}"]`)?.classList.add('hint');
@@ -423,7 +434,7 @@ const Wardrobe = {
       el.classList.remove('dragging'); el.src = it.card || it.img; Object.assign(el.style, { left: r.x + 'px', top: r.y + 'px', width: r.w + 'px', transition: 'all .35s ease' });
       setTimeout(() => { el.style.transition = ''; }, 400); Sfx.soft(); say('back-shelf');
     }
-    const bar = $('.wardrobe-bar'); if (bar) bar.innerHTML = Object.keys(state.outfit).length ? `<button class="pill" onclick="Wardrobe.undressAll()">${ICON.undress} הכול חוזר לארון</button>` : '';
+    const bar = $('.wardrobe-bar'); if (bar) bar.innerHTML = Object.keys(state.outfit).length ? `<button class="pill" onclick="Wardrobe.undressAll()">${ICON.undress} ${T.undressAll}</button>` : '';
   },
   undressAll() { state.outfit = {}; save(); this.open(); say('back-shelf'); },
 };
@@ -476,15 +487,15 @@ function openParents() {
   stage.insertAdjacentHTML('beforeend', `<div class="overlay" id="parents" onclick="if(event.target===this)this.remove()"><div class="sheet">
     <button class="round close" onclick="document.getElementById('parents').remove()">✕</button>
     <h2>מידע להורים</h2>
-    <p>כל יחידת אות בנויה מאותם חמישה שלבים: <b>צליל פותח</b> (איזה פריט מתחיל בצליל), <b>אוצר מילים</b> (עוד שלוש מילים), <b>זיהוי האות</b> בין אותיות דומות, <b>כתיבה בדפוס</b> (פעם במסלול מודרך ופעם לבד), ו<b>פרס</b> שהכוכבת לובשת מיד.</p>
-    <p>אחרי שתי טעויות מופיע רמז מנצנץ, כך שאף ילדה לא נתקעת. הכפתור הסגול עם הרמקול משמיע שוב את ההוראה.</p>
+    <p>כל יחידת אות בנויה מאותם חמישה שלבים: <b>צליל פותח</b> (איזה פריט מתחיל בצליל), <b>אוצר מילים</b> (עוד שלוש מילים), <b>זיהוי האות</b> בין אותיות דומות, <b>כתיבה בדפוס</b> (פעם במסלול מודרך ופעם לבד), ${T.parentsReward}.</p>
+    <p>${T.parentsHint} הכפתור הסגול עם הרמקול משמיע שוב את ההוראה.</p>
     <p><b>הקלטת קול:</b> אפשר להקליט את ההוראות בקול שלכם, והמשחק ישתמש בהקלטות במקום בקול הממוחשב. <a href="studio.html" target="_blank" rel="noopener">לאולפן ההקלטות</a></p>
-    <p><b>דפי עבודה להדפסה:</b></p><div class="row">${UNITS.map(u => `<a class="pill" style="text-decoration:none" href="worksheets/letter-worksheet.html?l=${encodeURIComponent(u.letter)}" target="_blank" rel="noopener">${u.letter}</a>`).join('')}</div>
+    ${CFG.worksheets ? `<p><b>דפי עבודה להדפסה:</b></p><div class="row">${UNITS.map(u => `<a class="pill" style="text-decoration:none" href="worksheets/letter-worksheet.html?l=${encodeURIComponent(u.letter)}" target="_blank" rel="noopener">${u.letter}</a>`).join('')}</div>` : ''}
     <p><button class="pill" onclick="if(confirm('למחוק את כל ההתקדמות והפריטים?')){localStorage.removeItem('${SAVE_KEY}');state=loadState();state.migrated=true;save();document.getElementById('parents').remove();go.home()}">איפוס ההתקדמות</button></p>
   </div></div>`);
 }
 
 /* ---------- start ---------- */
 Voice.ready();
-stage.innerHTML = `<img class="bg" src="${ART.room}" alt="">${starHTML()}<div class="overlay" style="background:#3a284666"><button class="start-btn" id="startBtn">בואי<br>נשחק!</button></div>`;
+stage.innerHTML = `<img class="bg" src="${ART.room}" alt="">${starHTML()}<div class="overlay" style="background:#3a284666"><button class="start-btn" id="startBtn">${T.start}</button></div>`;
 document.getElementById('startBtn').onclick = () => { Sfx.unlock(); Sfx.good(); go.home(); };

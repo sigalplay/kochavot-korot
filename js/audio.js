@@ -4,9 +4,10 @@
    → a file in audio/ listed in audio/manifest.json (e.g. "open-mem.mp3") → the computer voice. */
 
 // which upload file a spoken line belongs to: one per world, plus shared words and general lines
-function recGroups() { return ['general', 'words', 'plural', ...WORLDS.map(w => w.key)]; }
+function recGroups() { return ['general', 'words', 'plural', 'football', ...WORLDS.map(w => w.key)]; }
 function recGroupOf(id) {
   if (id.startsWith('pl/')) return 'plural';
+  if (id.startsWith('fb/')) return 'football';
   if (/^(w|i|letter)-/.test(id)) return 'words';
   const u = UNITS.find(u => id.endsWith('-' + u.key));
   return u ? u.world : 'general';
@@ -123,7 +124,9 @@ const Voice = (() => {
   async function say(...ids) {
     stop(); const my = token;
     document.body.classList.add('talking');
-    for (const id of ids.flat()) { if (my !== token) return; await one(id, my); }
+    // a game can say one line with recordings from the shared banks, e.g. 'done-mem' → ['pl/done-mem', 'pl/won', 'i-shorts']
+    const alias = typeof VOICE_ALIAS !== 'undefined' ? VOICE_ALIAS : {};
+    for (const id of ids.flat().flatMap(i => alias[i] || [i])) { if (my !== token) return; await one(id, my); }
     if (my === token) document.body.classList.remove('talking');
   }
   return { ready, say, stop, unlock, getClip, putClip, delClip, listClips, playUrl, bundle: () => bundle };

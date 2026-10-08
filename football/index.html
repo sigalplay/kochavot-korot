@@ -5,15 +5,19 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="theme-color" content="#5a3f68">
-<title>כוכבות קוראות</title>
+<meta name="theme-color" content="#173a7a">
+<title>אלופי האותיות</title>
+<!-- every path in the game is from the site root, so both games share fonts, words, letters and recordings -->
+<base href="../">
 <link rel="stylesheet" href="css/game.css">
+<link rel="stylesheet" href="football/football.css">
 </head>
-<body>
+<body class="football">
 <div id="viewport"><div id="stage"></div></div>
 <div id="rotate">↻ במסך לרוחב המשחק גדול יותר</div>
 <script src="js/letters.js"></script>
-<script src="js/content.js"></script>
+<script src="football/data.js"></script>
+<script src="football/content.js"></script>
 <script src="js/audio.js"></script>
 <script src="js/game.js"></script>
 </body>

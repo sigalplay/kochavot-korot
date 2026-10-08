@@ -252,4 +252,32 @@ function buildLines() {
 }
 const LETTER_NAMES = { 'א': 'אָלֶף', 'ב': 'בֵּית', 'ג': 'גִּימֶל', 'ד': 'דָּלֶת', 'ה': 'הֵא', 'ו': 'וָו', 'ז': 'זַיִן', 'ח': 'חֵית', 'ט': 'טֵית', 'י': 'יוּד', 'כ': 'כָּף', 'ל': 'לָמֶד', 'מ': 'מֵם', 'נ': 'נוּן', 'ס': 'סָמֶךְ', 'ע': 'עַיִן', 'פ': 'פֵּא', 'צ': 'צָדִי', 'ק': 'קוּף', 'ר': 'רֵישׁ', 'ש': 'שִׁין', 'ת': 'תָּו' };
 const LETTER_KEYS = { 'א': 'alef', 'ב': 'bet', 'ג': 'gimel', 'ד': 'dalet', 'ה': 'he', 'ו': 'vav', 'ז': 'zayin', 'ח': 'chet', 'ט': 'tet', 'י': 'yod', 'כ': 'kaf', 'ל': 'lamed', 'מ': 'mem', 'נ': 'nun', 'ס': 'samech', 'ע': 'ayin', 'פ': 'pe', 'צ': 'tsadi', 'ק': 'kof', 'ר': 'resh', 'ש': 'shin', 'ת': 'tav' };
-const LINES = buildLines();
+/* The plural bank (לשון רבים): instructions and feedback that speak to the child, for every game after the first.
+   Recorded once, shared by all characters. Lines that are already neutral (letter names, words, "יופי!") are reused as is. */
+function buildPluralLines() {
+  const L = {
+    'pl/not-this': ['לא, זה לא מתחיל בצליל הזה. נסו שוב.'],
+    'pl/hint': ['רמז: חפשו את מה שמנצנץ.'],
+    'pl/next-step': ['ממשיכים!'],
+    'pl/write-again': ['כמעט! נסו לעבור עוד קצת על האות.'],
+    'pl/write-good': ['כתבתם יפה מאוד!'],
+    'pl/trace-start': ['שימו את האצבע על הכוכב.'],
+    'pl/look-for': ['ואנחנו מחפשים את האות'],
+    'pl/place-empty': ['עוד אין כאן כלום. סיימו יחידה וקבלו את הדבר הראשון!'],
+    'pl/choose-letter': ['בחרו אות!'],
+    'pl/yes': ['נכון!'],
+    'pl/won': ['הרווחתם'],
+    'pl/new-item': ['הפרס החדש מחכה לכם! גררו אותו למקום.'],
+    'pl/drag': ['גררו את הדברים למקום שאתם רוצים.'],
+  };
+  for (const u of UNITS) {
+    L[`pl/words-${u.key}`] = [`מצאו שלוש תמונות שמתחילות בצליל ${u.sound}`];
+    L[`pl/hunt-${u.key}`] = [`מצאו את כל האותיות ${u.name}`];
+    L[`pl/write-${u.key}`] = [`בואו נכתוב את האות ${u.name}. מתחילים בכוכב ועוברים לאט על הדרך.`];
+    L[`pl/write2-${u.key}`] = [`עכשיו לבד! כתבו ${u.name} על האות הבהירה.`];
+    L[`pl/done-${u.key}`] = [`כל הכבוד! למדתם את האות ${u.name}!`];
+  }
+  return L;
+}
+const PLURAL_LINES = buildPluralLines();
+const LINES = Object.assign(buildLines(), PLURAL_LINES);

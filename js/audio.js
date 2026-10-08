@@ -4,8 +4,9 @@
    → a file in audio/ listed in audio/manifest.json (e.g. "open-mem.mp3") → the computer voice. */
 
 // which upload file a spoken line belongs to: one per world, plus shared words and general lines
-function recGroups() { return ['general', 'words', ...WORLDS.map(w => w.key)]; }
+function recGroups() { return ['general', 'words', 'plural', ...WORLDS.map(w => w.key)]; }
 function recGroupOf(id) {
+  if (id.startsWith('pl/')) return 'plural';
   if (/^(w|i|letter)-/.test(id)) return 'words';
   const u = UNITS.find(u => id.endsWith('-' + u.key));
   return u ? u.world : 'general';

@@ -269,7 +269,7 @@ const Writer = {
   u: null, round: 1, strokes: [], si: 0, pi: 0, down: false, ink: null, g: null,
   P(p) { return [365 + (p[0] - 50) * 8, 300 + (p[1] - 52) * 8]; }, // 100×100 letter box → 730×600 board
   begin(u, round, help = false) {
-    this.u = u; this.round = round; this.si = 0; this.pi = 0; this.tries = 0; this.finished = false; this.help = !!help; this.inkAll = 0; this.inkOn = 0;
+    this.u = u; this.round = round; this.si = 0; this.pi = 0; this.tries = 0; this.finished = false; this.complete = false; this.help = !!help; this.inkAll = 0; this.inkOn = 0;
     // resample each stroke every ~14px so progress can be checked point by point
     this.strokes = u.strokes.map(st => { const pts = this.smooth(st).map(p => this.P(p)), out = [pts[0]]; for (let i = 1; i < pts.length; i++) { const [x0, y0] = pts[i - 1], [x1, y1] = pts[i], n = Math.max(1, Math.round(Math.hypot(x1 - x0, y1 - y0) / 14)); for (let j = 1; j <= n; j++) out.push([x0 + (x1 - x0) * j / n, y0 + (y1 - y0) * j / n]); } return out; });
     this.covered = this.strokes.map(s => s.map(() => false));
@@ -336,12 +336,14 @@ const Writer = {
       while (this.si < this.strokes.length && this.share(this.si) >= this.STROKE_OK) this.si++;
       if (this.si !== before) Sfx.snap();
       const st = this.strokes[this.si]; this.pi = st ? Math.max(0, st.findIndex((_, j) => !this.covered[this.si][j])) : 0;
-      if (this.si >= this.strokes.length) { if (this.accuracy() >= this.ACCURACY_OK) return this.passed(); return this.offLetter(); }
+      // every line is covered: wait for the finger to lift, so the child can finish the line they are drawing
+      if (this.si >= this.strokes.length) { this.complete = true; return; }
       this.drawGuide();
     }
   },
   check() {
-    if (this.round === 1 || this.finished) return;
+    if (this.finished) return;
+    if (this.round === 1) { if (this.complete) { this.complete = false; if (this.accuracy() >= this.ACCURACY_OK) this.passed(); else this.offLetter(); } return; }
     if (this.total() >= this.ROUND2_OK && this.covered.every((_, i) => this.share(i) >= .4)) {
       if (this.accuracy() >= this.ACCURACY_OK) this.passed(); else this.offLetter();
     }

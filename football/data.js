@@ -10,7 +10,7 @@ const FB = (() => {
     room: A + 'locker-room.jpg',         // home and menu screens
   };
   // where the player stands on the 1600×1000 stage (same spot on every screen); player.png is 351×924 (40px of empty room on each side, for the boots)
-  const STAR_BOX = { x: 1190, y: 212, w: 281, h: 740 };
+  const STAR_BOX = { x: 1300, y: 212, w: 281, h: 740 };
 
   // Dressing room: every item is a full-size layer drawn over player.png (made by football/assets/make-layers.py,
   // armband and wristband placed by measurement). fit = where the item is inside the layer, for the fly-in.

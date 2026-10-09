@@ -38,9 +38,9 @@ const FB = (() => {
     speaker: { ...P('fans', 'רמקול', 'speaker', 1.672, 1000, 185, 62, 5), slot: true },
     screen: { ...P('fans', 'טלוויזיה', 'screen', .878, 520, 150, 180, 4), slot: true },
     // the snack stand: the food stands on the counter
-    hamburger: { ...P('snack', 'המבורגר', 'hamburger', .956, 620, 484, 190), slot: true },
-    popcorn: { ...P('snack', 'פופקורן', 'popcorn', 1.429, 800, 474, 140), slot: true },
-    waffle: { ...P('snack', 'ופל', 'waffle', .986, 980, 490, 170), slot: true },
+    hamburger: { ...P('snack', 'המבורגר', 'hamburger', .806, 430, 688, 250), slot: true },
+    popcorn: { ...P('snack', 'פופקורן', 'popcorn', 1.429, 690, 660, 180), slot: true },
+    waffle: { ...P('snack', 'ופל', 'waffle', .986, 930, 690, 200), slot: true },
     // the celebration: the cup on the winners' podium, the cake on the table, balloons by the stage, fireworks in the sky
     cup: { ...P('party', 'גביע', 'cup', 1.386, 845, 456, 110, 8), slot: true },
     cake: { ...P('party', 'עוגה', 'cake', 1.062, 668, 388, 120, 8), slot: true },

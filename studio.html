@@ -21,6 +21,7 @@ main{max-width:980px;margin:0 auto;padding:16px}
 .rec{background:#e86f95!important;color:#fff}
 .rec.on{animation:p 1s infinite}
 .has{box-shadow:inset 0 0 0 3px #66b99e}
+.modes button{font-size:20px;font-weight:800;padding:10px 20px}.modes button.on{background:#1f5fc4}.boy h1{color:#1f5fc4}
 .count{font-weight:800}.sync{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:12px;background:#fff6e0;border-radius:16px;padding:10px 14px}.sync .big{border:0;border-radius:999px;padding:12px 20px;font:inherit;font-weight:800;background:#a76a9c;color:#fff;cursor:pointer}.site{color:#3c9b7a;font-size:14px;font-weight:700}
 @keyframes p{50%{opacity:.5}}
 </style>
@@ -29,6 +30,7 @@ main{max-width:980px;margin:0 auto;padding:16px}
 <header><h1>אולפן הקלטות — כוכבות קוראות</h1>
 <p>לחצי <b>הקלטה</b>, אמרי את המשפט, ולחצי <b>עצירה</b>. ההקלטה נשמרת במכשיר הזה, והמשחק משתמש בה במקום בקול הממוחשב.<br>
 טיפ: בצלילים (למשל „מְ”) אומרים רק את הצליל הקצר, בלי שם האות. הוקלטו <span class="count" id="count">0</span> מתוך <span id="total"></span>.</p>
+<div class="filters modes" id="modes"></div>
 <div class="filters" id="filters"></div>
 <div class="filters letters" id="letters"></div>
 <div class="sync"><button class="big" onclick="exportAll()">⬆ שמירת כל ההקלטות לקבצים</button>
@@ -40,22 +42,40 @@ main{max-width:980px;margin:0 auto;padding:16px}
 <script src="js/audio.js"></script>
 <script>
 Object.assign(LINES, FB.lines()); // the football game's own lines (אלופי האותיות)
-const groups={'עוד לא הוקלט':id=>!have.has(id)&&!Voice.bundle()[id],'לשון רבים':id=>id.startsWith('pl/'),'כדורגל':id=>id.startsWith('fb/'),'הכול':()=>true,'הוראות':id=>/^(open|words|hunt|write|write2|done|yes)-/.test(id),'מילים ופריטים':id=>/^(w|i)-/.test(id),'אותיות וצלילים':id=>/^(name|sound|letter)-/.test(id),'כללי':id=>!/^(pl|fb)\//.test(id)&&!/^(open|words|hunt|write|write2|done|yes|name|sound|w|i|letter)-/.test(id)};
+/* Two voices: the girls' game (her voice) and אלופי האותיות, recorded by a boy. The boy's recordings are saved
+   under 'boy/<id>' so they never replace hers; the list shows only the lines the football game says. */
+const BOY = FB.voice(buildSharedLines(), buildPluralLines());
+let mode = 'girl';
+try { if (localStorage.getItem('studio-mode') === 'boy') mode = 'boy'; } catch {}
+const recKey = id => mode === 'boy' ? 'boy/' + id : id;       // where a recording is saved
+const ids = () => mode === 'boy' ? BOY.ids : Object.keys(LINES);
+const text = id => (mode === 'boy' ? BOY.lines : LINES)[id][0];
+const bare = id => id.replace(/^(pl|fb)\//, '');                // 'pl/words-mem' groups with 'words-mem'
+function setMode(m) { mode = m; filter = 'עוד לא הוקלט'; try { localStorage.setItem('studio-mode', m); } catch {} refresh(); }
+const groups={'עוד לא הוקלט':id=>!have.has(recKey(id))&&!Voice.bundle()[recKey(id)],'הכול':()=>true,
+  'לשון רבים':id=>mode==='girl'&&id.startsWith('pl/'),'כדורגל':id=>mode==='girl'&&id.startsWith('fb/'),
+  'הוראות':id=>/^(open|words|hunt|write|write2|done|yes)-/.test(bare(id)),'מילים ופריטים':id=>/^(w|i)-/.test(bare(id)),'אותיות וצלילים':id=>/^(name|sound|letter)-/.test(bare(id)),
+  'כללי':id=>!/^(open|words|hunt|write|write2|done|yes|name|sound|w|i|letter)-/.test(bare(id))&&(mode==='boy'||!/^(pl|fb)\//.test(id))};
 let filter='עוד לא הוקלט',have=new Set(),rec=null;
-async function refresh(){have=new Set(await Voice.listClips()||[]);document.getElementById('count').textContent=Object.keys(LINES).filter(k=>have.has(k)||Voice.bundle()[k]).length;render()}
-function letterIds(key){
-  const u=UNITS.find(x=>x.key===key),ids=new Set(Object.keys(LINES).filter(id=>id.endsWith('-'+u.key)&&!/^(w|i|letter)-/.test(id)));
-  ids.add('letter-'+LETTER_KEYS[u.letter]);u.options.forEach(k=>ids.add('i-'+k));[...u.words,...u.wrong].forEach(w=>ids.add('w-'+w));
-  for(const id of [...ids])if(LINES['pl/'+id])ids.add('pl/'+id);
-  return ids;
+async function refresh(){have=new Set(await Voice.listClips()||[]);document.getElementById('count').textContent=ids().filter(k=>have.has(recKey(k))||Voice.bundle()[recKey(k)]).length;render()}
+function letterIds(lk){
+  const u=(mode==='boy'?FB.UNITS:UNITS).find(x=>x.key===lk),all=ids(),out=new Set(all.filter(id=>bare(id).endsWith('-'+u.key)&&!/^(w|i|letter)-/.test(bare(id))));
+  out.add('letter-'+LETTER_KEYS[u.letter]);[...u.words,...u.wrong].forEach(w=>out.add('w-'+w));
+  if(mode==='boy')u.options.forEach(k=>(BOY.alias['i-'+k]||[]).forEach(i=>out.add(i)));else u.options.forEach(k=>out.add('i-'+k));
+  if(mode==='girl')for(const id of [...out])if(LINES['pl/'+id])out.add('pl/'+id);
+  return new Set([...out].filter(id=>all.includes(id)));
 }
 const pred=f=>f.startsWith('L:')?(s=>id=>s.has(id))(letterIds(f.slice(2))):groups[f];
 function render(){
-  document.getElementById('total').textContent=Object.keys(LINES).length;
-  document.getElementById('filters').innerHTML=Object.keys(groups).map(g=>`<button class="${g===filter?'on':''}" onclick="filter='${g}';render()">${g}</button>`).join('');
-  document.getElementById('letters').innerHTML=WORLDS.map(w=>`<span class="world">${w.title}:</span>`+unitsOf(w.key).map(u=>`<button class="${filter==='L:'+u.key?'on':''}" onclick="filter='L:${u.key}';render()">${u.letter}</button>`).join('')).join('');
-  document.getElementById('list').innerHTML=Object.entries(LINES).filter(([id])=>pred(filter)(id)).map(([id,[text]])=>`<div class="line ${have.has(id)?'has':''}" id="L-${id}"><div class="t">${text}<small>${id}</small>${Voice.bundle()[id]?'<span class="site">✓ באתר</span>':''}</div>
-   <button class="rec" onclick="toggle('${id}',this)">הקלטה</button>${have.has(id)?`<button onclick="play('${id}')">▶ השמעה</button><button onclick="download('${id}')">הורדה</button><button onclick="del('${id}')">מחיקה</button>`:Voice.bundle()[id]?`<button onclick="Voice.playUrl(Voice.bundle()['${id}'])">▶ ההקלטה שבאתר</button>`:`<button onclick="Voice.say('${id}')">▶ קול ממוחשב</button>`}</div>`).join('');
+  document.body.classList.toggle('boy',mode==='boy');
+  document.querySelector('h1').textContent=mode==='boy'?'אולפן הקלטות — אלופי האותיות (קול של ילד)':'אולפן הקלטות — כוכבות קוראות';
+  document.getElementById('modes').innerHTML=`<button class="${mode==='girl'?'on':''}" onclick="setMode('girl')">כוכבות קוראות</button><button class="${mode==='boy'?'on':''}" onclick="setMode('boy')">⚽ אלופי האותיות — קול של ילד</button>`;
+  document.getElementById('total').textContent=ids().length;
+  document.getElementById('filters').innerHTML=Object.keys(groups).filter(g=>mode==='girl'||!['לשון רבים','כדורגל'].includes(g)).map(g=>`<button class="${g===filter?'on':''}" onclick="filter='${g}';render()">${g}</button>`).join('');
+  const W_=mode==='boy'?FB.WORLDS:WORLDS,U_=w=>(mode==='boy'?FB.UNITS:UNITS).filter(u=>u.world===w);
+  document.getElementById('letters').innerHTML=W_.map(w=>`<span class="world">${w.title}:</span>`+U_(w.key).map(u=>`<button class="${filter==='L:'+u.key?'on':''}" onclick="filter='L:${u.key}';render()">${u.letter}</button>`).join('')).join('');
+  document.getElementById('list').innerHTML=ids().filter(id=>pred(filter)(id)).map(id=>{const k=recKey(id),site=Voice.bundle()[k];return `<div class="line ${have.has(k)?'has':''}" id="L-${k}"><div class="t">${text(id)}<small>${k}</small>${site?'<span class="site">✓ באתר</span>':''}</div>
+   <button class="rec" onclick="toggle('${k}',this)">הקלטה</button>${have.has(k)?`<button onclick="play('${k}')">▶ השמעה</button><button onclick="download('${k}')">הורדה</button><button onclick="del('${k}')">מחיקה</button>`:site?`<button onclick="Voice.playUrl(Voice.bundle()['${k}'])">▶ ההקלטה שבאתר</button>`:`<button onclick="Voice.say('${id}')">▶ קול ממוחשב</button>`}</div>`}).join('');
 }
 async function toggle(id,btn){
   if(rec){rec.stop();return}

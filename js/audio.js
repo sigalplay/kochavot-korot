@@ -4,9 +4,10 @@
    → a file in audio/ listed in audio/manifest.json (e.g. "open-mem.mp3") → the computer voice. */
 
 // which upload file a spoken line belongs to: one per world, plus shared words and general lines
-function recGroups() { return ['general', 'words', 'plural', 'football', ...WORLDS.map(w => w.key)]; }
+function recGroups() { return ['general', 'words', 'plural', 'football', 'boy', ...WORLDS.map(w => w.key)]; }
 function recGroupOf(id) {
   if (id.startsWith('pl/')) return 'plural';
+  if (id.startsWith('boy/')) return 'boy';
   if (id.startsWith('fb/')) return 'football';
   if (/^(w|i|letter)-/.test(id)) return 'words';
   const u = UNITS.find(u => id.endsWith('-' + u.key));
@@ -113,10 +114,14 @@ const Voice = (() => {
   async function one(id, my) {
     const line = LINES[id];
     if (!line) return;
-    const clip = await getClip(id);
-    if (my !== token) return;
-    if (clip) { const url = URL.createObjectURL(clip), ok = await playUrl(url); URL.revokeObjectURL(url); if (ok || my !== token) return; }
-    if (bundle[id] && (await playUrl(bundle[id]) || my !== token)) return;
+    // a game with its own voice (football: a boy) plays its own recording first, then the shared one
+    const pre = typeof VOICE_PREFIX !== 'undefined' ? VOICE_PREFIX : '';
+    for (const key of pre ? [pre + id, id] : [id]) {
+      const clip = await getClip(key);
+      if (my !== token) return;
+      if (clip) { const url = URL.createObjectURL(clip), ok = await playUrl(url); URL.revokeObjectURL(url); if (ok || my !== token) return; }
+      if (bundle[key] && (await playUrl(bundle[key]) || my !== token)) return;
+    }
     if (files.has(id) && (await playUrl(`audio/${files.get(id)}`) || my !== token)) return;
     return tts(line[1] || line[0]);
   }

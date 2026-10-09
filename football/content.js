@@ -15,22 +15,8 @@ const { ART, STAR_BOX, ITEMS, CUBBIES, UNITS, WORLDS } = FB;
 const WRISTS = [];
 const unitsOf = w => UNITS.filter(u => u.world === w);
 
-const itemVoice = k => FB.SAME_ITEM[k] || `fb/i-${k}`;
-
 /* Engine line id → what to say. Text is shown on screen and used by the computer voice;
-   VOICE_ALIAS says which recordings to play instead. */
-const LINES = {}, VOICE_ALIAS = {};
-(() => {
-  const shared = buildSharedLines(), fb = FB.lines(), plural = buildPluralLines();
-  const use = (id, ...ids) => { VOICE_ALIAS[id] = ids; LINES[id] = [ids.map(i => (shared[i] || fb[i] || plural[i] || [''])[0]).join(' ')]; };
-  Object.assign(LINES, shared, fb, plural);
-  for (const k of ['home', 'wardrobe', 'wardrobe-empty', 'wardrobe-new', 'dressed', 'back-shelf']) use(k, `fb/${k}`);
-  for (const k of ['not-this', 'hint', 'next-step', 'write-again', 'write-good', 'trace-start', 'place-empty', 'look-for']) use(k, `pl/${k}`);
-  for (const w of WORLDS) { use(`world-${w.key}`, `fb/world-${w.key}`); use(`done-world-${w.key}`, `fb/done-world-${w.key}`); if (w.place) use(`place-${w.key}`, `fb/place-${w.key}`); }
-  for (const u of UNITS) {
-    for (const s of ['words', 'hunt', 'write', 'write2']) use(`${s}-${u.key}`, `pl/${s}-${u.key}`);
-    use(`yes-${u.key}`, `fb/yes-${u.key}`);
-    use(`done-${u.key}`, `fb/done-${u.key}`);
-  }
-  for (const [k, it] of Object.entries(ITEMS)) { use(`i-${k}`, itemVoice(k)); LINES[`i-${k}`] = [it.name]; }
-})();
+   VOICE_ALIAS says which recordings to play instead. The football game is voiced by a boy:
+   his recordings are kept apart from the girls' game under ids starting with 'boy/' (VOICE_PREFIX). */
+const VOICE = FB.voice(buildSharedLines(), buildPluralLines());
+const LINES = VOICE.lines, VOICE_ALIAS = VOICE.alias, VOICE_PREFIX = 'boy/';

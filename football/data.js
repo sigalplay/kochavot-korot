@@ -111,5 +111,26 @@ const FB = (() => {
     for (const [k, it] of Object.entries(ITEMS)) if (!SAME_ITEM[k]) L[`fb/i-${k}`] = [it.name];
     return L;
   }
-  return { ART, STAR_BOX, ITEMS, CUBBIES, UNITS, WORLDS, SAME_ITEM, lines };
+  /* What the football game says, for the game and for the recording studio.
+     lines: id → text; alias: engine line id → the ids actually played; ids: every id the game can play (all recorded by the boy). */
+  function voice(shared, plural) {
+    const fb = lines(), out = Object.assign({}, shared, fb, plural), alias = {};
+    const use = (id, ...ids) => { alias[id] = ids; out[id] = [ids.map(i => (shared[i] || fb[i] || plural[i] || [''])[0]).join(' ')]; };
+    for (const k of ['home', 'wardrobe', 'wardrobe-empty', 'wardrobe-new', 'dressed', 'back-shelf']) use(k, `fb/${k}`);
+    for (const k of ['not-this', 'hint', 'next-step', 'write-again', 'write-good', 'trace-start', 'place-empty', 'look-for']) use(k, `pl/${k}`);
+    for (const w of WORLDS) { use(`world-${w.key}`, `fb/world-${w.key}`); use(`done-world-${w.key}`, `fb/done-world-${w.key}`); if (w.place) use(`place-${w.key}`, `fb/place-${w.key}`); }
+    for (const u of UNITS) {
+      for (const s of ['words', 'hunt', 'write', 'write2']) use(`${s}-${u.key}`, `pl/${s}-${u.key}`);
+      use(`yes-${u.key}`, `fb/yes-${u.key}`);
+      use(`done-${u.key}`, `fb/done-${u.key}`);
+    }
+    for (const [k, it] of Object.entries(ITEMS)) { use(`i-${k}`, SAME_ITEM[k] || `fb/i-${k}`); out[`i-${k}`] = [it.name]; }
+    // lines the engine says as they are (letters, sounds, words, cheers)
+    const plain = ['yay-1', 'yay-2', 'yay-3', 'yay-4', 'placed', 'place-back', 'this-is', 'write-on-letter',
+      ...Object.values(LETTER_KEYS).map(k => `letter-${k}`),
+      ...UNITS.flatMap(u => [`open-${u.key}`, `name-${u.key}`, ...u.words.map(w => `w-${w}`), ...u.wrong.map(w => `w-${w}`)])];
+    const ids = [...new Set([...Object.values(alias).flat(), ...plain])].filter(i => out[i]);
+    return { lines: out, alias, ids };
+  }
+  return { ART, STAR_BOX, ITEMS, CUBBIES, UNITS, WORLDS, SAME_ITEM, lines, voice };
 })();

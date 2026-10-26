@@ -4,6 +4,8 @@
 const GAME = {
   colors: { ink: '#1f5fc4', path: '#dde9f8', path2: '#e9f1fb', dots: '#5b8fd6', dotsOff: '#bcd0ea', confetti: ['#3a7bd5', '#ffffff', '#f2c230', '#4caf6a', '#9cc3f5'] },
   autoPlace: false, // the child places every prize himself
+  // a sixth tile on the home screen: the penalty game (football/penalty.js), practising all the letters
+  homeExtra: () => `<button class="world pen" onclick="Sfx.tap();go.penalty()"><span class="emoji">⚽</span><b>פנדלים</b><small>תרגול כל האותיות</small></button>`,
   saveKey: 'alufim-v1', title: 'אלופי האותיות', subtitle: 'הכנה משחקית לכיתה א׳', heroAlt: 'השחקן', worksheets: false,
   text: {
     next: 'ממשיכים', find3: 'מצאו', findAll: 'מצאו את כל האותיות', writing: 'כותבים את האות', restart: 'מתחילים מחדש',

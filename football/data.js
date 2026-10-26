@@ -101,6 +101,12 @@ const FB = (() => {
       'fb/wardrobe-new': ['הפריט החדש מחכה בארונית! גררו אותו אליי ותלבישו אותי.'],
       'fb/dressed': ['יש! תודה!'],
       'fb/back-shelf': ['החזרתי לארונית.'],
+      'fb/pen-intro': ['פנדלים! אני אגיד אות, ואתם תבעטו בכדור שעליו האות הזאת.'],
+      'fb/pen-kick': ['בעטו בכדור עם האות'],
+      'fb/pen-goal': ['גוֹל! זאת באמת האות'],
+      'fb/pen-again': ['נסו שוב!'],
+      'fb/pen-done': ['איזה אלופים! סיימתם את הפנדלים!'],
+      'fb/pen-name': ['פנדלים'],
     };
     for (const w of WORLDS) { L[`fb/world-${w.key}`] = [w.intro]; L[`fb/done-world-${w.key}`] = [w.doneLine]; if (w.place) L[`fb/place-${w.key}`] = [w.place]; }
     for (const u of UNITS) {
@@ -127,6 +133,7 @@ const FB = (() => {
     for (const [k, it] of Object.entries(ITEMS)) { use(`i-${k}`, SAME_ITEM[k] || `fb/i-${k}`); out[`i-${k}`] = [it.name]; }
     // lines the engine says as they are (letters, sounds, words, cheers)
     const plain = ['yay-1', 'yay-2', 'yay-3', 'yay-4', 'placed', 'place-back', 'this-is', 'write-on-letter',
+      ...Object.keys(fb).filter(k => k.startsWith('fb/pen-')), ...Object.keys(LETTERS).map(k => `name-${k}`),
       ...Object.values(LETTER_KEYS).map(k => `letter-${k}`),
       ...UNITS.flatMap(u => [`open-${u.key}`, `name-${u.key}`, ...u.words.map(w => `w-${w}`), ...u.wrong.map(w => `w-${w}`)])];
     const ids = [...new Set([...Object.values(alias).flat(), ...plain])].filter(i => out[i]);

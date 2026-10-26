@@ -131,7 +131,7 @@ const go = {
     screen(`${topbar({ home: false, replay: true })}
       <button class="round" style="position:absolute;bottom:28px;left:28px;z-index:31;width:auto;padding:0 26px;border-radius:999px;font-size:28px;font-weight:700" onclick="openParents()">להורים</button>
       <div class="hero-title"><h1>${CFG.title}</h1><p>${CFG.subtitle}</p></div>
-      <div class="worlds">${WORLDS.map(w => w.soon ? `<button class="world soon" onclick="Sfx.soft()">${w.icon ? `<img src="${w.icon}" alt="">` : `<span class="emoji">${w.emoji}</span>`}<b>${w.title}</b><small>בקרוב</small></button>` : `<button class="world ${worldDone(w.key) ? 'done' : 'active'}" onclick="Sfx.tap();go.world('${w.key}')"><img src="${w.icon}" alt=""><b>${w.title}</b><small>${doneCount(w.key)} מתוך ${unitsOf(w.key).length} אותיות</small></button>`).join('')}
+      <div class="worlds">${WORLDS.map(w => w.soon ? `<button class="world soon" onclick="Sfx.soft()">${w.icon ? `<img src="${w.icon}" alt="">` : `<span class="emoji">${w.emoji}</span>`}<b>${w.title}</b><small>בקרוב</small></button>` : `<button class="world ${worldDone(w.key) ? 'done' : 'active'}" onclick="Sfx.tap();go.world('${w.key}')"><img src="${w.icon}" alt=""><b>${w.title}</b><small>${doneCount(w.key)} מתוך ${unitsOf(w.key).length} אותיות</small></button>`).join('')}${CFG.homeExtra ? CFG.homeExtra() : ''}
       </div>${starHTML()}`);
     prompt(['home']);
   },

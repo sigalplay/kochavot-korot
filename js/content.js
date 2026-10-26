@@ -86,7 +86,7 @@ const UNITS = [
 
 /* Settings for the shared engine. A sixth tile on the home screen: the monster game (js/monsters.js), practising all the letters. */
 const GAME = {
-  homeExtra: () => `<button class="world mon-tile" onclick="Sfx.tap();go.monsters()">${Monsters.monsterSVG(2)}<b>מפלצות האותיות</b><small>תרגול כל האותיות</small></button>`,
+  homeExtra: () => `<button class="world mon-tile" onclick="Sfx.tap();go.monsters()"><img src="assets/battle/monster-2.png" alt=""><b>מפלצות האותיות</b><small>תרגול כל האותיות</small></button>`,
 };
 
 const WORLDS = [

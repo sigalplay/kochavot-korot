@@ -1,12 +1,12 @@
 /* מפלצות האותיות — a letter-practice game for כוכבות קוראות.
    Cute monsters crowd the stage, each holding a letter. "פגעי במפלצת עם האות מֵם": the star sends a beam of
    music and light at the right one, and it bursts into sparkles. Every round practises the letters the child
-   has met least, so over a few rounds all 22 letters come up. The monsters are drawn here (SVG) until
-   illustrated ones arrive. */
+   has met least, so over a few rounds all 22 letters come up. Art in assets/battle: the arena, five monsters
+   (each with a pale round tummy where its letter goes) and the star's two battle poses. */
 
 const Monsters = {
   ROUND: 8,
-  SPOTS: [{ x: 230, y: 470 }, { x: 510, y: 560 }, { x: 790, y: 470 }],
+  SPOTS: [{ x: 250, y: 470 }, { x: 520, y: 560 }, { x: 790, y: 470 }],   // centre of each monster
   // the star in battle (assets/battle): ready, facing the monsters on the left, and attacking. Both are 620px tall,
   // standing on the same spot; HAND is where the attack pose's outstretched hand is (fraction of that picture)
   HERO: { right: 1480, bottom: 960, h: 620, ready: [262, 522], attack: [396, 516], HAND: [.03, .37] },
@@ -16,35 +16,21 @@ const Monsters = {
       <img class="ready" src="assets/battle/star-ready.png" alt="הכוכבת" style="right:0;width:${wr}px;height:${H.h}px">
       <img class="attack" src="assets/battle/star-attack.png" alt="" style="right:0;width:${wa}px;height:${H.h}px"></div>`;
   },
-  COLORS: [['#b69add', '#8c6cc0'], ['#7fd1c2', '#4fa996'], ['#f6a7c1', '#d97a9d'], ['#ffc96b', '#e0a13d'], ['#8fc1f0', '#5e95cf']],
+  KINDS: 5,
   open() {
     this.hits = 0; this.turn = 0;
     this.round = Practice.plan('mon', this.ROUND);   // hard letters first, then the least practised
     screen(`${topbar({ title: 'מפלצות האותיות' })}
       <div class="mon-score" id="monScore"></div>
       <div class="mon-call" id="monCall"></div>
-      <div id="monField"></div>${this.heroHTML()}`, { bg: ART.stage });
+      <div id="monField"></div>${this.heroHTML()}`, { bg: 'assets/battle/arena.jpg' });
     stage.querySelector('.veil')?.remove();
     this.showScore();
     say('mon-intro');
     setTimeout(() => this.next(), 2800);
   },
   showScore() { $('#monScore').innerHTML = `✨ ${this.hits} <small>מפלצות</small> · ${Math.min(this.turn + 1, this.round.length)} מתוך ${this.round.length}`; },
-  // a round, friendly monster: soft body, little horns, big eyes, a smile, and the letter on its tummy
-  monsterSVG(i) {
-    const [c, d] = this.COLORS[i % this.COLORS.length];
-    return `<svg viewBox="0 0 200 220" class="mon-body">
-      <path d="M58 52 L46 14 L84 40Z M142 52 L154 14 L116 40Z" fill="${d}" stroke="#4a3550" stroke-width="5" stroke-linejoin="round"/>
-      <path d="M100 30 C160 30 188 80 188 135 C188 190 150 212 100 212 C50 212 12 190 12 135 C12 80 40 30 100 30Z" fill="${c}" stroke="#4a3550" stroke-width="6"/>
-      <path d="M30 150 C10 140 8 120 18 110 M170 150 C190 140 192 120 182 110" fill="none" stroke="#4a3550" stroke-width="7" stroke-linecap="round"/>
-      <circle cx="72" cy="88" r="20" fill="#fff" stroke="#4a3550" stroke-width="4"/><circle cx="128" cy="88" r="20" fill="#fff" stroke="#4a3550" stroke-width="4"/>
-      <circle class="pupil" cx="76" cy="92" r="9" fill="#2e2238"/><circle class="pupil" cx="132" cy="92" r="9" fill="#2e2238"/>
-      <circle cx="79" cy="88" r="3" fill="#fff"/><circle cx="135" cy="88" r="3" fill="#fff"/>
-      <path class="mouth" d="M84 118 Q100 130 116 118" fill="none" stroke="#4a3550" stroke-width="5" stroke-linecap="round"/>
-      <path d="M92 122 L95 128 L98 123 M102 123 L105 128 L108 122" fill="#fff" stroke="#4a3550" stroke-width="2.5" stroke-linejoin="round"/>
-      <ellipse cx="50" cy="108" rx="11" ry="7" fill="#ff8fb3" opacity=".6"/><ellipse cx="150" cy="108" rx="11" ry="7" fill="#ff8fb3" opacity=".6"/>
-    </svg>`;
-  },
+  monsterImg(i) { return `<img class="mon-body" src="assets/battle/monster-${i % this.KINDS}.png" alt="" draggable="false">`; },
   next() {
     if (this.turn >= this.round.length) return this.finish();
     const key = this.round[this.turn], L = LETTERS[key];
@@ -52,8 +38,8 @@ const Monsters = {
     this.key = key; this.misses = 0; this.busy = false;
     const letters = shuffle([L.letter, ...near]), first = Math.floor(Math.random() * 5);
     $('#monField').innerHTML = letters.map((ch, i) => { const p = this.SPOTS[i];
-      return `<button class="mon arrive" data-ch="${ch}" style="left:${p.x - 110}px;top:${p.y - 120}px;animation-delay:${i * .12}s" aria-label="${ch}">
-        ${this.monsterSVG(first + i)}<b>${ch}</b></button>`; }).join('');
+      return `<button class="mon arrive" data-ch="${ch}" style="left:${p.x - 100}px;top:${p.y - 170}px;animation-delay:${i * .12}s" aria-label="${ch}">
+        ${this.monsterImg(first + i)}<b>${ch}</b></button>`; }).join('');
     stage.querySelectorAll('.mon').forEach(m => m.addEventListener('pointerdown', e => { e.preventDefault(); this.hit(m); }));
     $('#monCall').innerHTML = `פגעי במפלצת עם האות <b>${L.letter}</b>`;
     this.showScore();

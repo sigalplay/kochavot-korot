@@ -106,7 +106,6 @@ const FB = (() => {
       'fb/pen-goal': ['גוֹל! זאת באמת האות'],
       'fb/pen-again': ['נסו שוב!'],
       'fb/pen-done': ['איזה אלופים! סיימתם את הפנדלים!'],
-      'fb/pen-name': ['פנדלים'],
     };
     for (const w of WORLDS) { L[`fb/world-${w.key}`] = [w.intro]; L[`fb/done-world-${w.key}`] = [w.doneLine]; if (w.place) L[`fb/place-${w.key}`] = [w.place]; }
     for (const u of UNITS) {

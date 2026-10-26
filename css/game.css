@@ -190,8 +190,8 @@ button{font:inherit;color:inherit;border:0;background:none;padding:0;cursor:poin
 .mon-beam{position:absolute;z-index:40;height:26px;margin-top:-13px;transform-origin:0 50%;border-radius:999px;background:linear-gradient(90deg,#fff6,#fff,#ffe9a8,#f29cc3);box-shadow:0 0 22px #fff,0 0 50px #ff6fb5,0 0 80px #ffd36e;animation:beam .55s ease-out forwards;pointer-events:none}
 .mon-beam.miss{background:linear-gradient(90deg,#fff6,#fff,#d8cbe8);box-shadow:0 0 14px #fff}
 @keyframes beam{from{clip-path:inset(0 100% 0 0)}40%{clip-path:inset(0 0 0 0);opacity:1}to{clip-path:inset(0 0 0 0);opacity:0}}
-@keyframes monBob{50%{transform:translateY(-14px) rotate(-2deg)}}
-@keyframes monIn{from{transform:translate(120px,-120px) scale(.15);opacity:0;filter:blur(3px) drop-shadow(0 14px 10px #2a183555)}70%{transform:translateY(-10px) scale(1.06);opacity:1}to{transform:none;opacity:1}}   /* out of the depth of the stage */
+@keyframes monBob{50%{transform:translateY(-14px)}}
+@keyframes monIn{from{transform:translate(90px,-90px);opacity:0}to{transform:none;opacity:1}}   /* out of the back of the stage; no scaling, it leaves the letter blurry on iPad */
 @keyframes monPoof{40%{transform:scale(1.25) rotate(8deg);opacity:1}to{transform:scale(.1) rotate(40deg);opacity:0}}
 @keyframes monFlee{to{transform:translateX(-500px) rotate(-30deg);opacity:0}}
 .world.mon-tile img{height:150px}

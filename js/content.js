@@ -84,6 +84,11 @@ const UNITS = [
   { key: 'kaf', world: 'gifts', item: 'hat', options: ['hat','earrings','flower'] },
 ].map(u => ({ ...LETTERS[u.key], ...u }));
 
+/* Settings for the shared engine. A sixth tile on the home screen: the monster game (js/monsters.js), practising all the letters. */
+const GAME = {
+  homeExtra: () => `<button class="world mon-tile" onclick="Sfx.tap();go.monsters()">${Monsters.monsterSVG(2)}<b>מפלצות האותיות</b><small>תרגול כל האותיות</small></button>`,
+};
+
 const WORLDS = [
   { key: 'clothes', title: 'לבוש ואביזרים', icon: 'assets/items/coat.png', placeName: 'חדר ההלבשה', bg: 'assets/scene/wardrobe.jpg',
     intro: 'בעולם הלבוש לכל אות יש פריט חדש בשבילי. בחרי אות!', doneText: 'הלבשת את הכוכבת מכף רגל ועד ראש! ✨', doneLine: 'הלבשת אותי מכף רגל ועד ראש! אני מוכנה לעלות לבמה!' },
@@ -116,6 +121,11 @@ function buildLines() {
     'trace-start': ['שימי את האצבע על הכוכב.'],
     'place-empty': ['עוד אין כאן כלום. סיימי יחידה וקבלי את הדבר הראשון!'],
     'look-for': ['ואנחנו מחפשות את האות'],
+    'mon-intro': ['המפלצות עלו לבמה! אני אגיד אות, ואת תפגעי במפלצת שעליה האות הזאת.'],
+    'mon-hit': ['פגעי במפלצת עם האות'],
+    'mon-yes': ['בּוּם! זאת באמת האות'],
+    'mon-again': ['נסי שוב!'],
+    'mon-done': ['כל הכבוד! ניצחת את כל המפלצות, והבמה נקייה!'],
   };
   for (const w of WORLDS) { L[`world-${w.key}`] = [w.intro]; L[`done-world-${w.key}`] = [w.doneLine]; if (w.place) L[`place-${w.key}`] = [w.place]; }
   for (const u of UNITS) {

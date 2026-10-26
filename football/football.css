@@ -59,4 +59,3 @@
 .pen-ball.hint{animation:hintGlow 1s ease-in-out infinite;border-radius:50%}
 .world.pen{background:linear-gradient(160deg,#dbe9ff,#d8f3e0)}
 .world.pen .emoji{font-size:110px;line-height:150px}
-.football .worlds{top:330px}.football .world{height:250px}.football .world img{height:130px}

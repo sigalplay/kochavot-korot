@@ -6,7 +6,7 @@
 <style>
 @font-face{font-family:'Playful Hebrew';src:url('assets/fonts/playpen-sans-hebrew.woff2') format('woff2');font-weight:100 900}
 body{margin:0;font-family:'Playful Hebrew',Arial,sans-serif;background:#fbf2f7;color:#5b4468}
-header{position:sticky;top:0;background:#fffaf6;box-shadow:0 4px 16px #8d5f9f22;padding:16px 22px;z-index:2}
+header{position:relative;background:#fffaf6;box-shadow:0 4px 16px #8d5f9f22;padding:16px 22px;z-index:2}
 h1{margin:0;font-size:30px;color:#8b5fa0}
 header p{margin:6px 0 0;line-height:1.5}
 .filters{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
@@ -22,7 +22,11 @@ main{max-width:980px;margin:0 auto;padding:16px}
 .rec.on{animation:p 1s infinite}
 .has{box-shadow:inset 0 0 0 3px #66b99e}
 .modes button{font-size:20px;font-weight:800;padding:10px 20px}.modes button.on{background:#1f5fc4}.boy h1{color:#1f5fc4}
-.count{font-weight:800}.sync{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:12px;background:#fff6e0;border-radius:16px;padding:10px 14px}.sync .big{border:0;border-radius:999px;padding:12px 20px;font:inherit;font-weight:800;background:#a76a9c;color:#fff;cursor:pointer}.site{color:#3c9b7a;font-size:14px;font-weight:700}
+.count{font-weight:800}
+.top-btn{position:fixed;left:16px;bottom:16px;z-index:5;border:0;border-radius:999px;padding:12px 18px;font:inherit;font-weight:800;background:#a76a9c;color:#fff;box-shadow:0 6px 16px #0003;cursor:pointer}
+.boy .top-btn{background:#1f5fc4}
+.list-title{max-width:980px;margin:14px auto 0;padding:0 16px;font-size:22px;font-weight:800}
+@media (max-width:700px){h1{font-size:24px}header{padding:12px 14px}.filters button{padding:6px 12px;font-size:15px}.letters button{min-width:38px;font-size:19px;padding:2px 8px}.line{flex-wrap:wrap}.line .t{flex-basis:100%;font-size:20px}}.sync{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:12px;background:#fff6e0;border-radius:16px;padding:10px 14px}.sync .big{border:0;border-radius:999px;padding:12px 20px;font:inherit;font-weight:800;background:#a76a9c;color:#fff;cursor:pointer}.site{color:#3c9b7a;font-size:14px;font-weight:700}
 @keyframes p{50%{opacity:.5}}
 </style>
 </head>
@@ -35,7 +39,9 @@ main{max-width:980px;margin:0 auto;padding:16px}
 <div class="filters letters" id="letters"></div>
 <div class="sync"><button class="big" onclick="exportAll()">⬆ שמירת כל ההקלטות לקבצים</button>
 <span id="expInfo">אחרי השמירה מעלים את <b>כל הקבצים</b> שנוצרו (אפשר לבחור את כולם ביחד) לכאן: <a href="https://github.com/sigalplay/kochavot-korot/upload/main/audio" target="_blank" rel="noopener">העלאה לאתר</a>. מאותו רגע ההקלטות נשמעות בכל מכשיר.</span></div></header>
+<div class="list-title" id="listTitle"></div>
 <main id="list"></main>
+<button class="top-btn" onclick="scrollTo({top:0,behavior:'smooth'})">↑ לבחירת אות</button>
 <script src="js/letters.js"></script>
 <script src="js/content.js"></script>
 <script src="football/data.js"></script>
@@ -65,15 +71,18 @@ function letterIds(lk){
   if(mode==='girl')for(const id of [...out])if(LINES['pl/'+id])out.add('pl/'+id);
   return new Set([...out].filter(id=>all.includes(id)));
 }
+function choose(f){filter=f;render();document.getElementById('listTitle').scrollIntoView({behavior:'smooth'})}
 const pred=f=>f.startsWith('L:')?(s=>id=>s.has(id))(letterIds(f.slice(2))):groups[f];
 function render(){
   document.body.classList.toggle('boy',mode==='boy');
   document.querySelector('h1').textContent=mode==='boy'?'אולפן הקלטות — אלופי האותיות (קול של ילד)':'אולפן הקלטות — כוכבות קוראות';
   document.getElementById('modes').innerHTML=`<button class="${mode==='girl'?'on':''}" onclick="setMode('girl')">כוכבות קוראות</button><button class="${mode==='boy'?'on':''}" onclick="setMode('boy')">⚽ אלופי האותיות — קול של ילד</button>`;
   document.getElementById('total').textContent=ids().length;
-  document.getElementById('filters').innerHTML=Object.keys(groups).filter(g=>mode==='girl'||!['לשון רבים','כדורגל'].includes(g)).map(g=>`<button class="${g===filter?'on':''}" onclick="filter='${g}';render()">${g}</button>`).join('');
+  document.getElementById('filters').innerHTML=Object.keys(groups).filter(g=>mode==='girl'||!['לשון רבים','כדורגל'].includes(g)).map(g=>`<button class="${g===filter?'on':''}" onclick="choose('${g}')">${g}</button>`).join('');
   const W_=mode==='boy'?FB.WORLDS:WORLDS,U_=w=>(mode==='boy'?FB.UNITS:UNITS).filter(u=>u.world===w);
-  document.getElementById('letters').innerHTML=W_.map(w=>`<span class="world">${w.title}:</span>`+U_(w.key).map(u=>`<button class="${filter==='L:'+u.key?'on':''}" onclick="filter='L:${u.key}';render()">${u.letter}</button>`).join('')).join('');
+  document.getElementById('letters').innerHTML=W_.map(w=>`<span class="world">${w.title}:</span>`+U_(w.key).map(u=>`<button class="${filter==='L:'+u.key?'on':''}" onclick="choose('L:${u.key}')">${u.letter}</button>`).join('')).join('');
+  const shown=ids().filter(id=>pred(filter)(id));
+  document.getElementById('listTitle').textContent=filter.startsWith('L:')?`משפטים לאות ${(mode==='boy'?FB.UNITS:UNITS).find(u=>u.key===filter.slice(2)).letter}׳ (${shown.length})`:`${filter} (${shown.length})`;
   document.getElementById('list').innerHTML=ids().filter(id=>pred(filter)(id)).map(id=>{const k=recKey(id),site=Voice.bundle()[k];return `<div class="line ${have.has(k)?'has':''}" id="L-${k}"><div class="t">${text(id)}<small>${k}</small>${site?'<span class="site">✓ באתר</span>':''}</div>
    <button class="rec" onclick="toggle('${k}',this)">הקלטה</button>${have.has(k)?`<button onclick="play('${k}')">▶ השמעה</button><button onclick="download('${k}')">הורדה</button><button onclick="del('${k}')">מחיקה</button>`:site?`<button onclick="Voice.playUrl(Voice.bundle()['${k}'])">▶ ההקלטה שבאתר</button>`:`<button onclick="Voice.say('${id}')">▶ קול ממוחשב</button>`}</div>`}).join('');
 }

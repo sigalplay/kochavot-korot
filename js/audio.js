@@ -89,7 +89,9 @@ const Voice = (() => {
   }
   let unlocked = false, pending = null;
   function unlock() {
-    try { if (navigator.audioSession) navigator.audioSession.type = 'playback'; } catch {} // iPad: play even when the device is on silent
+    // iPad: play even when the device is on silent. The recording studio needs the microphone too
+    // ('playback' alone turns the microphone off), so it sets AUDIO_SESSION_TYPE = 'play-and-record'.
+    try { if (navigator.audioSession) navigator.audioSession.type = typeof AUDIO_SESSION_TYPE !== 'undefined' ? AUDIO_SESSION_TYPE : 'playback'; } catch {}
     if (unlocked) return; unlocked = true;
     try { el.src = SILENT; el.play().catch(() => { unlocked = false; }); } catch { unlocked = false; }
     try { if ('speechSynthesis' in window) { const u = new SpeechSynthesisUtterance(' '); u.volume = 0; speechSynthesis.speak(u); } } catch {}

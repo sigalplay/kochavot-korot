@@ -42,6 +42,7 @@ main{max-width:980px;margin:0 auto;padding:16px}
 <div class="list-title" id="listTitle"></div>
 <main id="list"></main>
 <button class="top-btn" onclick="scrollTo({top:0,behavior:'smooth'})">↑ לבחירת אות</button>
+<script>var AUDIO_SESSION_TYPE = 'play-and-record';</script>
 <script src="js/letters.js"></script>
 <script src="js/content.js"></script>
 <script src="football/data.js"></script>
@@ -87,12 +88,19 @@ function render(){
    <button class="rec" onclick="toggle('${k}',this)">הקלטה</button>${have.has(k)?`<button onclick="play('${k}')">▶ השמעה</button><button onclick="download('${k}')">הורדה</button><button onclick="del('${k}')">מחיקה</button>`:site?`<button onclick="Voice.playUrl(Voice.bundle()['${k}'])">▶ ההקלטה שבאתר</button>`:`<button onclick="Voice.say('${id}')">▶ קול ממוחשב</button>`}</div>`}).join('');
 }
 async function toggle(id,btn){
-  if(rec){rec.stop();return}
-  let stream;try{stream=await navigator.mediaDevices.getUserMedia({audio:true})}catch{alert('אין גישה למיקרופון');return}
-  const chunks=[],r=new MediaRecorder(stream);rec=r;btn.classList.add('on');btn.textContent='עצירה';
-  r.ondataavailable=e=>chunks.push(e.data);
-  r.onstop=async()=>{stream.getTracks().forEach(t=>t.stop());rec=null;await Voice.putClip(id,new Blob(chunks,{type:r.mimeType||'audio/webm'}));await refresh();play(id)};
-  r.start();
+  if(rec){try{rec.stop()}catch{rec=null;refresh()}return}
+  try{if(navigator.audioSession)navigator.audioSession.type='play-and-record'}catch{}
+  let stream;
+  try{stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true}})}
+  catch(e){alert('אין גישה למיקרופון.\n'+(e&&e.name==='NotAllowedError'?'צריך לאשר מיקרופון בהגדרות הדפדפן ולרענן את הדף.':'('+(e&&(e.name||e.message))+')'));return}
+  let r;
+  try{r=new MediaRecorder(stream)}catch(e){stream.getTracks().forEach(t=>t.stop());alert('הדפדפן הזה לא מצליח להקליט ('+(e&&(e.name||e.message))+'). נסי בספארי או בכרום.');return}
+  const chunks=[];rec=r;btn.classList.add('on');btn.textContent='עצירה';
+  r.ondataavailable=e=>{if(e.data&&e.data.size)chunks.push(e.data)};
+  r.onstop=async()=>{stream.getTracks().forEach(t=>t.stop());rec=null;
+    if(!chunks.length){alert('ההקלטה יצאה ריקה. נסי שוב.');refresh();return}
+    await Voice.putClip(id,new Blob(chunks,{type:r.mimeType||'audio/mp4'}));await refresh();play(id)};
+  try{r.start(250)}catch(e){rec=null;stream.getTracks().forEach(t=>t.stop());alert('לא הצלחתי להתחיל להקליט ('+(e&&(e.name||e.message))+').');refresh()}
 }
 async function play(id){const b=await Voice.getClip(id);if(b){const u=URL.createObjectURL(b);await Voice.playUrl(u);URL.revokeObjectURL(u)}}
 async function del(id){await Voice.delClip(id);refresh()}

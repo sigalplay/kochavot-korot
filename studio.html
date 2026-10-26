@@ -114,20 +114,33 @@ async function deviceNew(){
   return out;
 }
 // only the new recordings, in new files; the index lists the site's files plus these, so the upload just adds them
+let ready=null;   // files prepared by the last "save" tap, waiting for the send tap
+function offer(files,text){
+  ready=files;
+  document.getElementById('expInfo').innerHTML=`${text}<br><button class="big" style="margin-top:10px;background:#3c9b7a" onclick="sendReady()">📤 שליחה / שמירה של ${files.length} הקבצים</button>
+    <br><small>אפשר גם להעלות אותם לכאן: <a href="https://github.com/sigalplay/kochavot-korot/upload/main/audio" target="_blank" rel="noopener">העלאה לאתר</a></small>`;
+  document.getElementById('expInfo').scrollIntoView({behavior:'smooth',block:'center'});
+}
+async function sendReady(){
+  const files=ready;if(!files)return;
+  if(navigator.canShare?.({files})){try{await navigator.share({files,title:'הקלטות'});return}catch(e){if(e&&e.name==='AbortError')return}}
+  for(const f of files){const a=document.createElement('a');a.href=URL.createObjectURL(f);a.download=f.name;document.body.appendChild(a);a.click();a.remove();await new Promise(r=>setTimeout(r,500))}
+}
+function busy(t){document.getElementById('expInfo').innerHTML=`<b>${t}</b>`}
 async function exportNew(){
+  busy('בודקת מה חדש… (עוד רגע)');await siteReady;
   const fresh=await deviceNew();
-  if(!Object.keys(fresh).length){alert('אין הקלטות חדשות. כל מה שהקלטת במכשיר הזה כבר נמצא באתר.');return}
+  if(!Object.keys(fresh).length){document.getElementById('expInfo').innerHTML='<b>✓ אין הקלטות חדשות.</b> כל מה שהקלטת במכשיר הזה כבר נמצא באתר.';return}
   const t=new Date(),stamp=`${t.getFullYear()}${String(t.getMonth()+1).padStart(2,'0')}${String(t.getDate()).padStart(2,'0')}-${String(t.getHours()).padStart(2,'0')}${String(t.getMinutes()).padStart(2,'0')}`;
   const LIMIT=12e6,files=[];let part={},size=0,n=1;
   const flush=()=>{if(Object.keys(part).length)files.push(new File([JSON.stringify(part)],`rec-new-${stamp}-${n++}.json`,{type:'application/json'}));part={};size=0};
   for(const [id,data] of Object.entries(fresh)){if(size+data.length>LIMIT)flush();part[id]=data;size+=data.length}
   flush();
   files.push(new File([JSON.stringify([...Voice.siteFiles(),...files.map(f=>f.name)])],'rec-index.json',{type:'application/json'}));
-  document.getElementById('expInfo').innerHTML=`נשמרו <b>${Object.keys(fresh).length}</b> הקלטות חדשות ב-${files.length} קבצים: ${files.map(f=>`<b>${f.name}</b>`).join(', ')}. שולחים לי את כולם, או מעלים לכאן: <a href="https://github.com/sigalplay/kochavot-korot/upload/main/audio" target="_blank" rel="noopener">העלאה לאתר</a>`;
-  if(navigator.canShare?.({files})){try{await navigator.share({files,title:'הקלטות חדשות'});return}catch{}}
-  for(const f of files){const a=document.createElement('a');a.href=URL.createObjectURL(f);a.download=f.name;a.click();await new Promise(r=>setTimeout(r,400))}
+  offer(files,`מוכנות <b>${Object.keys(fresh).length}</b> הקלטות חדשות: ${files.map(f=>`<b>${f.name}</b>`).join(', ')}.`);
 }
 async function exportAll(){
+  busy('מכינה את הקבצים… (עוד רגע)');await siteReady;
   const all={...Voice.bundle()},ids=await Voice.listClips()||[];
   for(const id of ids){const b=await Voice.getClip(id);if(b)all[id]=await new Promise(r=>{const f=new FileReader();f.onload=()=>r(f.result);f.readAsDataURL(b)})}
   if(!Object.keys(all).length){alert('עוד אין הקלטות');return}
@@ -139,10 +152,9 @@ async function exportAll(){
     flush();
   }
   files.push(new File([JSON.stringify(files.map(f=>f.name))],'rec-index.json',{type:'application/json'}));
-  document.getElementById('expInfo').innerHTML=`נוצרו ${files.length} קבצים: ${files.map(f=>`<b>${f.name}</b> (${(f.size/1e6).toFixed(1)}MB)`).join(', ')}. מעלים את כולם ביחד לכאן: <a href="https://github.com/sigalplay/kochavot-korot/upload/main/audio" target="_blank" rel="noopener">העלאה לאתר</a>`;
-  if(navigator.canShare?.({files})){try{await navigator.share({files,title:'הקלטות'});return}catch{}}
-  for(const f of files){const a=document.createElement('a');a.href=URL.createObjectURL(f);a.download=f.name;a.click();await new Promise(r=>setTimeout(r,400))}
+  offer(files,`מוכנים ${files.length} קבצים: ${files.map(f=>`<b>${f.name}</b> (${(f.size/1e6).toFixed(1)}MB)`).join(', ')}.`);
 }
-Voice.ready().then(refresh);
+const siteReady=Voice.ready();   // the recordings already on the site: needed before telling what is new
+siteReady.then(refresh);
 </script>
 </body></html>

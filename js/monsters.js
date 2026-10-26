@@ -6,7 +6,8 @@
 
 const Monsters = {
   ROUND: 8,
-  SPOTS: [{ x: 250, y: 470 }, { x: 520, y: 560 }, { x: 790, y: 470 }],   // centre of each monster
+  // where the monsters float: s = size, so the one further back is smaller and the one in front bigger (a sense of depth)
+  SPOTS: [{ x: 250, y: 420, s: .82 }, { x: 520, y: 590, s: 1.12 }, { x: 800, y: 440, s: .88 }],
   // the star in battle (assets/battle): ready, facing the monsters on the left, and attacking. Both are 620px tall,
   // standing on the same spot; HAND is where the attack pose's outstretched hand is (fraction of that picture)
   HERO: { right: 1480, bottom: 960, h: 620, ready: [262, 522], attack: [396, 516], HAND: [.03, .37] },
@@ -38,7 +39,8 @@ const Monsters = {
     this.key = key; this.misses = 0; this.busy = false;
     const letters = shuffle([L.letter, ...near]), first = Math.floor(Math.random() * 5);
     $('#monField').innerHTML = letters.map((ch, i) => { const p = this.SPOTS[i];
-      return `<button class="mon arrive" data-ch="${ch}" style="left:${p.x - 100}px;top:${p.y - 170}px;animation-delay:${i * .12}s" aria-label="${ch}">
+      const w = 200 * p.s, h = 340 * p.s;
+      return `<button class="mon arrive" data-ch="${ch}" style="left:${p.x - w / 2}px;top:${p.y - h / 2}px;width:${w}px;height:${h}px;--s:${p.s};z-index:${Math.round(p.y / 10)};animation-delay:${i * .15}s" aria-label="${ch}">
         ${this.monsterImg(first + i)}<b>${ch}</b></button>`; }).join('');
     stage.querySelectorAll('.mon').forEach(m => m.addEventListener('pointerdown', e => { e.preventDefault(); this.hit(m); }));
     $('#monCall').innerHTML = `פגעי במפלצת עם האות <b>${L.letter}</b>`;
@@ -60,6 +62,7 @@ const Monsters = {
     this.busy = true; Sfx.fly();
     const L = LETTERS[this.key], right = m.dataset.ch === L.letter, r = rectOf(m), to = { x: r.x + r.w / 2, y: r.y + r.h / 2 };
     this.beam(to, right);
+    const bg = stage.querySelector('.bg'); bg.classList.remove('cam-shake'); void bg.offsetWidth; bg.classList.add('cam-shake');   // the stage shakes a little
     setTimeout(() => {
       if (right) {
         this.hits++; Practice.done('mon', this.key, this.misses, this.round, this.turn);

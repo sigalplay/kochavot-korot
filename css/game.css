@@ -180,7 +180,7 @@ button{font:inherit;color:inherit;border:0;background:none;padding:0;cursor:poin
 .mon-score{position:absolute;top:24px;left:140px;z-index:31;background:#4a2f5cdd;color:#fff;border-radius:999px;padding:10px 24px;font-size:28px;font-weight:800}
 .mon{position:absolute;width:200px;height:340px;z-index:20;touch-action:none;filter:drop-shadow(0 14px 10px #2a183555);animation:monBob 2.4s ease-in-out infinite}
 .mon .mon-body{width:100%;height:100%;object-fit:contain;pointer-events:none}
-.mon b{position:absolute;left:51%;top:59%;transform:translate(-50%,-50%);width:96px;height:96px;border-radius:50%;background:none;display:grid;place-items:center;font-family:'School Print Hebrew',Arial,sans-serif;font-size:84px;font-weight:700;color:#3a2450;line-height:1}
+.mon b{position:absolute;left:51%;top:59%;transform:translate(-50%,-50%);width:calc(96px * var(--s,1));height:calc(96px * var(--s,1));border-radius:50%;background:none;display:grid;place-items:center;font-family:'School Print Hebrew',Arial,sans-serif;font-size:calc(84px * var(--s,1));font-weight:700;color:#3a2450;line-height:1}
 .mon.arrive{animation:monIn .6s both,monBob 2.4s .6s ease-in-out infinite}
 .mon.tease{animation:shake .45s}
 .mon.tease .mouth{d:path("M80 130 Q100 112 120 130")}
@@ -191,7 +191,7 @@ button{font:inherit;color:inherit;border:0;background:none;padding:0;cursor:poin
 .mon-beam.miss{background:linear-gradient(90deg,#fff6,#fff,#d8cbe8);box-shadow:0 0 14px #fff}
 @keyframes beam{from{clip-path:inset(0 100% 0 0)}40%{clip-path:inset(0 0 0 0);opacity:1}to{clip-path:inset(0 0 0 0);opacity:0}}
 @keyframes monBob{50%{transform:translateY(-14px) rotate(-2deg)}}
-@keyframes monIn{from{transform:translateY(120px) scale(.3);opacity:0}70%{transform:translateY(-10px) scale(1.06)}to{transform:none;opacity:1}}
+@keyframes monIn{from{transform:translate(120px,-120px) scale(.15);opacity:0;filter:blur(3px) drop-shadow(0 14px 10px #2a183555)}70%{transform:translateY(-10px) scale(1.06);opacity:1}to{transform:none;opacity:1}}   /* out of the depth of the stage */
 @keyframes monPoof{40%{transform:scale(1.25) rotate(8deg);opacity:1}to{transform:scale(.1) rotate(40deg);opacity:0}}
 @keyframes monFlee{to{transform:translateX(-500px) rotate(-30deg);opacity:0}}
 .world.mon-tile img{height:150px}
@@ -202,3 +202,5 @@ button{font:inherit;color:inherit;border:0;background:none;padding:0;cursor:poin
 .battle-hero.attacking .attack{opacity:1}
 .battle-hero.attacking .ready{opacity:0}
 .battle-hero .ready{animation:breathe 4s ease-in-out infinite;transform-origin:50% 100%}
+.bg.cam-shake{animation:camShake .45s ease-out}
+@keyframes camShake{20%{transform:translate(-10px,4px) scale(1.02)}45%{transform:translate(8px,-4px) scale(1.02)}70%{transform:translate(-4px,2px) scale(1.01)}}

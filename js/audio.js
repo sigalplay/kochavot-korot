@@ -19,7 +19,7 @@ const RECORDING_SPEED = 1.25;
 
 const Voice = (() => {
   const DB = 'kochavot-voice', STORE = 'clips';
-  let db = null, files = new Map(), bundle = {}, current = null, token = 0, voices = [];
+  let db = null, files = new Map(), bundle = {}, siteFiles = [], current = null, token = 0, voices = [];
 
   function openDb() {
     return new Promise(res => {
@@ -37,7 +37,7 @@ const Voice = (() => {
     // recordings uploaded with the site come in several small files (GitHub refuses one big file)
     const load = async name => { try { const r = await fetch(`audio/${name}`, { cache: 'no-cache' }); if (r.ok) { Object.assign(bundle, await r.json()); return true; } } catch {} return false; };
     let index = null; try { const r = await fetch('audio/rec-index.json', { cache: 'no-cache' }); if (r.ok) index = await r.json(); } catch {}
-    if (index) await Promise.all(index.map(load));
+    if (index) { siteFiles = index; await Promise.all(index.map(load)); }
     else await Promise.all(['recordings.json'].map(load).concat(recGroups().map(async g => { for (let n = 1; n < 20 && await load(`rec-${g}-${n}.json`); n++); })));
     try { const r = await fetch('audio/manifest.json', { cache: 'no-cache' }); if (r.ok) files = new Map((await r.json()).map(f => [f.replace(/\.[^.]+$/, ''), f])); } catch {}
   }
@@ -136,7 +136,7 @@ const Voice = (() => {
     for (const id of ids.flat().flatMap(i => alias[i] || [i])) { if (my !== token) return; await one(id, my); }
     if (my === token) document.body.classList.remove('talking');
   }
-  return { ready, say, stop, unlock, getClip, putClip, delClip, listClips, playUrl, bundle: () => bundle };
+  return { ready, say, stop, unlock, getClip, putClip, delClip, listClips, playUrl, bundle: () => bundle, siteFiles: () => siteFiles };
 })();
 
 /* Little synthesized sound effects — no files needed. */

@@ -37,7 +37,7 @@ main{max-width:980px;margin:0 auto;padding:16px}
 <div class="filters modes" id="modes"></div>
 <div class="filters" id="filters"></div>
 <div class="filters letters" id="letters"></div>
-<div class="sync"><button class="big" onclick="exportAll()">⬆ שמירת כל ההקלטות לקבצים</button>
+<div class="sync"><button class="big" onclick="exportNew()">⬆ שמירת ההקלטות החדשות בלבד</button><button class="big" style="background:#fff;color:#a76a9c;box-shadow:inset 0 0 0 3px #a76a9c" onclick="exportAll()">שמירת כל ההקלטות</button>
 <span id="expInfo">אחרי השמירה מעלים את <b>כל הקבצים</b> שנוצרו (אפשר לבחור את כולם ביחד) לכאן: <a href="https://github.com/sigalplay/kochavot-korot/upload/main/audio" target="_blank" rel="noopener">העלאה לאתר</a>. מאותו רגע ההקלטות נשמעות בכל מכשיר.</span></div></header>
 <div class="list-title" id="listTitle"></div>
 <main id="list"></main>
@@ -107,6 +107,26 @@ async function del(id){await Voice.delClip(id);refresh()}
 async function download(id){const b=await Voice.getClip(id);if(!b)return;const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=id+(b.type.includes('mp4')?'.m4a':'.webm');a.click()}
 // one file with every recording (the ones already on the site + the ones on this device), ready to upload
 // every recording (the ones already on the site + the ones on this device), split into small files GitHub accepts
+// what was recorded on this device and is not on the site yet (or was recorded again), as a data URL per id
+async function deviceNew(){
+  const out={},ids=await Voice.listClips()||[],site=Voice.bundle();
+  for(const id of ids){const b=await Voice.getClip(id);if(!b)continue;const d=await new Promise(r=>{const f=new FileReader();f.onload=()=>r(f.result);f.readAsDataURL(b)});const body=x=>x?x.slice(x.indexOf(',')+1):'';if(body(site[id])!==body(d))out[id]=d}   // same sound = same bytes, whatever the type label says
+  return out;
+}
+// only the new recordings, in new files; the index lists the site's files plus these, so the upload just adds them
+async function exportNew(){
+  const fresh=await deviceNew();
+  if(!Object.keys(fresh).length){alert('אין הקלטות חדשות. כל מה שהקלטת במכשיר הזה כבר נמצא באתר.');return}
+  const t=new Date(),stamp=`${t.getFullYear()}${String(t.getMonth()+1).padStart(2,'0')}${String(t.getDate()).padStart(2,'0')}-${String(t.getHours()).padStart(2,'0')}${String(t.getMinutes()).padStart(2,'0')}`;
+  const LIMIT=12e6,files=[];let part={},size=0,n=1;
+  const flush=()=>{if(Object.keys(part).length)files.push(new File([JSON.stringify(part)],`rec-new-${stamp}-${n++}.json`,{type:'application/json'}));part={};size=0};
+  for(const [id,data] of Object.entries(fresh)){if(size+data.length>LIMIT)flush();part[id]=data;size+=data.length}
+  flush();
+  files.push(new File([JSON.stringify([...Voice.siteFiles(),...files.map(f=>f.name)])],'rec-index.json',{type:'application/json'}));
+  document.getElementById('expInfo').innerHTML=`נשמרו <b>${Object.keys(fresh).length}</b> הקלטות חדשות ב-${files.length} קבצים: ${files.map(f=>`<b>${f.name}</b>`).join(', ')}. שולחים לי את כולם, או מעלים לכאן: <a href="https://github.com/sigalplay/kochavot-korot/upload/main/audio" target="_blank" rel="noopener">העלאה לאתר</a>`;
+  if(navigator.canShare?.({files})){try{await navigator.share({files,title:'הקלטות חדשות'});return}catch{}}
+  for(const f of files){const a=document.createElement('a');a.href=URL.createObjectURL(f);a.download=f.name;a.click();await new Promise(r=>setTimeout(r,400))}
+}
 async function exportAll(){
   const all={...Voice.bundle()},ids=await Voice.listClips()||[];
   for(const id of ids){const b=await Voice.getClip(id);if(b)all[id]=await new Promise(r=>{const f=new FileReader();f.onload=()=>r(f.result);f.readAsDataURL(b)})}

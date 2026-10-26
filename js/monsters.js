@@ -10,9 +10,7 @@ const Monsters = {
   COLORS: [['#b69add', '#8c6cc0'], ['#7fd1c2', '#4fa996'], ['#f6a7c1', '#d97a9d'], ['#ffc96b', '#e0a13d'], ['#8fc1f0', '#5e95cf']],
   open() {
     this.hits = 0; this.turn = 0;
-    state.mon ||= {};
-    const keys = shuffle(Object.keys(LETTERS)).sort((a, b) => (state.mon[a] || 0) - (state.mon[b] || 0));
-    this.round = keys.slice(0, this.ROUND);
+    this.round = Practice.plan('mon', this.ROUND);   // hard letters first, then the least practised
     screen(`${topbar({ title: 'מפלצות האותיות' })}
       <div class="mon-score" id="monScore"></div>
       <div class="mon-call" id="monCall"></div>
@@ -22,7 +20,7 @@ const Monsters = {
     say('mon-intro');
     setTimeout(() => this.next(), 2800);
   },
-  showScore() { $('#monScore').innerHTML = `✨ ${this.hits} <small>מפלצות</small> · ${Math.min(this.turn + 1, this.ROUND)} מתוך ${this.ROUND}`; },
+  showScore() { $('#monScore').innerHTML = `✨ ${this.hits} <small>מפלצות</small> · ${Math.min(this.turn + 1, this.round.length)} מתוך ${this.round.length}`; },
   // a round, friendly monster: soft body, little horns, big eyes, a smile, and the letter on its tummy
   monsterSVG(i) {
     const [c, d] = this.COLORS[i % this.COLORS.length];
@@ -39,7 +37,7 @@ const Monsters = {
     </svg>`;
   },
   next() {
-    if (this.turn >= this.ROUND) return this.finish();
+    if (this.turn >= this.round.length) return this.finish();
     const key = this.round[this.turn], L = LETTERS[key];
     const near = shuffle(L.near.filter(ch => LETTER_KEYS[ch] && ch !== L.letter)).slice(0, 2);
     this.key = key; this.misses = 0; this.busy = false;
@@ -68,7 +66,7 @@ const Monsters = {
     this.beam(to, right);
     setTimeout(() => {
       if (right) {
-        this.hits++; state.mon[this.key] = (state.mon[this.key] || 0) + 1; save();
+        this.hits++; Practice.done('mon', this.key, this.misses, this.round, this.turn);
         m.classList.add('poof'); Sfx.done(); sparkle(to.x, to.y, 30);
         stage.querySelectorAll('.mon:not(.poof)').forEach(o => o.classList.add('flee'));
         say('mon-yes', `name-${this.key}`);
@@ -81,7 +79,7 @@ const Monsters = {
     }, 380);
   },
   finish() {
-    $('#monField').innerHTML = ''; $('#monCall').innerHTML = ''; this.turn = this.ROUND - 1; this.showScore();
+    $('#monField').innerHTML = ''; $('#monCall').innerHTML = ''; this.turn = this.round.length - 1; this.showScore();
     confetti(); Sfx.done(); hop();
     stage.insertAdjacentHTML('beforeend', `<div class="overlay"><div class="sheet" style="text-align:center">
       <h2>✨ הבמה נקייה!</h2><p style="font-size:40px;margin:10px 0 24px">ניצחת <b>${this.hits}</b> מפלצות</p>

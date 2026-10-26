@@ -502,6 +502,27 @@ const Place = {
   clear() { for (const k of this.owned()) delete state.stage[k]; save(); this.open(); say('place-back'); },
 };
 
+/* ---------- letter practice (פנדלים, מפלצות האותיות): which letters come up, and when ----------
+   Each game keeps, per letter, how often it was practised (seen) and how hard it is for this child (hard).
+   A wrong answer makes a letter harder; a first-try answer makes it easier. Hard letters open the next round,
+   and within a round a letter the child got wrong comes back a few turns later. */
+const Practice = {
+  data(game) { state.practice ||= {}; return (state.practice[game] ||= {}); },
+  plan(game, size) {
+    const d = this.data(game), info = k => d[k] || { seen: 0, hard: 0 };
+    const keys = shuffle(Object.keys(LETTERS));
+    const hard = keys.filter(k => info(k).hard > 0).sort((a, b) => info(b).hard - info(a).hard).slice(0, Math.ceil(size / 2));
+    const rest = keys.filter(k => !hard.includes(k)).sort((a, b) => info(a).seen - info(b).seen);
+    const round = shuffle(hard).concat(rest).slice(0, size); round.extra = 0; return round;
+  },
+  // after a turn: was it right on the first try? A miss also brings the letter back later in this round (at most 3 times a round)
+  done(game, key, misses, round, turn) {
+    const d = this.data(game), r = (d[key] ||= { seen: 0, hard: 0 });
+    r.seen++; r.hard = misses ? Math.min(6, r.hard + 2 * misses) : Math.max(0, r.hard - 1);   // a mistake counts double, so one lucky answer does not clear it save();
+    if (misses && round.extra < 3 && !round.slice(turn + 1).includes(key)) { round.splice(Math.min(round.length, turn + 3), 0, key); round.extra++; }
+  },
+};
+
 /* ---------- parents ---------- */
 function openParents() {
   stage.insertAdjacentHTML('beforeend', `<div class="overlay" id="parents" onclick="if(event.target===this)this.remove()"><div class="sheet">

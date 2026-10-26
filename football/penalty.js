@@ -9,9 +9,7 @@ const Penalty = {
   open() {
     this.score = 0; this.kick = 0; this.misses = 0;
     // the letters kicked least so far come first, so every letter gets its turn
-    state.pen ||= {};
-    const keys = shuffle(Object.keys(LETTERS)).sort((a, b) => (state.pen[a] || 0) - (state.pen[b] || 0));
-    this.round = keys.slice(0, this.KICKS);
+    this.round = Practice.plan('pen', this.KICKS);   // hard letters first, then the least practised
     screen(`${topbar({ title: 'פנדלים' })}
       <img class="bg pen-layer" src="football/assets/stadium/grass-on.png" alt="">
       <img class="bg pen-layer pen-fans" src="football/assets/stadium/fans-on.png" alt="">
@@ -33,9 +31,9 @@ const Penalty = {
       <path d="M0 ${h} V0 H${w} V${h}" fill="none" stroke="#2b2b35" stroke-width="22" stroke-linejoin="round"/>
       <path d="M0 ${h} V0 H${w} V${h}" fill="none" stroke="#fff" stroke-width="15" stroke-linejoin="round"/></svg>`;
   },
-  showScore() { $('#penScore').innerHTML = `⚽ ${this.score} <small>גולים</small> · בעיטה ${Math.min(this.kick + 1, this.KICKS)} מתוך ${this.KICKS}`; },
+  showScore() { $('#penScore').innerHTML = `⚽ ${this.score} <small>גולים</small> · בעיטה ${Math.min(this.kick + 1, this.round.length)} מתוך ${this.round.length}`; },
   next() {
-    if (this.kick >= this.KICKS) return this.finish();
+    if (this.kick >= this.round.length) return this.finish();
     const key = this.round[this.kick], L = LETTERS[key];
     const near = shuffle(L.near.filter(ch => LETTER_KEYS[ch] && ch !== L.letter)).slice(0, 2);
     this.key = key; this.misses = 0; this.busy = false;
@@ -58,7 +56,7 @@ const Penalty = {
     ball.classList.add('flying');
     setTimeout(() => {
       if (right) {
-        this.score++; state.pen[this.key] = (state.pen[this.key] || 0) + 1; save();
+        this.score++; Practice.done('pen', this.key, this.misses, this.round, this.kick);
         $('#penGoal').classList.add('shake'); Sfx.done(); hop(); sparkle(to.x, to.y, 26); confetti();
         say('fb/pen-goal', `name-${this.key}`);
         setTimeout(() => { this.kick++; this.next(); }, 2300);
@@ -71,7 +69,7 @@ const Penalty = {
     }, 650);
   },
   finish() {
-    $('#penBalls').innerHTML = ''; $('#penCall').innerHTML = ''; this.kick = this.KICKS - 1; this.showScore();
+    $('#penBalls').innerHTML = ''; $('#penCall').innerHTML = ''; this.kick = this.round.length - 1; this.showScore();
     confetti(); Sfx.done(); hop();
     stage.insertAdjacentHTML('beforeend', `<div class="overlay" id="penEnd"><div class="sheet" style="text-align:center">
       <h2>⚽ איזה אלופים!</h2><p style="font-size:40px;margin:10px 0 24px">כבשתם <b>${this.score}</b> גולים</p>

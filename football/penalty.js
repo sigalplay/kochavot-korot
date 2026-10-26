@@ -19,8 +19,9 @@ const Penalty = {
       <div id="penBalls"></div>${starHTML()}`, { bg: 'football/assets/stadium/base.jpg' });
     stage.querySelector('.veil')?.remove();
     this.showScore();
-    say('fb/pen-intro');
-    setTimeout(() => this.next(), 2600);
+    const intro = !this.played; this.played = true;   // the welcome only on the first round
+    if (intro) say('fb/pen-intro');
+    setTimeout(() => this.next(), intro ? 2400 : 600);
   },
   goalSVG() {
     const { x, y, w, h } = this.GOAL, net = [];
@@ -59,7 +60,7 @@ const Penalty = {
         this.score++; Practice.done('pen', this.key, this.misses, this.round, this.kick);
         $('#penGoal').classList.add('shake'); Sfx.done(); hop(); sparkle(to.x, to.y, 26); confetti();
         say('fb/pen-goal', `name-${this.key}`);
-        setTimeout(() => { this.kick++; this.next(); }, 2300);
+        setTimeout(() => { this.kick++; this.next(); }, 1600);
       } else {
         this.misses++; Sfx.soft(); ball.classList.add('out');
         const ids = ['this-is', `letter-${LETTER_KEYS[ball.dataset.ch]}`, 'fb/pen-again'];

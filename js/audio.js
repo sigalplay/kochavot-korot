@@ -64,7 +64,10 @@ const Voice = (() => {
       u.lang = 'he-IL'; u.rate = .85; u.pitch = 1.1;
       u.onend = u.onerror = () => res();
       speechSynthesis.speak(u);
-      setTimeout(res, 9000);
+      // tablets often drop the computer voice without a word: never wait longer than the line would take,
+      // and move on at once if nothing started speaking
+      setTimeout(res, Math.min(6000, 700 + 80 * text.length));
+      setTimeout(() => { if (!speechSynthesis.speaking) res(); }, 900);
     });
   }
   // iPad/iPhone only let a page play sound right after a tap. One audio element is "unlocked"
@@ -136,7 +139,9 @@ const Voice = (() => {
     for (const id of ids.flat().flatMap(i => alias[i] || [i])) { if (my !== token) return; await one(id, my); }
     if (my === token) document.body.classList.remove('talking');
   }
-  return { ready, say, stop, unlock, getClip, putClip, delClip, listClips, playUrl, bundle: () => bundle, siteFiles: () => siteFiles };
+  // is there a real recording for this line (on the site or in audio/)? Games use it to skip lines nobody recorded yet
+  function has(id) { const pre = typeof VOICE_PREFIX !== 'undefined' ? VOICE_PREFIX : ''; return !!(bundle[pre + id] || bundle[id] || files.has(id)); }
+  return { ready, say, stop, has, unlock, getClip, putClip, delClip, listClips, playUrl, bundle: () => bundle, siteFiles: () => siteFiles };
 })();
 
 /* Little synthesized sound effects — no files needed. */

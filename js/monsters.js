@@ -27,8 +27,10 @@ const Monsters = {
       <div id="monField"></div>${this.heroHTML()}`, { bg: 'assets/battle/arena.jpg' });
     stage.querySelector('.veil')?.remove();
     this.showScore();
-    say('mon-intro');
-    setTimeout(() => this.next(), 2800);
+    // the long welcome only when it is recorded, and only on the first round
+    const intro = !this.played && Voice.has('mon-intro'); this.played = true;
+    if (intro) say('mon-intro');
+    setTimeout(() => this.next(), intro ? 2600 : 700);
   },
   showScore() { $('#monScore').innerHTML = `✨ ${this.hits} <small>מפלצות</small> · ${Math.min(this.turn + 1, this.round.length)} מתוך ${this.round.length}`; },
   monsterImg(i) { return `<img class="mon-body" src="assets/battle/monster-${i % this.KINDS}.png" alt="" draggable="false">`; },
@@ -40,12 +42,13 @@ const Monsters = {
     const letters = shuffle([L.letter, ...near]), first = Math.floor(Math.random() * 5);
     $('#monField').innerHTML = letters.map((ch, i) => { const p = this.SPOTS[i];
       const w = 200 * p.s, h = 340 * p.s;
-      return `<button class="mon arrive" data-ch="${ch}" style="left:${p.x - w / 2}px;top:${p.y - h / 2}px;width:${w}px;height:${h}px;--s:${p.s};z-index:${Math.round(p.y / 10)};animation-delay:${i * .15}s" aria-label="${ch}">
+      return `<button class="mon arrive" data-ch="${ch}" style="left:${p.x - w / 2}px;top:${p.y - h / 2}px;width:${w}px;height:${h}px;--s:${p.s};z-index:${Math.round(p.y / 10)};animation-delay:${i * .07}s" aria-label="${ch}">
         ${this.monsterImg(first + i)}<b>${ch}</b></button>`; }).join('');
     stage.querySelectorAll('.mon').forEach(m => m.addEventListener('pointerdown', e => { e.preventDefault(); this.hit(m); }));
     $('#monCall').innerHTML = `פגעי במפלצת עם האות <b>${L.letter}</b>`;
     this.showScore();
-    prompt(['mon-hit', `name-${key}`]);
+    // the letter's name is always recorded; the sentence around it only once it is
+    prompt(Voice.has('mon-hit') ? ['mon-hit', `name-${key}`] : [`name-${key}`]);
   },
   // the star sends a beam of light from her hand to the monster
   beam(to, good) {
@@ -68,14 +71,14 @@ const Monsters = {
         this.hits++; Practice.done('mon', this.key, this.misses, this.round, this.turn);
         m.classList.add('poof'); Sfx.done(); sparkle(to.x, to.y, 30);
         stage.querySelectorAll('.mon:not(.poof)').forEach(o => o.classList.add('flee'));
-        say('mon-yes', `name-${this.key}`);
-        setTimeout(() => { this.turn++; this.next(); }, 2300);
+        say(Voice.has('mon-yes') ? 'mon-yes' : 'yay-3', `name-${this.key}`);
+        setTimeout(() => { this.turn++; this.next(); }, 1400);
       } else {
         this.misses++; Sfx.soft(); m.classList.remove('tease'); void m.offsetWidth; m.classList.add('tease');
         if (this.misses >= 2) stage.querySelector(`.mon[data-ch="${L.letter}"]`)?.classList.add('hint');
-        say('this-is', `letter-${LETTER_KEYS[m.dataset.ch]}`, 'mon-again'); this.busy = false;
+        say('this-is', `letter-${LETTER_KEYS[m.dataset.ch]}`, ...(Voice.has('mon-again') ? ['mon-again'] : [])); this.busy = false;
       }
-    }, 380);
+    }, 260);
   },
   finish() {
     $('#monField').innerHTML = ''; $('#monCall').innerHTML = ''; this.turn = this.round.length - 1; this.showScore();
@@ -84,7 +87,7 @@ const Monsters = {
       <h2>✨ הבמה נקייה!</h2><p style="font-size:40px;margin:10px 0 24px">ניצחת <b>${this.hits}</b> מפלצות</p>
       <div class="row" style="justify-content:center"><button class="next" style="position:static;transform:none;animation:none" onclick="Monsters.open()">עוד סיבוב</button>
       <button class="pill" onclick="go.home()">חזרה</button></div></div></div>`);
-    say('mon-done');
+    if (Voice.has('mon-done')) say('mon-done'); else say('yay-4');
   },
 };
 go.monsters = () => Monsters.open();

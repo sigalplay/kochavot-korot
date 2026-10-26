@@ -195,3 +195,10 @@ button{font:inherit;color:inherit;border:0;background:none;padding:0;cursor:poin
 @keyframes monPoof{40%{transform:scale(1.25) rotate(8deg);opacity:1}to{transform:scale(.1) rotate(40deg);opacity:0}}
 @keyframes monFlee{to{transform:translateX(-500px) rotate(-30deg);opacity:0}}
 .world.mon-tile svg{width:130px;height:130px;filter:drop-shadow(0 6px 6px #6b3f7a33)}
+
+.battle-hero{position:absolute;z-index:12;pointer-events:none;filter:drop-shadow(0 12px 14px #2a183566)}
+.battle-hero img{position:absolute;top:0;transition:opacity .12s}
+.battle-hero .attack{opacity:0}
+.battle-hero.attacking .attack{opacity:1}
+.battle-hero.attacking .ready{opacity:0}
+.battle-hero .ready{animation:breathe 4s ease-in-out infinite;transform-origin:50% 100%}

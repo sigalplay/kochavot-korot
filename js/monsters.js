@@ -6,7 +6,16 @@
 
 const Monsters = {
   ROUND: 8,
-  SPOTS: [{ x: 260, y: 470 }, { x: 560, y: 560 }, { x: 860, y: 470 }],
+  SPOTS: [{ x: 230, y: 470 }, { x: 510, y: 560 }, { x: 790, y: 470 }],
+  // the star in battle (assets/battle): ready, facing the monsters on the left, and attacking. Both are 620px tall,
+  // standing on the same spot; HAND is where the attack pose's outstretched hand is (fraction of that picture)
+  HERO: { right: 1480, bottom: 960, h: 620, ready: [262, 522], attack: [396, 516], HAND: [.03, .37] },
+  heroHTML() {
+    const H = this.HERO, wr = H.h * H.ready[0] / H.ready[1], wa = H.h * H.attack[0] / H.attack[1];
+    return `<div class="battle-hero" id="star" style="left:${H.right - wa}px;top:${H.bottom - H.h}px;width:${wa}px;height:${H.h}px">
+      <img class="ready" src="assets/battle/star-ready.png" alt="הכוכבת" style="right:0;width:${wr}px;height:${H.h}px">
+      <img class="attack" src="assets/battle/star-attack.png" alt="" style="right:0;width:${wa}px;height:${H.h}px"></div>`;
+  },
   COLORS: [['#b69add', '#8c6cc0'], ['#7fd1c2', '#4fa996'], ['#f6a7c1', '#d97a9d'], ['#ffc96b', '#e0a13d'], ['#8fc1f0', '#5e95cf']],
   open() {
     this.hits = 0; this.turn = 0;
@@ -14,7 +23,7 @@ const Monsters = {
     screen(`${topbar({ title: 'מפלצות האותיות' })}
       <div class="mon-score" id="monScore"></div>
       <div class="mon-call" id="monCall"></div>
-      <div id="monField"></div>${starHTML()}`, { bg: ART.stage });
+      <div id="monField"></div>${this.heroHTML()}`, { bg: ART.stage });
     stage.querySelector('.veil')?.remove();
     this.showScore();
     say('mon-intro');
@@ -52,7 +61,8 @@ const Monsters = {
   },
   // the star sends a beam of light from her hand to the monster
   beam(to, good) {
-    const s = rectOf($('#star')), from = { x: s.x + s.w * .22, y: s.y + s.h * .5 };
+    const s = rectOf($('#star')), H = this.HERO, from = { x: s.x + s.w * H.HAND[0], y: s.y + s.h * H.HAND[1] };
+    const hero = $('#star'); hero.classList.add('attacking'); clearTimeout(this.pose); this.pose = setTimeout(() => hero.classList.remove('attacking'), 900);
     const b = document.createElement('div'); b.className = 'mon-beam' + (good ? '' : ' miss');
     const dx = to.x - from.x, dy = to.y - from.y, len = Math.hypot(dx, dy);
     Object.assign(b.style, { left: from.x + 'px', top: from.y + 'px', width: len + 'px', transform: `rotate(${Math.atan2(dy, dx)}rad)` });
@@ -61,7 +71,7 @@ const Monsters = {
   },
   hit(m) {
     if (this.busy || m.classList.contains('gone')) return;
-    this.busy = true; Sfx.fly(); hop();
+    this.busy = true; Sfx.fly();
     const L = LETTERS[this.key], right = m.dataset.ch === L.letter, r = rectOf(m), to = { x: r.x + r.w / 2, y: r.y + r.h / 2 };
     this.beam(to, right);
     setTimeout(() => {

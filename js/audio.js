@@ -32,15 +32,37 @@ const Voice = (() => {
       } catch { res(null); }
     });
   }
+  // Recordings: the files of the opening lines first, the rest one by one in the background, so they do not
+  // slow down the pictures. A line whose file has not come yet waits for that file only.
+  const loaded = new Map();
+  const loadFile = name => {
+    if (!loaded.has(name)) loaded.set(name, (async () => { try { const r = await fetch(`audio/${name}`, { cache: 'no-cache' }); if (r.ok) { Object.assign(bundle, await r.json()); return true; } } catch {} return false; })());
+    return loaded.get(name);
+  };
+  const filesOf = group => siteFiles.filter(f => f.startsWith(`rec-${group}-`));
+  const ensureGroup = group => Promise.all(filesOf(group).map(loadFile));
+  let indexReady = null;
   async function ready() {
     db = await openDb();
-    // recordings uploaded with the site come in several small files (GitHub refuses one big file)
-    const load = async name => { try { const r = await fetch(`audio/${name}`, { cache: 'no-cache' }); if (r.ok) { Object.assign(bundle, await r.json()); return true; } } catch {} return false; };
-    let index = null; try { const r = await fetch('audio/rec-index.json', { cache: 'no-cache' }); if (r.ok) index = await r.json(); } catch {}
-    if (index) { siteFiles = index; await Promise.all(index.map(load)); }
-    else await Promise.all(['recordings.json'].map(load).concat(recGroups().map(async g => { for (let n = 1; n < 20 && await load(`rec-${g}-${n}.json`); n++); })));
+    indexReady = indexReady || (async () => {
+      let index = null; try { const r = await fetch('audio/rec-index.json', { cache: 'no-cache' }); if (r.ok) index = await r.json(); } catch {}
+      if (index) siteFiles = index;
+      return Boolean(index);
+    })();
+    const hasIndex = await indexReady;
     try { const r = await fetch('audio/manifest.json', { cache: 'no-cache' }); if (r.ok) files = new Map((await r.json()).map(f => [f.replace(/\.[^.]+$/, ''), f])); } catch {}
+    if (!hasIndex) {
+      // recordings uploaded with the site come in several small files (GitHub refuses one big file)
+      await Promise.all(['recordings.json'].map(loadFile).concat(recGroups().map(async g => { for (let n = 1; n < 20 && await loadFile(`rec-${g}-${n}.json`); n++); })));
+      return;
+    }
+    const pre = typeof VOICE_PREFIX !== 'undefined' ? VOICE_PREFIX : '';
+    const first = pre ? ['general', 'football', 'boy'] : ['general'];
+    await Promise.all(first.map(ensureGroup));
+    for (const name of siteFiles) await loadFile(name);
   }
+  // the file of a line's recordings, before playing it (nothing to wait for once it came)
+  async function ensureLine(key) { if (indexReady && await indexReady) await ensureGroup(recGroupOf(key)); }
   function tx(mode, fn) {
     return new Promise(res => {
       if (!db) return res(null);
@@ -124,6 +146,7 @@ const Voice = (() => {
     for (const key of pre ? [pre + id, id] : [id]) {
       const clip = await getClip(key);
       if (my !== token) return;
+      if (!clip && !bundle[key]) { await ensureLine(key); if (my !== token) return; }
       if (clip) { const url = URL.createObjectURL(clip), ok = await playUrl(url); URL.revokeObjectURL(url); if (ok || my !== token) return; }
       if (bundle[key] && (await playUrl(bundle[key]) || my !== token)) return;
     }

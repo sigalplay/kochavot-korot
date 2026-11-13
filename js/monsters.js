@@ -14,8 +14,8 @@ const Monsters = {
   heroHTML() {
     const H = this.HERO, wr = H.h * H.ready[0] / H.ready[1], wa = H.h * H.attack[0] / H.attack[1];
     return `<div class="battle-hero" id="star" style="left:${H.right - wa}px;top:${H.bottom - H.h}px;width:${wa}px;height:${H.h}px">
-      <img class="ready" src="assets/battle/star-ready.png" alt="הכוכבת" style="right:0;width:${wr}px;height:${H.h}px">
-      <img class="attack" src="assets/battle/star-attack.png" alt="" style="right:0;width:${wa}px;height:${H.h}px"></div>`;
+      <img class="ready" src="assets/battle/star-ready.webp" alt="הכוכבת" style="right:0;width:${wr}px;height:${H.h}px">
+      <img class="attack" src="assets/battle/star-attack.webp" alt="" style="right:0;width:${wa}px;height:${H.h}px"></div>`;
   },
   KINDS: 5,
   open() {
@@ -33,7 +33,7 @@ const Monsters = {
     setTimeout(() => this.next(), intro ? 2600 : 700);
   },
   showScore() { $('#monScore').innerHTML = `✨ ${this.hits} <small>מפלצות</small> · ${Math.min(this.turn + 1, this.round.length)} מתוך ${this.round.length}`; },
-  monsterImg(i) { return `<img class="mon-body" src="assets/battle/monster-${i % this.KINDS}.png" alt="" draggable="false">`; },
+  monsterImg(i) { return `<img class="mon-body" src="assets/battle/monster-${i % this.KINDS}.webp" alt="" draggable="false">`; },
   next() {
     if (this.turn >= this.round.length) return this.finish();
     const key = this.round[this.turn], L = LETTERS[key];

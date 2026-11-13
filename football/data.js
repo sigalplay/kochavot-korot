@@ -5,35 +5,35 @@
 const FB = (() => {
   const A = 'football/assets/';
   const ART = {
-    star: A + 'player.png',              // the player, transparent, standing, white shirt and navy shorts
+    star: A + 'player.webp',              // the player, transparent, standing, white shirt and navy shorts
     wardrobe: A + 'locker-room.jpg',     // dressing room with the cubbies (1600×1000)
     room: A + 'locker-room.jpg',         // home and menu screens
   };
-  // where the player stands on the 1600×1000 stage (same spot on every screen); player.png is 351×924 (40px of empty room on each side, for the boots)
+  // where the player stands on the 1600×1000 stage (same spot on every screen); player.webp is 351×924 (40px of empty room on each side, for the boots)
   const STAR_BOX = { x: 1300, y: 212, w: 281, h: 740 };
 
-  // Dressing room: every item is a full-size layer drawn over player.png (made by football/assets/make-layers.py,
+  // Dressing room: every item is a full-size layer drawn over player.webp (made by football/assets/make-layers.py,
   // armband and wristband placed by measurement). fit = where the item is inside the layer, for the fly-in.
-  const L = (name, k, fit, cardAr, z) => ({ name, img: `${A}items/${k}-on.png`, card: `${A}items/${k}.png`, cardAr, fit, layer: true, ar: 924 / 351, w: 1, cx: .5, cy: .5, z, snap: 'body' });
+  const L = (name, k, fit, cardAr, z) => ({ name, img: `${A}items/${k}-on.webp`, card: `${A}items/${k}.webp`, cardAr, fit, layer: true, ar: 924 / 351, w: 1, cx: .5, cy: .5, z, snap: 'body' });
   const ITEMS = {
     jersey:    L('חולצה',     'jersey',    [.128, .271, .741, .274], .979, 6),
     shorts:    L('מכנסיים',   'shorts',    [.236, .534, .530, .126], .893, 5),
-    boots:     { ...L('נעליים',    'boots',     [.071, .758, .883, .242], .612, 5), base: A + 'player-nofeet.png' }, // shown on the player without bare feet
+    boots:     { ...L('נעליים',    'boots',     [.071, .758, .883, .242], .612, 5), base: A + 'player-nofeet.webp' }, // shown on the player without bare feet
     armband:   L('סרט קפטן',  'armband',   [.142, .404, .177, .042], .669, 8),
     wristband: L('צמיד',      'wristband', [.103, .521, .142, .041], 1.079, 8),
   };
   // the other worlds: things the child places on the picture. stage = where it lands first (centre, stage px) and its width
-  const P = (world, name, k, ar, x, y, w, z = 10) => ({ world, name, img: `${A}${world}/${k}.png`, ar, stage: { x, y, w }, z });
+  const P = (world, name, k, ar, x, y, w, z = 10) => ({ world, name, img: `${A}${world}/${k}.webp`, ar, stage: { x, y, w }, z });
   Object.assign(ITEMS, {
     // one stadium, built for real (pictures from make-stadium.py): the grass and the goals cover the bare pitch exactly,
     // the stand and its fans fill the empty space behind it, and the rest clicks into its own place (slot)
-    grass: { ...P('field', 'דשא', 'grass', .625, 800, 500, 1600, 1), img: A + 'stadium/grass-on.png', card: A + 'field/grass.png', cardAr: .764, slot: true, scene: true },
-    goal: { ...P('field', 'שער', 'goal', .625, 800, 500, 1600, 2), img: A + 'stadium/goals-on.png', card: A + 'field/goal.png', cardAr: 1.057, slot: true, scene: true },
+    grass: { ...P('field', 'דשא', 'grass', .625, 800, 500, 1600, 1), img: A + 'stadium/grass-on.webp', card: A + 'field/grass.webp', cardAr: .764, slot: true, scene: true },
+    goal: { ...P('field', 'שער', 'goal', .625, 800, 500, 1600, 2), img: A + 'stadium/goals-on.webp', card: A + 'field/goal.webp', cardAr: 1.057, slot: true, scene: true },
     team: { ...P('field', 'קבוצה', 'team', 1.67, 600, 498, 130, 7), slot: true },
     scoreboard: { ...P('field', 'לוח תוצאות', 'scoreboard', .695, 800, 152, 150, 5), slot: true },
     ball: { ...P('field', 'כדור', 'ball', 1.097, 800, 487, 34, 9), slot: true },
-    stand: { ...P('fans', 'יציע', 'stand', .625, 800, 500, 1600, 2), img: A + 'stadium/stand-on.png', card: A + 'fans/stand.png', cardAr: .425, slot: true, scene: true },
-    fans: { ...P('fans', 'אוהדים', 'fans', .625, 800, 500, 1600, 3), img: A + 'stadium/fans-on.png', card: A + 'fans/fans.png', cardAr: .716, slot: true, scene: true },
+    stand: { ...P('fans', 'יציע', 'stand', .625, 800, 500, 1600, 2), img: A + 'stadium/stand-on.webp', card: A + 'fans/stand.webp', cardAr: .425, slot: true, scene: true },
+    fans: { ...P('fans', 'אוהדים', 'fans', .625, 800, 500, 1600, 3), img: A + 'stadium/fans-on.webp', card: A + 'fans/fans.webp', cardAr: .716, slot: true, scene: true },
     drum: { ...P('fans', 'תוף', 'drum', .93, 360, 760, 110, 8), slot: true },
     speaker: { ...P('fans', 'רמקול', 'speaker', 1.672, 1000, 185, 62, 5), slot: true },
     screen: { ...P('fans', 'טלוויזיה', 'screen', .878, 520, 150, 180, 4), slot: true },
@@ -45,7 +45,7 @@ const FB = (() => {
     cup: { ...P('party', 'גביע', 'cup', 1.386, 845, 456, 110, 8), slot: true },
     cake: { ...P('party', 'עוגה', 'cake', 1.062, 668, 388, 120, 8), slot: true },
     balloons: { ...P('party', 'בלונים', 'balloons', 1.799, 380, 330, 190, 9), slot: true },
-    fireworks: { ...P('party', 'זיקוקים', 'fireworks', 2.687, 1000, 330, 230, 1), card: A + 'party/fireworks-card.png', slot: true }, // see-through: a dark card for the menus
+    fireworks: { ...P('party', 'זיקוקים', 'fireworks', 2.687, 1000, 330, 230, 1), card: A + 'party/fireworks-card.webp', slot: true }, // see-through: a dark card for the menus
   });
   // cubby for each item in the locker room (stage px, centre-bottom + width)
   const CUBBIES = {
@@ -79,12 +79,12 @@ const FB = (() => {
   ].map(u => ({ ...LETTERS[u.key], ...u }));
 
   const WORLDS = [
-    { key: 'clothes', title: 'חדר ההלבשה', icon: A + 'items/jersey.png', placeName: 'הארונית', bg: A + 'locker-room.jpg',
+    { key: 'clothes', title: 'חדר ההלבשה', icon: A + 'items/jersey.webp', placeName: 'הארונית', bg: A + 'locker-room.jpg',
       intro: 'בחדר ההלבשה כל אות נותנת לי עוד חלק מהמדים. בחרו אות!', doneText: 'השחקן לבוש ומוכן למשחק! ⚽', doneLine: 'יש לי מדים מלאים! אני מוכן לעלות למגרש!' },
-    { key: 'field', title: 'המגרש', icon: A + 'field/goal.png', placeName: 'המגרש', bg: A + 'stadium/base.jpg', noVeil: true, intro: 'במגרש כל אות מוסיפה משהו למשחק. בחרו אות!', place: 'בואו נבנה את המגרש! גררו כל דבר למגרש, והוא ייכנס למקום שלו.', doneText: 'המגרש מוכן! ⚽', doneLine: 'המגרש מוכן! בואו נשחק!' },
-    { key: 'fans', title: 'האוהדים', icon: A + 'fans/drum.png', placeName: 'היציע', bg: A + 'stadium/stadium.jpg', noVeil: true, intro: 'ביציע כל אות מביאה עוד עידוד. בחרו אות!', place: 'גררו כל דבר ליציע, והוא ייכנס למקום שלו!', doneText: 'היציע מלא! ⚽', doneLine: 'איזה עידוד! תודה!' },
-    { key: 'snack', title: 'הדוכן', icon: A + 'snack/hamburger.png', placeName: 'דוכן האוכל', bg: A + 'snack/stand.jpg', noVeil: true, intro: 'בדוכן כל אות מביאה משהו טעים. בחרו אות!', place: 'גררו את האוכל לדוכן, והוא יעלה על הדלפק!', doneText: 'הדוכן מלא! בתיאבון! ⚽', doneLine: 'איזה דוכן! בתיאבון!' },
-    { key: 'party', title: 'החגיגה', icon: A + 'party/cup.png', placeName: 'החגיגה', bg: A + 'party/party.jpg', noVeil: true, intro: 'בחגיגה כל אות מביאה עוד הפתעה. בחרו אות!', place: 'גררו כל דבר לחגיגה, והוא ייכנס למקום שלו!', doneText: 'ניצחנו! ⚽', doneLine: 'ניצחנו! זאת החגיגה הכי שווה!' },
+    { key: 'field', title: 'המגרש', icon: A + 'field/goal.webp', placeName: 'המגרש', bg: A + 'stadium/base.jpg', noVeil: true, intro: 'במגרש כל אות מוסיפה משהו למשחק. בחרו אות!', place: 'בואו נבנה את המגרש! גררו כל דבר למגרש, והוא ייכנס למקום שלו.', doneText: 'המגרש מוכן! ⚽', doneLine: 'המגרש מוכן! בואו נשחק!' },
+    { key: 'fans', title: 'האוהדים', icon: A + 'fans/drum.webp', placeName: 'היציע', bg: A + 'stadium/stadium.jpg', noVeil: true, intro: 'ביציע כל אות מביאה עוד עידוד. בחרו אות!', place: 'גררו כל דבר ליציע, והוא ייכנס למקום שלו!', doneText: 'היציע מלא! ⚽', doneLine: 'איזה עידוד! תודה!' },
+    { key: 'snack', title: 'הדוכן', icon: A + 'snack/hamburger.webp', placeName: 'דוכן האוכל', bg: A + 'snack/stand.jpg', noVeil: true, intro: 'בדוכן כל אות מביאה משהו טעים. בחרו אות!', place: 'גררו את האוכל לדוכן, והוא יעלה על הדלפק!', doneText: 'הדוכן מלא! בתיאבון! ⚽', doneLine: 'איזה דוכן! בתיאבון!' },
+    { key: 'party', title: 'החגיגה', icon: A + 'party/cup.webp', placeName: 'החגיגה', bg: A + 'party/party.jpg', noVeil: true, intro: 'בחגיגה כל אות מביאה עוד הפתעה. בחרו אות!', place: 'גררו כל דבר לחגיגה, והוא ייכנס למקום שלו!', doneText: 'ניצחנו! ⚽', doneLine: 'ניצחנו! זאת החגיגה הכי שווה!' },
   ];
 
   // item names that the girls' game already recorded (same word), so they are not recorded twice

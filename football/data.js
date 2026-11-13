@@ -1,4 +1,4 @@
-/* אלופי האותיות — the football game's own content, kept in one object (FB) so the recording studio
+/* כוכבי הכדורגל — the football game's own content, kept in one object (FB) so the recording studio
    can load it next to the girls' game. football/content.js turns it into the globals the engine reads.
    All paths are from the site root (football/index.html sets <base href="../">). */
 
@@ -95,7 +95,7 @@ const FB = (() => {
      name-/sound-/letter-... (letters) and yay-... */
   function lines() {
     const L = {
-      'fb/home': ['שלום! אני אלוף האותיות. בחרו עולם ובואו נשחק!'],
+      'fb/home': ['שלום! אני כוכב הכדורגל. בחרו עולם ובואו נשחק!'],
       'fb/wardrobe': ['גררו פריט מהארונית אליי, ואני אלבש אותו.'],
       'fb/wardrobe-empty': ['הארונית עוד ריקה. סיימו אות וקבלו את הפריט הראשון!'],
       'fb/wardrobe-new': ['הפריט החדש מחכה בארונית! גררו אותו אליי ותלבישו אותי.'],

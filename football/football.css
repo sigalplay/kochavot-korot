@@ -1,4 +1,4 @@
-/* אלופי האותיות — the same screens as כוכבות קוראות, in team colours: royal blue, white, pitch green and trophy gold. */
+/* כוכבי הכדורגל — the same screens as כוכבות קוראות, in team colours: royal blue, white, pitch green and trophy gold. */
 .football{--ink:#1d3557;--plum:#1f4e9c;--pink:#3a7bd5;--pink-2:#bcd4f5;--lilac:#4caf6a;--gold:#f2c230;--cream:#f7fbff}
 .football #viewport{background:radial-gradient(circle at 50% 40%,#2c5aa0,#0f2347)}
 .football #stage{background:#e6f0fb}

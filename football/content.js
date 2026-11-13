@@ -1,4 +1,4 @@
-/* אלופי האותיות — hands the football content (football/data.js) to the shared engine (js/game.js),
+/* כוכבי הכדורגל — hands the football content (football/data.js) to the shared engine (js/game.js),
    and says every engine line with the plural voice bank or a football line. */
 
 const GAME = {
@@ -6,7 +6,7 @@ const GAME = {
   autoPlace: false, // the child places every prize himself
   // a sixth tile on the home screen: the penalty game (football/penalty.js), practising all the letters
   homeExtra: () => `<button class="world pen" onclick="Sfx.tap();go.penalty()"><span class="emoji">⚽</span><b>פנדלים</b><small>תרגול כל האותיות</small></button>`,
-  saveKey: 'alufim-v1', title: 'אלופי האותיות', subtitle: 'הכנה משחקית לכיתה א׳', heroAlt: 'השחקן', worksheets: false,
+  saveKey: 'alufim-v1', title: 'כוכבי הכדורגל', subtitle: 'הכנה משחקית לכיתה א׳', heroAlt: 'השחקן', worksheets: false,
   text: {
     next: 'ממשיכים', find3: 'מצאו', findAll: 'מצאו את כל האותיות', writing: 'כותבים את האות', restart: 'מתחילים מחדש',
     won: 'איזה אלופים! הרווחתם', collected: 'אספתם', dress: 'בואו נלביש את השחקן!', undressAll: 'הכול חוזר לארונית', start: 'בואו<br>נשחק!',

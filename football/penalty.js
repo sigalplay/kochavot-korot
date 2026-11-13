@@ -11,8 +11,8 @@ const Penalty = {
     // the letters kicked least so far come first, so every letter gets its turn
     this.round = Practice.plan('pen', this.KICKS);   // hard letters first, then the least practised
     screen(`${topbar({ title: 'פנדלים' })}
-      <img class="bg pen-layer" src="football/assets/stadium/grass-on.png" alt="">
-      <img class="bg pen-layer pen-fans" src="football/assets/stadium/fans-on.png" alt="">
+      <img class="bg pen-layer" src="football/assets/stadium/grass-on.webp" alt="">
+      <img class="bg pen-layer pen-fans" src="football/assets/stadium/fans-on.webp" alt="">
       ${this.goalSVG()}
       <div class="pen-score" id="penScore"></div>
       <div class="pen-call" id="penCall"></div>
@@ -40,7 +40,7 @@ const Penalty = {
     this.key = key; this.misses = 0; this.busy = false;
     const letters = shuffle([L.letter, ...near]);
     $('#penBalls').innerHTML = letters.map((ch, i) => { const p = this.BALLS[i];
-      return `<button class="pen-ball arrive" data-ch="${ch}" style="left:${p.x - 70}px;top:${p.y - 70}px" aria-label="${ch}"><img src="football/assets/field/ball.png" alt=""><b>${ch}</b></button>`; }).join('');
+      return `<button class="pen-ball arrive" data-ch="${ch}" style="left:${p.x - 70}px;top:${p.y - 70}px" aria-label="${ch}"><img src="football/assets/field/ball.webp" alt=""><b>${ch}</b></button>`; }).join('');
     stage.querySelectorAll('.pen-ball').forEach(b => b.addEventListener('pointerdown', e => { e.preventDefault(); this.shoot(b); }));
     $('#penCall').innerHTML = `בעטו בכדור עם האות <b>${L.letter}</b>`;
     this.showScore();

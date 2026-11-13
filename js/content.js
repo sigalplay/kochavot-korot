@@ -2,8 +2,8 @@
    To swap in new illustrations, change the paths in ART / ITEMS / WORDS only. */
 
 const ART = {
-  star: 'assets/scene/star.png',            // the star, transparent, standing, base clothes
-  starArms: 'assets/scene/star-arms.png',   // same size: only her forearms and hands, drawn over skirts and coats
+  star: 'assets/scene/star.webp',            // the star, transparent, standing, base clothes
+  starArms: 'assets/scene/star-arms.webp',   // same size: only her forearms and hands, drawn over skirts and coats
   wardrobe: 'assets/scene/wardrobe.jpg',    // dressing room with the 7-cubby cabinet
   room: 'assets/scene/room.jpg',
   stage: 'assets/stage/stage.jpg',           // the concert stage            // the star's dressing room (1600×1000, right side kept clear for her)
@@ -15,39 +15,39 @@ const STAR_BOX = { x: 1114, y: 216, w: 289, h: 739 };
 /* Items. Positions are fractions of the star box:
    cx/cy = centre of the item on the star, w = width as a share of the star's width.
    snap: 'body' = clicks into place, 'wrist' = either wrist, 'free' = stays where dropped.
-   layer: true = the image is the same size as star.png and already sits on her body (best fit);
+   layer: true = the image is the same size as star.webp and already sits on her body (best fit);
    fit = where the item is inside that layer [x, y, w, h] as fractions (used for the fly-in animation). */
 const ITEMS = {
-  coat: { name: 'מעיל', img: 'assets/items/coat-on.png', fit: [.170, .273, .675, .225], card: 'assets/items/coat.png', cardAr: 0.825, layer: true, ar: 2.555, w: 1, cx: .5, cy: .5, z: 6, snap: 'body' },
-  watch:    { name: 'שעון',   img: 'assets/items/watch.png',    ar: 1.878, w: .082, cx: .216, cy: .527, turn: 90, z: 8, snap: 'wrist' },
-  heart:    { name: 'לב',     img: 'assets/items/heart.png',    ar: .80,  w: .20,  cx: .50,  cy: .40,  z: 9, snap: 'free' },
-  boots: { name: 'נעליים', img: 'assets/items/boots-on.png', fit: [.159, .852, .703, .148], card: 'assets/items/boots.png', cardAr: 0.957, layer: true, ar: 2.555, w: 1, cx: .5, cy: .5, z: 5, snap: 'body' },
-  pin:      { name: 'סיכה',   img: 'assets/items/pin.png',      ar: .846, w: .20,  cx: .712, cy: .091, z: 9, snap: 'free' },
-  bracelet: { name: 'צמיד',   img: 'assets/items/bracelet.png', ar: .772, w: .15,  cx: .779, cy: .548, z: 8, snap: 'wrist' },
-  skirt: { name: 'חצאית', img: 'assets/items/skirt-on.png', fit: [.049, .438, .921, .223], card: 'assets/items/skirt.png', cardAr: 0.703, layer: true, ar: 2.555, w: 1, cx: .5, cy: .5, z: 5, snap: 'body' },
+  coat: { name: 'מעיל', img: 'assets/items/coat-on.webp', fit: [.170, .273, .675, .225], card: 'assets/items/coat.webp', cardAr: 0.825, layer: true, ar: 2.555, w: 1, cx: .5, cy: .5, z: 6, snap: 'body' },
+  watch:    { name: 'שעון',   img: 'assets/items/watch.webp',    ar: 1.878, w: .082, cx: .216, cy: .527, turn: 90, z: 8, snap: 'wrist' },
+  heart:    { name: 'לב',     img: 'assets/items/heart.webp',    ar: .80,  w: .20,  cx: .50,  cy: .40,  z: 9, snap: 'free' },
+  boots: { name: 'נעליים', img: 'assets/items/boots-on.webp', fit: [.159, .852, .703, .148], card: 'assets/items/boots.webp', cardAr: 0.957, layer: true, ar: 2.555, w: 1, cx: .5, cy: .5, z: 5, snap: 'body' },
+  pin:      { name: 'סיכה',   img: 'assets/items/pin.webp',      ar: .846, w: .20,  cx: .712, cy: .091, z: 9, snap: 'free' },
+  bracelet: { name: 'צמיד',   img: 'assets/items/bracelet.webp', ar: .772, w: .15,  cx: .779, cy: .548, z: 8, snap: 'wrist' },
+  skirt: { name: 'חצאית', img: 'assets/items/skirt-on.webp', fit: [.049, .438, .921, .223], card: 'assets/items/skirt.webp', cardAr: 0.703, layer: true, ar: 2.555, w: 1, cx: .5, cy: .5, z: 5, snap: 'body' },
 };
 // Stage world: props the child places on the stage. stage = default centre (stage px) and width when placed.
 Object.assign(ITEMS, {
-  drums:     { world: 'stage', name: 'תופים',    img: 'assets/stage/drums.png',     ar: .843, stage: { x: 450, y: 650, w: 330 }, z: 10 },
-  guitar:    { world: 'stage', name: 'גיטרה',    img: 'assets/stage/guitar.png',    ar: 2.336, stage: { x: 1100, y: 640, w: 130 }, z: 11 },
-  audience:  { world: 'stage', name: 'קהל',      img: 'assets/stage/audience.png',  ar: .34,  stage: { x: 800, y: 950, w: 660 }, z: 14 },
-  fireworks: { world: 'stage', name: 'זיקוקים',  img: 'assets/stage/fireworks.png', ar: .492, stage: { x: 800, y: 170, w: 720 }, z: 5 },
-  speaker:   { world: 'stage', name: 'רמקול',    img: 'assets/stage/speaker.png',   ar: 2.587, stage: { x: 1360, y: 610, w: 140 }, z: 11 },
+  drums:     { world: 'stage', name: 'תופים',    img: 'assets/stage/drums.webp',     ar: .843, stage: { x: 450, y: 650, w: 330 }, z: 10 },
+  guitar:    { world: 'stage', name: 'גיטרה',    img: 'assets/stage/guitar.webp',    ar: 2.336, stage: { x: 1100, y: 640, w: 130 }, z: 11 },
+  audience:  { world: 'stage', name: 'קהל',      img: 'assets/stage/audience.webp',  ar: .34,  stage: { x: 800, y: 950, w: 660 }, z: 14 },
+  fireworks: { world: 'stage', name: 'זיקוקים',  img: 'assets/stage/fireworks.webp', ar: .492, stage: { x: 800, y: 170, w: 720 }, z: 5 },
+  speaker:   { world: 'stage', name: 'רמקול',    img: 'assets/stage/speaker.webp',   ar: 2.587, stage: { x: 1360, y: 610, w: 140 }, z: 11 },
 });
 Object.assign(ITEMS, {
-  door:       { world: 'room',  name: 'דלת',      img: 'assets/room/door.png',       ar: 1.752, stage: { x: 810, y: 528, w: 190 }, z: 6 },
-  curtain:    { world: 'room',  name: 'וילון',    img: 'assets/room/curtain.png',    ar: 1.357, stage: { x: 1020, y: 420, w: 220 }, z: 7 },
-  tv:         { world: 'room',  name: 'טלוויזיה', img: 'assets/room/tv.png',         ar: 1.168, stage: { x: 560, y: 820, w: 210 }, z: 10 },
-  vegetables: { world: 'food',  name: 'ירקות',    img: 'assets/food/vegetables.png', ar: .797, stage: { x: 320, y: 530, w: 230 }, z: 10 },
-  hamburger:  { world: 'food',  name: 'המבורגר',  img: 'assets/food/hamburger.png',  ar: .963, stage: { x: 600, y: 530, w: 190 }, z: 10 },
-  popsicle:   { world: 'food',  name: 'ארטיק',    img: 'assets/food/popsicle.png',   ar: 1.678, stage: { x: 860, y: 528, w: 110 }, z: 10 },
-  earrings:   { world: 'gifts', name: 'עגילים',   img: 'assets/gifts/earrings.png',  ar: .803, stage: { x: 300, y: 492, w: 170 }, z: 10 },
-  balloon:    { world: 'gifts', name: 'בלון',     img: 'assets/gifts/balloon.png',   ar: 1.938, stage: { x: 700, y: 250, w: 150 }, z: 11 },
-  flower:     { world: 'gifts', name: 'פרח',      img: 'assets/gifts/flower.png',    ar: 1.626, stage: { x: 560, y: 438, w: 150 }, z: 10 },
-  hat:        { world: 'gifts', name: 'כובע',     img: 'assets/gifts/hat.png',       ar: .663, stage: { x: 830, y: 490, w: 210 }, z: 10 },
+  door:       { world: 'room',  name: 'דלת',      img: 'assets/room/door.webp',       ar: 1.752, stage: { x: 810, y: 528, w: 190 }, z: 6 },
+  curtain:    { world: 'room',  name: 'וילון',    img: 'assets/room/curtain.webp',    ar: 1.357, stage: { x: 1020, y: 420, w: 220 }, z: 7 },
+  tv:         { world: 'room',  name: 'טלוויזיה', img: 'assets/room/tv.webp',         ar: 1.168, stage: { x: 560, y: 820, w: 210 }, z: 10 },
+  vegetables: { world: 'food',  name: 'ירקות',    img: 'assets/food/vegetables.webp', ar: .797, stage: { x: 320, y: 530, w: 230 }, z: 10 },
+  hamburger:  { world: 'food',  name: 'המבורגר',  img: 'assets/food/hamburger.webp',  ar: .963, stage: { x: 600, y: 530, w: 190 }, z: 10 },
+  popsicle:   { world: 'food',  name: 'ארטיק',    img: 'assets/food/popsicle.webp',   ar: 1.678, stage: { x: 860, y: 528, w: 110 }, z: 10 },
+  earrings:   { world: 'gifts', name: 'עגילים',   img: 'assets/gifts/earrings.webp',  ar: .803, stage: { x: 300, y: 492, w: 170 }, z: 10 },
+  balloon:    { world: 'gifts', name: 'בלון',     img: 'assets/gifts/balloon.webp',   ar: 1.938, stage: { x: 700, y: 250, w: 150 }, z: 11 },
+  flower:     { world: 'gifts', name: 'פרח',      img: 'assets/gifts/flower.webp',    ar: 1.626, stage: { x: 560, y: 438, w: 150 }, z: 10 },
+  hat:        { world: 'gifts', name: 'כובע',     img: 'assets/gifts/hat.webp',       ar: .663, stage: { x: 830, y: 490, w: 210 }, z: 10 },
 });
 
-// measured on star.png: the narrowest point of each forearm, and the arm's tilt.
+// measured on star.webp: the narrowest point of each forearm, and the arm's tilt.
 // turn = how much the item's own picture is rotated to lie across the wrist (the watch picture is drawn upright)
 const WRISTS = [{ cx: .216, cy: .527, rot: 10 }, { cx: .779, cy: .536, rot: -10 }];
 
@@ -86,19 +86,19 @@ const UNITS = [
 
 /* Settings for the shared engine. A sixth tile on the home screen: the monster game (js/monsters.js), practising all the letters. */
 const GAME = {
-  homeExtra: () => `<button class="world mon-tile" onclick="Sfx.tap();go.monsters()"><img src="assets/battle/monster-2.png" alt=""><b>מפלצות האותיות</b><small>תרגול כל האותיות</small></button>`,
+  homeExtra: () => `<button class="world mon-tile" onclick="Sfx.tap();go.monsters()"><img src="assets/battle/monster-2.webp" alt=""><b>מפלצות האותיות</b><small>תרגול כל האותיות</small></button>`,
 };
 
 const WORLDS = [
-  { key: 'clothes', title: 'לבוש ואביזרים', icon: 'assets/items/coat.png', placeName: 'חדר ההלבשה', bg: 'assets/scene/wardrobe.jpg',
+  { key: 'clothes', title: 'לבוש ואביזרים', icon: 'assets/items/coat.webp', placeName: 'חדר ההלבשה', bg: 'assets/scene/wardrobe.jpg',
     intro: 'בעולם הלבוש לכל אות יש פריט חדש בשבילי. בחרי אות!', doneText: 'הלבשת את הכוכבת מכף רגל ועד ראש! ✨', doneLine: 'הלבשת אותי מכף רגל ועד ראש! אני מוכנה לעלות לבמה!' },
-  { key: 'stage', title: 'הבמה', icon: 'assets/stage/guitar.png', placeName: 'הבמה', bg: 'assets/stage/stage.jpg', starX: 800, noVeil: true,
+  { key: 'stage', title: 'הבמה', icon: 'assets/stage/guitar.webp', placeName: 'הבמה', bg: 'assets/stage/stage.jpg', starX: 800, noVeil: true,
     intro: 'בעולם הבמה כל אות מוסיפה משהו להופעה שלי. בחרי אות!', place: 'גררי דברים לבמה, ותסדרי לי את ההופעה!', doneText: 'הבמה מוכנה להופעה! ✨', doneLine: 'הבמה מוכנה! בואי נופיע!' },
-  { key: 'room', title: 'החדר', icon: 'assets/room/tv.png', placeName: 'החדר שלי', bg: 'assets/room/room.jpg',
+  { key: 'room', title: 'החדר', icon: 'assets/room/tv.webp', placeName: 'החדר שלי', bg: 'assets/room/room.jpg',
     intro: 'בעולם החדר כל אות מוסיפה משהו לחדר שלי. בחרי אות!', place: 'גררי דברים מהארגז, ותעצבי לי את החדר!', doneText: 'החדר מעוצב ומוכן! ✨', doneLine: 'איזה חדר יפה! תודה שעיצבת לי אותו!' },
-  { key: 'food', title: 'האוכל', icon: 'assets/food/hamburger.png', placeName: 'שולחן האוכל', bg: 'assets/food/cafe.jpg',
+  { key: 'food', title: 'האוכל', icon: 'assets/food/hamburger.webp', placeName: 'שולחן האוכל', bg: 'assets/food/cafe.jpg',
     intro: 'בעולם האוכל כל אות מביאה לי משהו טעים. בחרי אות!', place: 'גררי אוכל מהארגז, ותערכי לי את השולחן!', doneText: 'השולחן ערוך! בתיאבון! ✨', doneLine: 'איזה שולחן! בתיאבון!' },
-  { key: 'gifts', title: 'המתנות', icon: 'assets/gifts/balloon.png', placeName: 'שולחן המתנות', bg: 'assets/gifts/party.jpg',
+  { key: 'gifts', title: 'המתנות', icon: 'assets/gifts/balloon.webp', placeName: 'שולחן המתנות', bg: 'assets/gifts/party.jpg',
     intro: 'בעולם המתנות כל אות מביאה לי מתנה. בחרי אות!', place: 'גררי מתנות מהארגז, ותסדרי לי את המסיבה!', doneText: 'המסיבה מוכנה! ✨', doneLine: 'כמה מתנות! זאת המסיבה הכי יפה!' },
 ];
 const unitsOf = w => UNITS.filter(u => u.world === w);

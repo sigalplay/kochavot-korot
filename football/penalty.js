@@ -1,4 +1,4 @@
-/* פנדלים — a letter-practice game for אלופי האותיות.
+/* פנדלים — a letter-practice game for כוכבי הכדורגל.
    "בעטו בכדור עם האות מֵם": three balls lie on the grass, each with a letter; kicking the right one scores a goal.
    Every round practises the letters the child has kicked least, so over a few rounds all 22 letters come up. */
 

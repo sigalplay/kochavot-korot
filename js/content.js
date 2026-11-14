@@ -57,31 +57,32 @@ const CUBBIES = {
   watch: { x: 198, b: 664, w: 64 },  heart: { x: 412, b: 664, w: 125 }, pin: { x: 623, b: 664, w: 130 }, bracelet: { x: 830, b: 664, w: 130 },
 };
 
-/* The letter units of this game: which world, which reward item, and the three items offered in the first step.
+/* The letter units of this game, in teaching order (the same idea as the football game: similar letters such as
+   ב/כ, ד/ר, ה/ח/ת, ו/ז and ע/צ come far apart): which world, which reward item, and the three items offered in the first step.
    Everything about the letter itself comes from js/letters.js. */
 const UNITS = [
+  { key: 'chet', world: 'clothes', item: 'skirt', options: ['skirt','coat','boots'] },
   { key: 'mem', world: 'clothes', item: 'coat', options: ['coat','watch','boots'] },
-  { key: 'shin', world: 'clothes', item: 'watch', options: ['watch','skirt','boots'] },
-  { key: 'lamed', world: 'clothes', item: 'heart', options: ['heart','watch','skirt'] },
   { key: 'nun', world: 'clothes', item: 'boots', options: ['boots','coat','pin'] },
   { key: 'samech', world: 'clothes', item: 'pin', options: ['pin','bracelet','heart'] },
   { key: 'tsadi', world: 'clothes', item: 'bracelet', options: ['bracelet','pin','watch'] },
-  { key: 'chet', world: 'clothes', item: 'skirt', options: ['skirt','coat','boots'] },
-  { key: 'tav', world: 'stage', item: 'drums', options: ['drums','guitar','speaker'] },
-  { key: 'gimel', world: 'stage', item: 'guitar', options: ['guitar','drums','fireworks'] },
-  { key: 'kof', world: 'stage', item: 'audience', options: ['audience','speaker','guitar'] },
-  { key: 'zayin', world: 'stage', item: 'fireworks', options: ['fireworks','drums','audience'] },
-  { key: 'resh', world: 'stage', item: 'speaker', options: ['speaker','fireworks','guitar'] },
+  { key: 'shin', world: 'clothes', item: 'watch', options: ['watch','skirt','boots'] },
+  { key: 'lamed', world: 'clothes', item: 'heart', options: ['heart','watch','skirt'] },
   { key: 'dalet', world: 'room', item: 'door', options: ['door','curtain','tv'] },
-  { key: 'vav', world: 'room', item: 'curtain', options: ['curtain','door','tv'] },
   { key: 'tet', world: 'room', item: 'tv', options: ['tv','curtain','door'] },
+  { key: 'vav', world: 'room', item: 'curtain', options: ['curtain','door','tv'] },
+  { key: 'kof', world: 'stage', item: 'audience', options: ['audience','speaker','guitar'] },
+  { key: 'tav', world: 'stage', item: 'drums', options: ['drums','guitar','speaker'] },
+  { key: 'resh', world: 'stage', item: 'speaker', options: ['speaker','fireworks','guitar'] },
+  { key: 'gimel', world: 'stage', item: 'guitar', options: ['guitar','drums','fireworks'] },
+  { key: 'zayin', world: 'stage', item: 'fireworks', options: ['fireworks','drums','audience'] },
+  { key: 'alef', world: 'food', item: 'popsicle', options: ['popsicle','vegetables','hamburger'] },
   { key: 'yod', world: 'food', item: 'vegetables', options: ['vegetables','hamburger','popsicle'] },
   { key: 'he', world: 'food', item: 'hamburger', options: ['hamburger','popsicle','vegetables'] },
-  { key: 'alef', world: 'food', item: 'popsicle', options: ['popsicle','vegetables','hamburger'] },
+  { key: 'kaf', world: 'gifts', item: 'hat', options: ['hat','earrings','flower'] },
+  { key: 'pe', world: 'gifts', item: 'flower', options: ['flower','hat','balloon'] },
   { key: 'ayin', world: 'gifts', item: 'earrings', options: ['earrings','balloon','hat'] },
   { key: 'bet', world: 'gifts', item: 'balloon', options: ['balloon','flower','earrings'] },
-  { key: 'pe', world: 'gifts', item: 'flower', options: ['flower','hat','balloon'] },
-  { key: 'kaf', world: 'gifts', item: 'hat', options: ['hat','earrings','flower'] },
 ].map(u => ({ ...LETTERS[u.key], ...u }));
 
 /* Settings for the shared engine. A sixth tile on the home screen: the monster game (js/monsters.js), practising all the letters. */
@@ -92,10 +93,10 @@ const GAME = {
 const WORLDS = [
   { key: 'clothes', title: 'לבוש ואביזרים', icon: 'assets/items/coat.webp', placeName: 'חדר ההלבשה', bg: 'assets/scene/wardrobe.jpg',
     intro: 'בעולם הלבוש לכל אות יש פריט חדש בשבילי. בחרי אות!', doneText: 'הלבשת את הכוכבת מכף רגל ועד ראש! ✨', doneLine: 'הלבשת אותי מכף רגל ועד ראש! אני מוכנה לעלות לבמה!' },
-  { key: 'stage', title: 'הבמה', icon: 'assets/stage/guitar.webp', placeName: 'הבמה', bg: 'assets/stage/stage.jpg', starX: 800, noVeil: true,
-    intro: 'בעולם הבמה כל אות מוסיפה משהו להופעה שלי. בחרי אות!', place: 'גררי דברים לבמה, ותסדרי לי את ההופעה!', doneText: 'הבמה מוכנה להופעה! ✨', doneLine: 'הבמה מוכנה! בואי נופיע!' },
   { key: 'room', title: 'החדר', icon: 'assets/room/tv.webp', placeName: 'החדר שלי', bg: 'assets/room/room.jpg',
     intro: 'בעולם החדר כל אות מוסיפה משהו לחדר שלי. בחרי אות!', place: 'גררי דברים מהארגז, ותעצבי לי את החדר!', doneText: 'החדר מעוצב ומוכן! ✨', doneLine: 'איזה חדר יפה! תודה שעיצבת לי אותו!' },
+  { key: 'stage', title: 'הבמה', icon: 'assets/stage/guitar.webp', placeName: 'הבמה', bg: 'assets/stage/stage.jpg', starX: 800, noVeil: true,
+    intro: 'בעולם הבמה כל אות מוסיפה משהו להופעה שלי. בחרי אות!', place: 'גררי דברים לבמה, ותסדרי לי את ההופעה!', doneText: 'הבמה מוכנה להופעה! ✨', doneLine: 'הבמה מוכנה! בואי נופיע!' },
   { key: 'food', title: 'האוכל', icon: 'assets/food/hamburger.webp', placeName: 'שולחן האוכל', bg: 'assets/food/cafe.jpg',
     intro: 'בעולם האוכל כל אות מביאה לי משהו טעים. בחרי אות!', place: 'גררי אוכל מהארגז, ותערכי לי את השולחן!', doneText: 'השולחן ערוך! בתיאבון! ✨', doneLine: 'איזה שולחן! בתיאבון!' },
   { key: 'gifts', title: 'המתנות', icon: 'assets/gifts/balloon.webp', placeName: 'שולחן המתנות', bg: 'assets/gifts/party.jpg',
